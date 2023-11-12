@@ -1,19 +1,47 @@
 package src;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Population {
-    private Tour[] tours;
-
-    public Population(int populationSize, int numCities) {
-        tours = new Tour[populationSize];
+    private List<Route> routes = new ArrayList<>(PopulationSize);
+    
+    public Population(int populationSize, boolean initialise, List<City> cities) {
         for (int i = 0; i < populationSize; i++) {
-            tours[i] = new Tour(numCities);
+            routes.add(null);
+        }
+        if (initialise) {
+            for (int i = 0; i < populationSize(); i++) {
+                Route newRoute = new Route(new ArrayList<>(cities));
+                newRoute.generateIndividual();
+                saveRoute(i, newRoute);
+            }
         }
     }
-
-    public void evaluateFitness(CityMap cityMap) {
-        for (Tour tour : tours) {
-            tour.calculateFitness(cityMap);
+    
+    public void saveRoute(int index, Route route) {
+        routes.set(index, route);
+    }
+    
+    public Route getRoute(int index) {
+        return routes.get(index);
+    }
+    
+    public Route getFittest() {
+        Route fittest = routes.get(0);
+        for (int i = 1; i < populationSize(); i++) {
+            if (fittest.getFitness() <= getRoute(i).getFitness()) {
+                fittest = getRoute(i);
+            }
         }
+        return fittest;
+    }
+    
+    public int populationSize() {
+        return routes.size();
     }
 
+    public int size() {
+        return 0;
+    }
 }
