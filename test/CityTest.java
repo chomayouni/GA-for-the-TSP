@@ -6,6 +6,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import junit.framework.Assert;
 
@@ -14,6 +16,14 @@ import static org.junit.Assert.*;
 
 public class CityTest {
 
+	@BeforeEach
+	void setUp() throws Exception {
+	}
+
+	@AfterEach
+	void tearDown() throws Exception {
+	}
+	
     @Test
     public static void main(String[] args) {
         City city1 = new City(0, 0);

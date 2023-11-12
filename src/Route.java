@@ -18,6 +18,11 @@ public class Route {
     public void setCities(ArrayList<City> cities) {
         this.cities = cities;
     }
+    
+    public City getCity(int index)
+    {
+    	return cities.get(index);
+    }
 
     public double getFitness() {
         if (fitness == 0) {
