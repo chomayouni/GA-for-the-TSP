@@ -42,8 +42,8 @@ public class GeneticAlgorithm {
         // Loop over cities in the route
         for (int cityIndex = 0; cityIndex < route.getRouteSize(); cityIndex++) {
             // Get city and the next city
-            City startCity = route.getCity(cityIndex);
-            City endCity = (cityIndex + 1 < route.getRouteSize()) ? route.getCity(cityIndex + 1) : route.getCity(0);
+            City startCity = route.getCities(cityIndex);
+            City endCity = (cityIndex + 1 < route.getRouteSize()) ? route.getCities(cityIndex + 1) : route.getCities(0);
     
             // Calculate distance between them and add to total
             totalDistance += startCity.distanceTo(endCity);
