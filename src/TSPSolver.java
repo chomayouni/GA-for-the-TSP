@@ -66,5 +66,7 @@ public class TSPSolver {
         System.out.println("Final distance: " + bestTour.getFitness());
         System.out.println("Final Solution:");
         System.out.println(Arrays.toString(bestTour.getRoute()));
+        database.getRouteNames(bestTour.getRoute());
+
     }
 }

@@ -12,31 +12,36 @@ public class cities {
     private Scanner citiesScanner;
     // variable to hold number of cities
     private int numberOfCities;
-    // variable to hold city database in memory
+    // variable to hold city distances from txt file
     private int[][] map;
+    // Variable to hold string of cities
+    private String[] cityNames;
     
     // overloaded constructors, lets us pass in new path if we want, as of now, would have to be COMPLETE path for your system
     public cities(String path) {
         this.citiesFile = new File(path);
         initilizeCitiesScanner();
+        setNumberOfCities();
+        setCityNames();
         createCitiesMatrix();
     }
 
     public cities() {
         this.citiesFile = new File("data/cities.txt");
         initilizeCitiesScanner();
+        setNumberOfCities();
+        setCityNames();
         createCitiesMatrix();
     }
 
+    // This method is called repeatedly to reset the scanner, for when we go into the txt file multiple times, more or less
+    //      for debugging purposes
     public void initilizeCitiesScanner() {
         //Scanner object wants to be in a try catch to get rid of warning if there is an invalid file path
+        citiesScanner = null;
         try {
             citiesScanner = new Scanner(this.citiesFile);
             citiesScanner.useDelimiter(",");
-            //Get the number of cities from the first piece of data in txt file
-            this.numberOfCities = Integer.parseInt(this.citiesScanner.next());
-            // citiesScanner.useDelimiter(",");
-
         } catch(FileNotFoundException exception) {
             exception.printStackTrace();
         }
@@ -80,12 +85,8 @@ public class cities {
         citiesScanner.nextLine();
         // Map var that will be returned
         this.map = new int[this.numberOfCities][this.numberOfCities];
-        // temp var
-        // int temp;
         //Print through the matrices
-        //row
         for (int i = 0; i < this.numberOfCities; i++) {
-            //column
             for (int j = 0; j < this.numberOfCities; j++) {
                 // very dirty way to ignore the new lines in the txt file (each row)
                 try {
@@ -104,5 +105,34 @@ public class cities {
 
     public int getNumberOfCities() {
         return this.numberOfCities;
+    }
+
+    public void setNumberOfCities() {
+        // Reset scanner object
+        initilizeCitiesScanner();
+        // Get the number of cities from the first piece of data in txt file
+        this.numberOfCities = Integer.parseInt(this.citiesScanner.next());
+    }
+
+    public void setCityNames() {
+        // Reset scanner object
+        initilizeCitiesScanner();
+        // Initialize the array size
+        this.cityNames = new String[this.numberOfCities];
+        // Skip the number of cities parameter
+        citiesScanner.nextLine();
+        for (int i = 0; i < this.numberOfCities; i++) {
+            this.cityNames[i] = this.citiesScanner.next();
+        }
+    }
+
+    // This method can take in a list, and will return the name of the cities cooresponding to the values (indeces) in the list
+    public void getRouteNames(int[] route) {
+        for (int i = 0; i < route.length; i++) {
+            System.out.print(this.cityNames[route[i]-1]);
+            if (i < route.length-1) {
+                System.out.print(" -> ");
+            }
+        }
     }
 }
