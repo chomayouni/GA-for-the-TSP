@@ -1,171 +1,256 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 public class GeneticAlgorithm {
     private int populationSize;
     private double mutationRate;
     private double crossoverRate;
-    private int elitismCount;
     private int tournamentSize;
+    private int tourSize;
+    private int cityMap[][];
+    private int parent1Arr[];
+    private int parent2Arr[];
+    
+    private Population population;
 
-    public GeneticAlgorithm(int populationSize, double mutationRate, double crossoverRate, int elitismCount, int tournamentSize) {
+    public GeneticAlgorithm(int populationSize, double mutationRate, double crossoverRate,
+    						int tournamentSize, int tourSize, int[][] cityMap)
+    {
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.crossoverRate = crossoverRate;
-        this.elitismCount = elitismCount;
         this.tournamentSize = tournamentSize;
-    }
-
-    public Population initPopulation(int chromosomeLength) {
-        // Initialize a new population with a given size
-        Population population = new Population(this.populationSize, false, null);
-    
-        // Create each route in the population
-        for (int routeIndex = 0; routeIndex < this.populationSize; routeIndex++) {
-            // Create a random route
-            Route newRoute = new Route(chromosomeLength);
-            newRoute.generateIndividual();
-            
-            // Add the route to the population
-            population.saveRoute(routeIndex, newRoute);
-        }
-    
-        return population;
+        this.tourSize = tourSize;
+        this.cityMap = cityMap;
+        parent1Arr = new int[populationSize];
+        parent2Arr = new int[populationSize];
+        
+        // Can add initialization logic here
+        population = new Population(populationSize,tourSize, true);
     }
 
     // Calculate fitness for each individual
-    public double calculateFitness(Route route) {
-        double totalDistance = 0.0;
-    
-        // Loop over cities in the route
-        for (int cityIndex = 0; cityIndex < route.getRouteSize(); cityIndex++) {
-            // Get city and the next city
-            City startCity = route.getCity(cityIndex);
-            City endCity = (cityIndex + 1 < route.getRouteSize()) ? route.getCity(cityIndex + 1) : route.getCity(0);
-    
-            // Calculate distance between them and add to total
-            totalDistance += startCity.distanceTo(endCity);
-        }
-    
-        double fitness = 1 / totalDistance;
-        route.setFitness(fitness);
-    
-        return fitness;
+    public void fitness()
+    {
+    	// For each member of the population
+    	for (int i = 0; i < populationSize; i++)
+    	{
+    		double fitness = 0; 
+    		int[] route = population.getRoute(i);
+    		// For each city in the population members tour
+    		for (int j = 0; j < tourSize; j++)
+    		{
+    			// Calculate a running total of the distance the
+    			// solution covers
+    			fitness += cityMap[route[j]-1][route[j+1]-1];
+    		}
+    		// Update the fitness of the individual
+    		population.setFitness(i,fitness);
+    	}
     }
     
 
-    public Population evolve(Population population) {
-        Population newPopulation = new Population(population.s());
-    
-        // Loop over the current population by fitness
-        for (int i = 0; i < population.size(); i++) {
-            // Select parents
-            Route parent1 = selectParent(population);
-            Route parent2 = selectParent(population);
-    
-            // Crossover parents
-            Route child = crossover(parent1, parent2);
-    
-            // Add child to new population
-            newPopulation.saveRoute(i, child);
-        }
-    
-        // Apply mutation to the new population
-        for (int i = 0; i < newPopulation.size(); i++) {
-            mutatePopulation(newPopulation, i);(newPopulation.getRoute(i));
-        }
-    
-        return newPopulation;
+    public void selection()
+    {
+    	// TODO
+    	for (int i = 0; i < populationSize; i++)
+    	{
+	    	parent1Arr[i] = tournamentSelection();
+	    	parent2Arr[i] = tournamentSelection();
+    	}
+    	// Debug
+    	//System.out.println(Arrays.toString(parent1Arr));
+    	//System.out.println(Arrays.toString(parent2Arr));
     }
-    
 
-    public Route tournamentSelection(Population population, int tournamentSize) {
-        // Create a tournament population
-        Population tournament = new Population(tournamentSize);
-        for (int i = 0; i < tournamentSize; i++) {
-            int randomId = (int) (Math.random() * population.size());
-            tournament.saveRoute(i, population.getRoute(randomId));
+
+    private int tournamentSelection()
+    {
+        double best = Double.MAX_VALUE;
+        int index = 0;
+        
+        // Create a random subset of the population
+        Random random = new Random();
+        List<Integer> tournament = random.ints(1,populationSize).distinct().
+        		limit(tournamentSize).boxed().collect(Collectors.toList());
+        
+        // Find the most fit member in the population subset
+        for (int i = 0; i < tournamentSize; i++)
+        {
+        	if (best > population.getFitness(tournament.get(i)))
+        	{
+        		best = population.getFitness(tournament.get(i));
+        		index = tournament.get(i);
+        	}
         }
-        // Get the fittest route
-        Route fittest = tournament.getFittest();
-        return fittest;
+        
+        // Return the index of the winning individual
+        return index;
+
     }
 
     // Crossover population
-    public Route crossover(Route parent1, Route parent2) {
-        // Create new child tour
-        Route child = new Route();
+    public void crossover()
+    {
+    	// Create a temporary population to hold children of current population
+    	Population childPop = new Population(populationSize,tourSize, false);
+    	
+    	Random random = new Random();
+    	
+    	// Based on the crossover rate, create a new child or pass
+    	// a current member of the population forward
+    	for (int i = 0; i < populationSize; i++)
+    	{ 
+    		if (random.nextDouble() < crossoverRate)
+    		{
+    			childPop.setRoute(i, twoPointCrossover(parent1Arr[i],parent2Arr[i]));
+    		}
+    		else
+    		{
+    			childPop.setRoute(i, population.getRoute(parent1Arr[i]));
+    		}
+    	}
+    	
+    	// Save the new population
+    	population = childPop;
+    }
     
-        // Get start and end sub tour positions for parent1's route
-        int startPos = (int) (Math.random() * parent1.routeSize());
-        int endPos = (int) (Math.random() * parent1.routeSize());
+    private int[] twoPointCrossover(int parent1Idx, int parent2Idx)
+    {
+    	int[] parent1 = population.getRoute(parent1Idx);
+    	int[] parent2 = population.getRoute(parent2Idx);
+    	int[] child = new int[tourSize+1];
+    	
+    	Random random = new Random();
+    	// Do not crossover at the first or last index
+    	// as they must be the starting city
+    	int crossover = 1+random.nextInt(tourSize);
+    	
+    	
+    	for (int i = 0; i < tourSize; i++)
+    	{
+    		if (i<crossover)
+    		{
+    			child[i] = parent1[i];
+    		}
+    		else
+    		{
+    			if (contains(child, parent2[i]) == true)
+    			{
+    				child[i] = getNextValidCity(child);
+    			}
+				else
+				{
+					child[i] = parent2[i];
+				}
+    		}
+    	}
+    	// Set the final index to the first city (untouched in for loop)
+    	child[tourSize] = 1;
+    	
+    	return child;
+    }
     
-        // Loop and add the sub tour from parent1 to our child
-        for (int i = 0; i < child.routeSize(); i++) {
-            if (startPos < endPos && i > startPos && i < endPos) {
-                child.setCity(i, parent1.getCity(i));
-            } else if (startPos > endPos) {
-                if (!(i < startPos && i > endPos)) {
-                    child.setCity(i, parent1.getCity(i));
-                }
-            }
-        }
+    private int getNextValidCity(int[] route)
+    {
+    	// For every city in the tour
+    	for (int i = 0; i <= tourSize; i++)
+    	{
+    		// Check if the index i is contained in the tour
+    		if (contains(route, i) == false)
+    		{
+    			return i;
+    		}
+    	}
+    	
+    	// Error should assert if this is reached
+    	return 0;
+    }
     
-        // Loop through parent2's city tour
-        for (int i = 0; i < parent2.routeSize(); i++) {
-            // If child doesn't have the city add it
-            if (!child.containsCity(parent2.getCity(i))) {
-                // Loop to find a spare position in the child's tour
-                for (int ii = 0; ii < child.routeSize(); ii++) {
-                    // Spare position found, add city
-                    if (child.getCity(ii) == null) {
-                        child.setCity(ii, parent2.getCity(i));
-                        break;
-                    }
-                }
-            }
-        }
-        return child;
+    // Utility function, check if an array of integers
+    // contains a specified integer
+    private boolean contains(int[] array, int target)
+    {
+    	for ( int i = 0; i < array.length; i++)
+    	{
+    		if (array[i] == target)
+    			return true;
+    	}
+    	return false;
     }
 
     // Mutate population
-    public void mutatePopulation(Population population, double mutationRate) {
-        for(int i = 1; i < population.size(); i++){ // Start from 1 to preserve the best route
-            if(Math.random() < mutationRate){
-                mutateRoute(population.getRoute(i));
-            }
-        }
+    public void mutation()
+    {
+    	Random random = new Random();
+    	
+    	// Loop through the population. Rarely, mutate a member of the population.
+    	for (int i = 0; i < populationSize; i++)
+    	{ 
+    		if (random.nextDouble() < mutationRate)
+    		{
+    			swapMutation(i);
+    		}
+    	}
     }
     
-    private void mutateRoute(Route route) {
-        // Apply swap mutation
-        for(int routePos1 = 0; routePos1 < route.routeSize(); routePos1++){
-            if(Math.random() < mutationRate){
-                int routePos2 = (int) (route.routeSize() * Math.random());
-    
-                // Get the cities at target position in route
-                City city1 = route.getCity(routePos1);
-                City city2 = route.getCity(routePos2);
-    
-                // Swap them
-                route.setCity(routePos2, city1);
-                route.setCity(routePos1, city2);
-            }
-        }
+    private void swapMutation(int populationIdx)
+    {
+    	Random random = new Random();
+    	
+    	// Create two unique indexes to swap cities
+    	// Do not mutate at the first or last index
+    	// as they must be the starting city
+    	int mutationIdx1 = 1+random.nextInt(tourSize-1);
+    	int mutationIdx2;
+    	do
+    	{
+    		mutationIdx2 = 1+random.nextInt(tourSize-1);
+    	} while (mutationIdx1 == mutationIdx2);
+    	
+    	// Debug
+//    	System.out.println("Mutation index 1: " + mutationIdx1);
+//    	System.out.println("Mutation index 2: " + mutationIdx2);
+    	
+    	int[] mutant = new int[tourSize+1];
+    	mutant = population.getRoute(populationIdx);
+//    	System.out.println("Original mutant:\t"+Arrays.toString(mutant));
+    	
+    	int temp = mutant[mutationIdx1];
+    	mutant[mutationIdx1] = mutant[mutationIdx2];
+    	mutant[mutationIdx2] = temp;
+    	
+    	// Debug
+    	// Population is already updated by this point. Not sure why
+//    	System.out.println("Original Population:\t"+Arrays.toString(population.getRoute(populationIdx)));
+//    	System.out.println("Updated Mutant:\t\t"+Arrays.toString(mutant));
+    	
+    	population.setRoute(populationIdx, mutant);
+    	
+//    	 Debug
+//    	System.out.println("Updated Population:\t"+Arrays.toString(population.getRoute(populationIdx)));
+    	
     }
     
 
-    // Get fittest individual
-    public Route getFittest(Population population) {
-        Route fittest = population.getRoute(0);
-        for (int i = 1; i < population.size(); i++) {
-            if (fittest.getFitness() <= population.getRoute(i).getFitness()) {
-                fittest = population.getRoute(i);
-            }
-        }
-        return fittest;
+    // Get most fit individual
+    public Tour getFittest()
+    {
+    	double bestFitness = Double.MAX_VALUE;
+    	int bestIndex = 0;
+    	for (int i = 0; i < populationSize; i++)
+    	{
+    		if (population.getFitness(i) < bestFitness)
+    		{
+    			bestFitness = population.getFitness(i);
+    			bestIndex = i;
+    		}
+    	}
+    	return population.getTour(bestIndex);
     }
     
 }
