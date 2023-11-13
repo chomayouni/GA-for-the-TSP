@@ -4,44 +4,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Population {
-    private List<Route> routes = new ArrayList<>(PopulationSize);
+	private int populationSize;
+    private List<Tour> tours = new ArrayList<>(populationSize);
     
-    public Population(int populationSize, boolean initialise, List<City> cities) {
-        for (int i = 0; i < populationSize; i++) {
-            routes.add(null);
-        }
-        if (initialise) {
-            for (int i = 0; i < populationSize(); i++) {
-                Route newRoute = new Route(new ArrayList<>(cities));
-                newRoute.generateIndividual();
-                saveRoute(i, newRoute);
-            }
+    public Population(int populationSize, int tourSize, boolean initialize)
+    {
+        this.populationSize = populationSize;
+    	for (int i = 0; i < populationSize; i++)
+    	{
+            Tour tour = new Tour(tourSize, initialize);
+            tours.add(tour);
         }
     }
     
-    public void saveRoute(int index, Route route) {
-        routes.set(index, route);
+    public int[] getRoute(int index)
+    {
+        return tours.get(index).getRoute();
     }
     
-    public Route getRoute(int index) {
-        return routes.get(index);
+    public void setRoute(int index, int[] route)
+    {
+    	tours.get(index).setRoute(route);
     }
     
-    public Route getFittest() {
-        Route fittest = routes.get(0);
-        for (int i = 1; i < populationSize(); i++) {
-            if (fittest.getFitness() <= getRoute(i).getFitness()) {
-                fittest = getRoute(i);
-            }
-        }
-        return fittest;
+    public void setFitness(int index, double fitness)
+    {
+    	tours.get(index).setFitness(fitness);
     }
     
-    public int populationSize() {
-        return routes.size();
+    public double getFitness(int index)
+    {
+    	return tours.get(index).getFitness();
+    }
+    
+    public Tour getTour(int index)
+    {
+    	return tours.get(index);
     }
 
-    public int size() {
-        return 0;
-    }
 }
