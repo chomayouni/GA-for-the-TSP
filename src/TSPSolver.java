@@ -2,8 +2,17 @@ package src;
 
 import java.util.Arrays;
 
+import org.junit.jupiter.params.shadow.com.univocity.parsers.common.input.CharInput;
+
 public class TSPSolver {
     public static void main(String[] args) {
+
+
+
+        cities database = new cities();
+        database.printCities();
+        database.printCitiesMatrixFromTxt();
+
         // The Driver for the other classes
         // Output the best solution found
         // I think that this will contain the GUI
@@ -20,7 +29,7 @@ public class TSPSolver {
 		
         // Create and the values of our city for testing
 		// TODO (mhorvath) replace cityMap with custom dataset
-        int[][] cityMap = {{0,1,200,300,400},{100,0,1,200,300},{200,100,0,1,200},{300,200,100,0,1},{400,300,200,1,0}};
+        int[][] cityMap = database.createCitiesMatrix();
         
         // Initialize GA
         GeneticAlgorithm GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverRate,
