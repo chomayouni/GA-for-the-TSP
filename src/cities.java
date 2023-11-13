@@ -11,17 +11,21 @@ public class cities {
     // scanner object which is used to parse text in the associiated file
     private Scanner citiesScanner;
     // variable to hold number of cities
-    public int numberOfCities;
+    private int numberOfCities;
+    // variable to hold city database in memory
+    private int[][] map;
     
     // overloaded constructors, lets us pass in new path if we want, as of now, would have to be COMPLETE path for your system
     public cities(String path) {
         this.citiesFile = new File(path);
         initilizeCitiesScanner();
+        createCitiesMatrix();
     }
 
     public cities() {
         this.citiesFile = new File("data/cities.txt");
         initilizeCitiesScanner();
+        createCitiesMatrix();
     }
 
     public void initilizeCitiesScanner() {
@@ -40,9 +44,10 @@ public class cities {
 
     public void printCities() {
         //Reset scanner each time we go back into it
-        this.citiesScanner.reset();
-        citiesScanner.useDelimiter(",");
-
+        initilizeCitiesScanner();
+        //Skip the number of cities, and name of cities
+        citiesScanner.nextLine();
+        citiesScanner.nextLine();
         //Print the number of cities grabbed on initialization
         System.out.print("This city database contains " + this.numberOfCities + " cities.");
         for (int i = 0; i < this.numberOfCities; i++) {
@@ -52,10 +57,9 @@ public class cities {
 
     public void printCitiesMatrixFromTxt() {
         //I'm just usually reseting the scanner each time we need to go back into the txt file
-        this.citiesScanner.reset();
-        citiesScanner.useDelimiter(",");
+        initilizeCitiesScanner();
 
-        //SKip to the data, I'm not sure why I only need this once insteas of twice (To skp the number and names)
+        //skip the number of cities
         citiesScanner.nextLine();
 
         //Print through the matrices
@@ -67,22 +71,38 @@ public class cities {
         }
     }
 
-    public int[][] createCitiesMatrix() {
+
+    public void createCitiesMatrix() {
         //I'm just usually reseting the scanner each time we need to go back into the txt file
-        this.citiesScanner.reset();
-        citiesScanner.useDelimiter(",");
-        //SKip to the data, I'm not sure why I only need this once insteas of twice (To skp the number and names)
-        // citiesScanner.nextLine();
-        int[][] map = new int[this.numberOfCities][this.numberOfCities];
-        
+        initilizeCitiesScanner();
+        //Skip the number of cities, and name of cities
+        citiesScanner.nextLine();
+        citiesScanner.nextLine();
+        // Map var that will be returned
+        this.map = new int[this.numberOfCities][this.numberOfCities];
+        // temp var
+        // int temp;
         //Print through the matrices
         //row
         for (int i = 0; i < this.numberOfCities; i++) {
             //column
             for (int j = 0; j < this.numberOfCities; j++) {
-                map[i][j] = Integer.parseInt(this.citiesScanner.next());
+                // very dirty way to ignore the new lines in the txt file (each row)
+                try {
+                    this.map[i][j] = Integer.parseInt(this.citiesScanner.next());
+                }
+                catch(NumberFormatException exception) {
+                    // exception.printStackTrace();
+                }
             }
         }
-        return map;
+    }
+
+    public int[][] getCityMatrix() {
+        return this.map;
+    }
+
+    public int getNumberOfCities() {
+        return this.numberOfCities;
     }
 }

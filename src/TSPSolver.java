@@ -9,10 +9,9 @@ public class TSPSolver {
 
 
 
+        // Create database from city txt file data
         cities database = new cities();
-        database.printCities();
-        database.printCitiesMatrixFromTxt();
-
+        // MATT TO DO
         // The Driver for the other classes
         // Output the best solution found
         // I think that this will contain the GUI
@@ -21,19 +20,17 @@ public class TSPSolver {
     	int printInterval = 10;
     	
     	// GA Configuration
-    	int tourSize = 5; // Number of cities
+    	int tourSize = database.getNumberOfCities();
     	int populationSize = 5;
 		double mutationRate = 0.05; // 0-1
 		double crossoverRate = 0.80; // 0-1
 		int tournamentSize = 2; // Must be less than populationSize
 		
-        // Create and the values of our city for testing
-		// TODO (mhorvath) replace cityMap with custom dataset
-        int[][] cityMap = database.createCitiesMatrix();
+
         
         // Initialize GA
         GeneticAlgorithm GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverRate,
-				tournamentSize,tourSize,cityMap);
+				tournamentSize,tourSize,database.getCityMatrix());
         
         // Must get fitness before GA operation loop
         GA.fitness();
