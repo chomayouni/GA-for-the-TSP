@@ -10,7 +10,9 @@ public class TSPSolver {
 
 
         // Create database from city txt file data
-        cities database = new cities();
+        Map wholeMap = new Map();
+        int[] userRoute = {1,2,5,7, 8, 9};
+        SubMap subMap = new SubMap(userRoute);
         // MATT TO DO
         // The Driver for the other classes
         // Output the best solution found
@@ -20,7 +22,7 @@ public class TSPSolver {
     	int printInterval = 10;
     	
     	// GA Configuration
-    	int tourSize = database.getNumberOfCities();
+    	int tourSize = subMap.getNumberOfCities();
     	int populationSize = 5;
 		double mutationRate = 0.05; // 0-1
 		double crossoverRate = 0.80; // 0-1
@@ -30,7 +32,7 @@ public class TSPSolver {
         
         // Initialize GA
         GeneticAlgorithm GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverRate,
-				tournamentSize,tourSize,database.getCityMatrix());
+				tournamentSize,tourSize,subMap.getCityMatrix());
         
         // Must get fitness before GA operation loop
         GA.fitness();
@@ -66,7 +68,7 @@ public class TSPSolver {
         System.out.println("Final distance: " + bestTour.getFitness());
         System.out.println("Final Solution:");
         System.out.println(Arrays.toString(bestTour.getRoute()));
-        database.getRouteNames(bestTour.getRoute());
+        wholeMap.printRouteNames(bestTour.getRoute());
 
     }
 }

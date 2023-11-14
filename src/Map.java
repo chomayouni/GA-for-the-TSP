@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Arrays;
 
 
-public class cities {
+public class Map {
     // file object ot point to the cities DB
     private File citiesFile;
     // scanner object which is used to parse text in the associiated file
@@ -13,22 +13,13 @@ public class cities {
     // variable to hold number of cities
     private int numberOfCities;
     // variable to hold city distances from txt file
-    private int[][] map;
+    protected int[][] map;
     // Variable to hold string of cities
-    private String[] cityNames;
+    protected String[] cityNames;
     
-    // overloaded constructors, lets us pass in new path if we want, as of now, would have to be COMPLETE path for your system
-    public cities(String path) {
-        this.citiesFile = new File(path);
-        initilizeCitiesScanner();
-        setNumberOfCities();
-        setCityNames();
-        createCitiesMatrix();
-    }
 
-    public cities() {
+    public Map() {
         this.citiesFile = new File("data/cities.txt");
-        initilizeCitiesScanner();
         setNumberOfCities();
         setCityNames();
         createCitiesMatrix();
@@ -76,7 +67,7 @@ public class cities {
         }
     }
 
-
+    // This method will create map from all cities in DB
     public void createCitiesMatrix() {
         //I'm just usually reseting the scanner each time we need to go back into the txt file
         initilizeCitiesScanner();
@@ -98,6 +89,7 @@ public class cities {
             }
         }
     }
+
 
     public int[][] getCityMatrix() {
         return this.map;
@@ -126,8 +118,9 @@ public class cities {
         }
     }
 
+
     // This method can take in a list, and will return the name of the cities cooresponding to the values (indeces) in the list
-    public void getRouteNames(int[] route) {
+    public void printRouteNames(int[] route) {
         for (int i = 0; i < route.length; i++) {
             System.out.print(this.cityNames[route[i]-1]);
             if (i < route.length-1) {
