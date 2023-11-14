@@ -27,7 +27,7 @@ public class Map {
 
     // This method is called repeatedly to reset the scanner, for when we go into the txt file multiple times, more or less
     //      for debugging purposes
-    public void initilizeCitiesScanner() {
+    private void initilizeCitiesScanner() {
         //Scanner object wants to be in a try catch to get rid of warning if there is an invalid file path
         citiesScanner = null;
         try {
@@ -68,7 +68,7 @@ public class Map {
     }
 
     // This method will create map from all cities in DB
-    public void createCitiesMatrix() {
+    private void createCitiesMatrix() {
         //I'm just usually reseting the scanner each time we need to go back into the txt file
         initilizeCitiesScanner();
         //Skip the number of cities, and name of cities
@@ -91,22 +91,26 @@ public class Map {
     }
 
 
+    // Return the matrix of cities
     public int[][] getCityMatrix() {
         return this.map;
     }
 
+    // return the number of cities
     public int getNumberOfCities() {
         return this.numberOfCities;
     }
 
-    public void setNumberOfCities() {
+    // set the number of cities from the txt file
+    private void setNumberOfCities() {
         // Reset scanner object
         initilizeCitiesScanner();
         // Get the number of cities from the first piece of data in txt file
         this.numberOfCities = Integer.parseInt(this.citiesScanner.next());
     }
 
-    public void setCityNames() {
+    // set the names of cities from the txt file
+    private void setCityNames() {
         // Reset scanner object
         initilizeCitiesScanner();
         // Initialize the array size

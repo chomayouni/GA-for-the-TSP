@@ -9,9 +9,11 @@ public class TSPSolver {
 
 
 
-        // Create database from city txt file data
-        Map wholeMap = new Map();
-        int[] userRoute = {1,2,5,7, 8, 9};
+        // Create whole map from dataset
+        Map dataset = new Map();
+
+        // set a user route, and create the sub map for testing that route
+        int[] userRoute = {1,2,5,7,8,9};
         SubMap subMap = new SubMap(userRoute);
         // MATT TO DO
         // The Driver for the other classes
@@ -68,7 +70,7 @@ public class TSPSolver {
         System.out.println("Final distance: " + bestTour.getFitness());
         System.out.println("Final Solution:");
         System.out.println(Arrays.toString(bestTour.getRoute()));
-        wholeMap.printRouteNames(bestTour.getRoute());
+        dataset.printRouteNames(bestTour.getRoute());
 
     }
 }

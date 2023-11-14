@@ -10,6 +10,7 @@ public class SubMap extends Map {
     private String[] cityNames;
     // Variable for child map, which is a user created map from the whole DB
 
+    // Constructor for sub map
     public SubMap(int[] route) {
         this.numberOfCities = route.length;
         // System.out.println("Sub route length is " + this.numberOfCities);
@@ -18,7 +19,8 @@ public class SubMap extends Map {
     }
 
 
-    public void createCitiesMatrix(int[] route) {
+    // Method for creating cities matrix for the submap, takes in route. Refernces parent map
+    private void createCitiesMatrix(int[] route) {
         // Map var that will be returned
         this.map = new int[this.numberOfCities][this.numberOfCities];
         //Print through the matrices
@@ -35,7 +37,8 @@ public class SubMap extends Map {
         }
     }
 
-    public void setCityNames(int[] route) {
+    // Method for setting city names via input route, references the parent map
+    private void setCityNames(int[] route) {
         // Initialize the array size
         this.cityNames = new String[this.numberOfCities];
         for (int i = 0; i < this.numberOfCities; i++) {
