@@ -105,12 +105,12 @@ public class GeneticAlgorithm {
     	// a current member of the population forward
     	for (int i = 0; i < populationSize; i++)
     	{ 
-    		if (random.nextDouble() < crossoverRate)
-    		{
-    			childPop.setRoute(i, twoPointCrossover(parent1Arr[i],parent2Arr[i]));
+    		if (random.nextDouble() < crossoverRate){
+    			//childPop.setRoute(i, twoPointCrossover(parent1Arr[i],parent2Arr[i]));
+				//commented out the above for testing the greedy crossover 
+				childPop.setRoute(i, greedyCrossover(parent1Arr[i],parent2Arr[i]));
     		}
-    		else
-    		{
+    		else{
     			childPop.setRoute(i, population.getRoute(parent1Arr[i]));
     		}
     	}
@@ -118,7 +118,53 @@ public class GeneticAlgorithm {
     	// Save the new population
     	population = childPop;
     }
-    
+
+	///Greedy crossover starts with the first city from parent1 and then iteratively selects the next city 
+	///based on the shortest distance from the current city, considering both parents.
+    private int[] greedyCrossover(int parent1Idx, int parent2Idx) {
+		int[] parent1 = population.getRoute(parent1Idx);
+		int[] parent2 = population.getRoute(parent2Idx);
+		int[] child = new int[tourSize + 1];
+	
+		// Start with the first city of parent1
+		child[0] = parent1[0];
+	
+	// Fill the rest of the child route
+    for (int i = 1; i < tourSize; i++) {
+        int currentCity = child[i - 1];
+        int nextCity = -1;
+
+        // Find the next city based on the shortest distance
+        // IDK how to calculate the distance based on what we have currently
+		// Consult Adam in the next meeting
+        for (int city : parent1) {
+            if (city == currentCity) continue;
+            if (!contains(child, city)) {
+                nextCity = city;
+                break;
+            }
+        }
+			if (nextCity == -1) {
+				for (int city : parent2) {
+					if (city == currentCity) continue;
+					if (!contains(child, city)) {
+						nextCity = city;
+						break;
+					}
+				}
+			}
+			else if (nextCity != -1) {
+				child[i] = nextCity;
+			} else {
+				// Handle the case where no valid next city is found
+				// This should not happen, but if there is one think i can count on it's mking a mistake
+				throw new IllegalStateException("No valid next city found");
+			}
+		}
+		// return the final child rout
+		return child;
+    }
+
     private int[] twoPointCrossover(int parent1Idx, int parent2Idx)
     {
     	int[] parent1 = population.getRoute(parent1Idx);
