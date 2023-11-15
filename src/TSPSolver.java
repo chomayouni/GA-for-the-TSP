@@ -12,9 +12,6 @@ import org.junit.jupiter.params.shadow.com.univocity.parsers.common.input.CharIn
 
 public class TSPSolver {
     public static void main(String[] args) {
-
-
-
         // Create whole map from dataset
         Map dataset = new Map();
 
