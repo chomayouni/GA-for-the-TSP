@@ -19,7 +19,7 @@ public class Map {
     
 
     public Map() {
-        this.citiesFile = new File("data/cities.txt");
+        this.citiesFile = new File("GA-for-the-TSP/data/cities.txt");
         setNumberOfCities();
         setCityNames();
         createCitiesMatrix();
