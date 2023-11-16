@@ -116,7 +116,7 @@
                               <Label fx:id="lblMutationRate" text="Mutatation Rate" GridPane.rowIndex="3" />
                               <Label fx:id="lblCrossoverRate" text="Crossover Rate" GridPane.rowIndex="4" />
                               <Label fx:id="lblTournamentSize" text="Tournament Size" GridPane.rowIndex="5" />
-                              <TextField fx:id="txtFieldPopSize" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <TextField fx:id="txtFieldPopSize" onAction="#updatePopulationSize" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <TextField fx:id="txtFieldMutationRate" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <TextField fx:id="txtFieldCrossoverRate" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <TextField fx:id="txtFieldTournamentSize" prefHeight="25.0" prefWidth="71.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />

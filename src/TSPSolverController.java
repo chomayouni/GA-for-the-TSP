@@ -77,7 +77,11 @@ public class TSPSolverController implements Initializable {
         System.out.println(chkComboBoxCities.getCheckModel().getCheckedItems());
         txtAreaOutput.setText("Running new test....");
     }
-    
+
+
+    public void updatePopulationSize() {
+        TSPSolver.setPopulationSize(Integer.parseInt(txtFieldPopSize.getText()));
+    }    
 
     
 }

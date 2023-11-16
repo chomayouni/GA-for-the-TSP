@@ -33,30 +33,65 @@ public class TSPSolver {
     public TSPSolver() {
         // Create whole map from dataset
         wholeMap = new Map();
-        // set a user route, and create the sub map for testing that route
-        userMap = new SubMap(userRoute);
-
-
+        // // set a user route, and create the sub map for testing that route
+        // userMap = new SubMap(userRoute);
         // MATT TO DO
-
     	// Application configuration
     	printInterval = 10;
     	
     	// GA Configuration
-    	tourSize = userMap.getNumberOfCities();
+    	// tourSize = userMap.getNumberOfCities();
     	populationSize = 5;
 		mutationRate = 0.05; // 0-1
 		crossoverRate = 0.80; // 0-1
 		tournamentSize = 2; // Must be less than populationSize
 		
-
+        updateTSP();
+        // // Initialize GA
+        // GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverRate,
+		// 		tournamentSize,tourSize,userMap.getCityMatrix());
         
+    }
+
+    private void updateTSP() {
+        userMap = null;
+        GA = null;
+        userMap = new SubMap(userRoute);
+        tourSize = userMap.getNumberOfCities();
         // Initialize GA
         GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverRate,
 				tournamentSize,tourSize,userMap.getCityMatrix());
-        
+    }
 
 
+    public void setUserRoute(int[] userRoute) {
+        this.userRoute = userRoute;
+        System.out.println("New User Route is " + this.userRoute);
+        updateTSP();
+    } 
+
+    public void setPopulationSize(int populationSize) {
+        this.populationSize = populationSize;
+        System.out.println("New Population Size is " + this.populationSize);
+        updateTSP();
+    }
+
+    public void setMutationRate(double mutationRate) {
+        this.mutationRate = mutationRate;
+        System.out.println("New Mutation Rate is " + this.mutationRate);
+        updateTSP();
+    }
+
+    public void setCrossoverRate(double crossoverRate) {
+        this.crossoverRate = crossoverRate;
+        System.out.println("New Crossover Rate is " + this.crossoverRate);
+        updateTSP();
+    }
+
+    public void setTournamentSize(int tournamentSize) {
+        this.tournamentSize = tournamentSize;
+        System.out.println("New Tournament Size is " + this.tournamentSize);
+        updateTSP();
     }
 
     public void run(TextArea textOutput) {
