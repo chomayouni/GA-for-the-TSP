@@ -131,5 +131,6 @@ public class Map {
                 System.out.print(" -> ");
             }
         }
+        System.out.println();
     }
 }
