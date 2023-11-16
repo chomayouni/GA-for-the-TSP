@@ -38,7 +38,7 @@ public class TSPSolverController implements Initializable {
     @FXML private ChoiceBox choiceBoxCrossover;
     @FXML private TextField txtFieldTourSize;
     @FXML private TextField txtFieldPopSize;
-    @FXML private TextField txtFieldMuationRate;
+    @FXML private TextField txtFieldMutationRate;
     @FXML private TextField txtFieldCrossoverRate;
     @FXML private TextField txtFieldTournamentSize;
     @FXML private TextArea txtAreaOutput;
@@ -49,6 +49,7 @@ public class TSPSolverController implements Initializable {
 
     private ObservableList<String> crossoverList = FXCollections.observableArrayList("Add", "Sub");
     private ObservableList<String> citiesList = FXCollections.observableArrayList("Detroit", "Atlanta", "Miami");
+    private ObservableList<String> selectedCitiesList;
 
     public TSPSolverController() {
         TSPSolver = new TSPSolver();
@@ -82,6 +83,29 @@ public class TSPSolverController implements Initializable {
     public void updatePopulationSize() {
         TSPSolver.setPopulationSize(Integer.parseInt(txtFieldPopSize.getText()));
     }    
+
+    public void updateMutationRate() {
+        TSPSolver.setMutationRate(Double.parseDouble(txtFieldMutationRate.getText()));
+    }
+    
+    public void updateCrossoverRate() {
+        TSPSolver.setCrossoverRate(Double.parseDouble(txtFieldCrossoverRate.getText()));
+    }
+
+    public void updateTournamentSize() {
+        TSPSolver.setTournamentSize(Integer.parseInt(txtFieldTournamentSize.getText()));
+    }
+
+    public void updateUserRoute() {
+        // Convert ObservableList<Integer> to int[]
+        selectedCitiesList = chkComboBoxCities.getCheckModel().getCheckedItems();
+        int[] userRoute = new int[selectedCitiesList.size()];
+
+        for (int i = 0; i < selectedCitiesList.size(); i++) {
+            userRoute[i] = Integer.parseInt(selectedCitiesList.get(i));
+        }
+        TSPSolver.setUserRoute(userRoute);
+    }
 
     
 }
