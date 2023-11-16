@@ -19,7 +19,7 @@ public class Map {
     
 
     public Map() {
-        this.citiesFile = new File("GA-for-the-TSP/data/cities.txt");
+        citiesFile = new File("GA-for-the-TSP/data/cities.txt");
         setNumberOfCities();
         setCityNames();
         createCitiesMatrix();
@@ -31,7 +31,7 @@ public class Map {
         //Scanner object wants to be in a try catch to get rid of warning if there is an invalid file path
         citiesScanner = null;
         try {
-            citiesScanner = new Scanner(this.citiesFile);
+            citiesScanner = new Scanner(citiesFile);
             citiesScanner.useDelimiter(",");
         } catch(FileNotFoundException exception) {
             exception.printStackTrace();
@@ -45,9 +45,9 @@ public class Map {
         citiesScanner.nextLine();
         citiesScanner.nextLine();
         //Print the number of cities grabbed on initialization
-        System.out.print("This city database contains " + this.numberOfCities + " cities.");
-        for (int i = 0; i < this.numberOfCities; i++) {
-            System.out.println(this.citiesScanner.next());
+        System.out.print("This city database contains " + numberOfCities + " cities.");
+        for (int i = 0; i < numberOfCities; i++) {
+            System.out.println(citiesScanner.next());
         }
     }
 
@@ -59,9 +59,9 @@ public class Map {
         citiesScanner.nextLine();
 
         //Print through the matrices
-        for (int i = 0; i < this.numberOfCities; i++) {
-            for (int j = 0; j < this.numberOfCities; j++) {
-                System.out.print(this.citiesScanner.next() + "\t");
+        for (int i = 0; i < numberOfCities; i++) {
+            for (int j = 0; j < numberOfCities; j++) {
+                System.out.print(citiesScanner.next() + "\t");
             }
             System.out.println();
         }
@@ -75,13 +75,13 @@ public class Map {
         citiesScanner.nextLine();
         citiesScanner.nextLine();
         // Map var that will be returned
-        this.map = new int[this.numberOfCities][this.numberOfCities];
+        map = new int[numberOfCities][numberOfCities];
         //Print through the matrices
-        for (int i = 0; i < this.numberOfCities; i++) {
-            for (int j = 0; j < this.numberOfCities; j++) {
+        for (int i = 0; i < numberOfCities; i++) {
+            for (int j = 0; j < numberOfCities; j++) {
                 // very dirty way to ignore the new lines in the txt file (each row)
                 try {
-                    this.map[i][j] = Integer.parseInt(this.citiesScanner.next());
+                    map[i][j] = Integer.parseInt(citiesScanner.next());
                 }
                 catch(NumberFormatException exception) {
                     // exception.printStackTrace();
@@ -93,12 +93,12 @@ public class Map {
 
     // Return the matrix of cities
     public int[][] getCityMatrix() {
-        return this.map;
+        return map;
     }
 
     // return the number of cities
     public int getNumberOfCities() {
-        return this.numberOfCities;
+        return numberOfCities;
     }
 
     // set the number of cities from the txt file
@@ -106,7 +106,7 @@ public class Map {
         // Reset scanner object
         initilizeCitiesScanner();
         // Get the number of cities from the first piece of data in txt file
-        this.numberOfCities = Integer.parseInt(this.citiesScanner.next());
+        numberOfCities = Integer.parseInt(citiesScanner.next());
     }
 
     // set the names of cities from the txt file
@@ -114,11 +114,11 @@ public class Map {
         // Reset scanner object
         initilizeCitiesScanner();
         // Initialize the array size
-        this.cityNames = new String[this.numberOfCities];
+        cityNames = new String[numberOfCities];
         // Skip the number of cities parameter
         citiesScanner.nextLine();
-        for (int i = 0; i < this.numberOfCities; i++) {
-            this.cityNames[i] = this.citiesScanner.next();
+        for (int i = 0; i < numberOfCities; i++) {
+            cityNames[i] = citiesScanner.next();
         }
     }
 
@@ -126,7 +126,7 @@ public class Map {
     // This method can take in a list, and will return the name of the cities cooresponding to the values (indeces) in the list
     public void printRouteNames(int[] route) {
         for (int i = 0; i < route.length; i++) {
-            System.out.print(this.cityNames[route[i]-1]);
+            System.out.print(cityNames[route[i]-1]);
             if (i < route.length-1) {
                 System.out.print(" -> ");
             }

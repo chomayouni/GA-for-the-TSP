@@ -8,6 +8,7 @@
 	<classpathentry kind="lib" path="C:/Users/spart/Desktop/openjfx-21_windows-x64_bin-sdk/javafx-sdk-21/lib/javafx.swing.jar"/>
 	<classpathentry kind="lib" path="C:/Users/spart/Desktop/openjfx-21_windows-x64_bin-sdk/javafx-sdk-21/lib/javafx.web.jar"/>
 	<classpathentry kind="lib" path="C:/Users/spart/Desktop/openjfx-21_windows-x64_bin-sdk/javafx-sdk-21/lib/javafx-swt.jar"/>
+	<!-- <classpathentry king="lib" path="C:/Users/spart/Desktop/controlsfx-11.2.0/controlsfx-11.2.0/controlsfx-11.2.0.jar"/> -->
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
