@@ -28,7 +28,8 @@ public class SubMap extends Map {
             for (int j = 0; j < numberOfCities; j++) {
                 // very dirty way to ignore the new lines in the txt file (each row)
                 try {
-                    this.map[i][j] = super.map[route[i]-1][route[j]];
+                    // System.out.println("i is: " + i + ", j is: " + j);
+                    this.map[i][j] = super.map[route[i]-1][route[j]-1];
                 }
                 catch(NumberFormatException exception) {
                     // exception.printStackTrace();

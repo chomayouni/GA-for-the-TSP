@@ -144,7 +144,7 @@ public class Map {
         for (int i = 0; i < routeIndices.length; i++) {
             for (int j = 0; j < cityNames.length; j++) {
                 if (routeNames[i] == cityNames[j]) {
-                    routeIndices[i] = j;
+                    routeIndices[i] = j+1;
                 }
             }
         }

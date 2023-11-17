@@ -68,7 +68,7 @@ public class TSPSolver {
 
     public void setUserRoute(int[] userRoute) {
         this.userRoute = userRoute;
-        System.out.println("New User Route is " + this.userRoute);
+        System.out.println("New User Route Starts with " + this.userRoute[0]);
         updateTSP();
     } 
 

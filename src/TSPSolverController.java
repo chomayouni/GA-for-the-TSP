@@ -75,7 +75,7 @@ public class TSPSolverController implements Initializable {
 
     public void run() {
         updateUserRoute();
-        // TSPSolver.run();
+        TSPSolver.run();
     }
 
 
@@ -98,6 +98,8 @@ public class TSPSolverController implements Initializable {
     public void updateUserRoute() {
         List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
         String[] selectedCities = cities.toArray(new String[0]);
+        int[] userRoute = TSPSolver.getRouteIndices(selectedCities);
+        TSPSolver.setUserRoute(userRoute);
 
 
         // System.out.println("Update user route method: " + selectedCities);
