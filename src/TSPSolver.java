@@ -1,6 +1,8 @@
 package src;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -94,16 +96,22 @@ public class TSPSolver {
         updateTSP();
     }
 
-    public void run(TextArea textOutput) {
+    public String[] getCityNames() {
+        return wholeMap.getCityNames();
+    }
+
+    public ArrayList<Integer> getRouteIndices(ArrayList<String> routeNames) {
+        return wholeMap.getRouteIndices(routeNames);
+    }
+
+    public void run() {
         // Must get fitness before GA operation loop
         GA.fitness();
         
         // Print best initial solution
         Tour bestTour = GA.getFittest();
         System.out.println("Initial route : " + Arrays.toString(bestTour.getRoute()));
-        // textOutput.appendText("\nInitial route : " + Arrays.toString(bestTour.getRoute()));
         System.out.println("Initial distance : " + bestTour.getFitness());
-        // textOutput.appendText("\nInitial distance : " + bestTour.getFitness());
         System.out.println("");
 
         // Perform GA operation
@@ -119,11 +127,8 @@ public class TSPSolver {
         	{
 	        	bestTour = GA.getFittest();
 	        	System.out.println("Iteration "+i);
-                // textOutput.appendText("\nIteration "+i);
 	        	System.out.println("Route : " + Arrays.toString(bestTour.getRoute()));
-                // textOutput.appendText("\nRoute : " + Arrays.toString(bestTour.getRoute()));
 	            System.out.println("Distance : " + bestTour.getFitness());
-                // textOutput.appendText("\nDistance : " + bestTour.getFitness());
 	            System.out.println("");
         	}
         }
@@ -131,13 +136,8 @@ public class TSPSolver {
         // Print results
         bestTour = GA.getFittest();
         System.out.println("Finished");
-        // textOutput.appendText("\nFinished");
         System.out.println("Final distance: " + bestTour.getFitness());
-        // textOutput.appendText("\nFinal distance: " + bestTour.getFitness());
         System.out.println("Final Solution:");
-        // textOutput.appendText("\nFinal Solution:");
-        // textOutput.setText("Finished");
         System.out.println(Arrays.toString(bestTour.getRoute()));
-        wholeMap.printRouteNames(bestTour.getRoute());
     }
 }

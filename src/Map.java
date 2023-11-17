@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.Scanner;  
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 
 public class Map {
@@ -96,6 +97,8 @@ public class Map {
         return map;
     }
 
+    //
+
     // return the number of cities
     public int getNumberOfCities() {
         return numberOfCities;
@@ -122,15 +125,28 @@ public class Map {
         }
     }
 
+    public String[] getCityNames() {
+        return cityNames;
+    }
 
-    // This method can take in a list, and will return the name of the cities cooresponding to the values (indeces) in the list
-    public void printRouteNames(int[] route) {
-        for (int i = 0; i < route.length; i++) {
-            System.out.print(cityNames[route[i]-1]);
-            if (i < route.length-1) {
-                System.out.print(" -> ");
+    // Take in route indices, return route names as Array List
+    public String[] getRouteNames(int[] routeIndices) {
+        String[] routeNames;
+        for (int i = 0; i < routeIndices.length; i++) {
+            routeNames.add(cityNames[routeIndices[i]]);
+        }
+        return routeNames;
+    }
+
+    // Take in route names, return route indices
+    public int[] getRouteIndices(String[] routeNames) {
+        for (int i = 0; i < routeNames.length; i++) {
+            for (int j = 0; j < routeNames.length; j++) {
+                if (routeNames[i] == cityNames[j]) {
+                    routeIndices.add(j);
+                }
             }
         }
-        System.out.println();
+        return routeIndices;
     }
 }

@@ -28,7 +28,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
 
-
 public class TSPSolverController implements Initializable {
 
     
@@ -48,8 +47,7 @@ public class TSPSolverController implements Initializable {
 
 
     private ObservableList<String> crossoverList = FXCollections.observableArrayList("Add", "Sub");
-    private ObservableList<String> citiesList = FXCollections.observableArrayList("Detroit", "Atlanta", "Miami");
-    private ObservableList<String> selectedCitiesList;
+    private ObservableList<String> citiesList = FXCollections.observableArrayList();
 
     public TSPSolverController() {
         TSPSolver = new TSPSolver();
@@ -65,18 +63,19 @@ public class TSPSolverController implements Initializable {
         // chkComboBoxCities = null;
         chkComboBoxCities = new CheckComboBox<String>(citiesList);
         chkComboBoxCities.setTitle("Cities");
-        gridPaneOptions.add(chkComboBoxCities, 1, 6);
         // throw new UnsupportedOperationException("Unimplemented method 'initialize'");
+        // Get the cities from the data set; 
+
+        citiesList.addAll(TSPSolver.getCityNames());
+        gridPaneOptions.add(chkComboBoxCities, 1, 6);
     }
 
 
 
 
     public void run() {
-        TSPSolver.run(txtAreaOutput);
-        btnRun.setText("Ran");
-        System.out.println(chkComboBoxCities.getCheckModel().getCheckedItems());
-        txtAreaOutput.setText("Running new test....");
+        updateUserRoute();
+        // TSPSolver.run();
     }
 
 
@@ -98,13 +97,16 @@ public class TSPSolverController implements Initializable {
 
     public void updateUserRoute() {
         // Convert ObservableList<Integer> to int[]
-        selectedCitiesList = chkComboBoxCities.getCheckModel().getCheckedItems();
-        int[] userRoute = new int[selectedCitiesList.size()];
+        // selectedCitiesList = chkComboBoxCities.getCheckModel().getCheckedItems();
+        // List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
+        ArrayList<String> selectedCitiesList = new ArrayList<String>(chkComboBoxCities.getCheckModel().getCheckedItems());
+        // int[] userRoute = new int[selectedCitiesList.size()];
 
-        for (int i = 0; i < selectedCitiesList.size(); i++) {
-            userRoute[i] = Integer.parseInt(selectedCitiesList.get(i));
-        }
-        TSPSolver.setUserRoute(userRoute);
+        // for (int i = 0; i < selectedCitiesList.size(); i++) {
+        //     userRoute[i] = Integer.parseInt(selectedCitiesList.get(i));
+        // }
+        System.out.println("Update user route method: " + selectedCitiesList);
+        TSPSolver.setUserRoute(TSPSolver.getRouteIndices(selectedCitiesList));
     }
 
     
