@@ -96,17 +96,12 @@ public class TSPSolverController implements Initializable {
     }
 
     public void updateUserRoute() {
-        // Convert ObservableList<Integer> to int[]
-        // selectedCitiesList = chkComboBoxCities.getCheckModel().getCheckedItems();
-        // List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
-        ArrayList<String> selectedCitiesList = new ArrayList<String>(chkComboBoxCities.getCheckModel().getCheckedItems());
-        // int[] userRoute = new int[selectedCitiesList.size()];
+        List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
+        String[] selectedCities = cities.toArray(new String[0]);
 
-        // for (int i = 0; i < selectedCitiesList.size(); i++) {
-        //     userRoute[i] = Integer.parseInt(selectedCitiesList.get(i));
-        // }
-        System.out.println("Update user route method: " + selectedCitiesList);
-        TSPSolver.setUserRoute(TSPSolver.getRouteIndices(selectedCitiesList));
+
+        // System.out.println("Update user route method: " + selectedCities);
+        // TSPSolver.setUserRoute(TSPSolver.getRouteIndices(selectedCitiesList));
     }
 
     

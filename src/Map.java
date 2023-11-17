@@ -131,19 +131,20 @@ public class Map {
 
     // Take in route indices, return route names as Array List
     public String[] getRouteNames(int[] routeIndices) {
-        String[] routeNames;
-        for (int i = 0; i < routeIndices.length; i++) {
-            routeNames.add(cityNames[routeIndices[i]]);
+        String[] routeNames = new String[routeIndices.length];
+        for (int i = 0; i < routeNames.length; i++) {
+            routeNames[i] = cityNames[routeIndices[i]];
         }
         return routeNames;
     }
 
     // Take in route names, return route indices
     public int[] getRouteIndices(String[] routeNames) {
-        for (int i = 0; i < routeNames.length; i++) {
-            for (int j = 0; j < routeNames.length; j++) {
+        int[] routeIndices = new int[routeNames.length];
+        for (int i = 0; i < routeIndices.length; i++) {
+            for (int j = 0; j < cityNames.length; j++) {
                 if (routeNames[i] == cityNames[j]) {
-                    routeIndices.add(j);
+                    routeIndices[i] = j;
                 }
             }
         }

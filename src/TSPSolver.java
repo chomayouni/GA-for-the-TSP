@@ -100,7 +100,7 @@ public class TSPSolver {
         return wholeMap.getCityNames();
     }
 
-    public ArrayList<Integer> getRouteIndices(ArrayList<String> routeNames) {
+    public int[] getRouteIndices(String[] routeNames) {
         return wholeMap.getRouteIndices(routeNames);
     }
 
