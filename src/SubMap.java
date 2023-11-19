@@ -56,4 +56,20 @@ public class SubMap extends Map {
     public int getNumberOfCities() {
         return numberOfCities;
     }
+
+    @Override
+    public String toString() {
+        String output = "";
+        for (int i = 0; i < map.length; i++) {
+            if (i < (map.length)-1) {
+                output = output + (cityNames[i]) + ", ";
+            }
+
+            else {
+                output = output + (cityNames[i]);
+            }
+
+        }
+        return output;
+    }
 }

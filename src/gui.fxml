@@ -111,7 +111,7 @@
                            </rowConstraints>
                            <children>
                               <Label fx:id="lblTourSIze" prefHeight="17.0" prefWidth="52.0" text="Tour Size" GridPane.rowIndex="1" />
-                              <TextField fx:id="txtFieldTourSize" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="77.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
+                              <TextField fx:id="txtFieldTourSize" disable="true" editable="false" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="77.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
                               <Label fx:id="lblPopSize" text="Population Size" GridPane.rowIndex="2" />
                               <Label fx:id="lblMutationRate" text="Mutatation Rate" GridPane.rowIndex="3" />
                               <Label fx:id="lblCrossoverRate" text="Crossover Rate" GridPane.rowIndex="4" />

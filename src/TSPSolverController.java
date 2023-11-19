@@ -11,6 +11,7 @@ import org.junit.jupiter.api.parallel.Resources;
 
 import javafx.event.EventHandler;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -56,6 +57,12 @@ public class TSPSolverController implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+        // Initial Constants, can pull this up if we want. Will initial txt fields with these as well. NOT part of this class. Should be passed 
+        //      into the TSP constructor to be honest
+        int populationSize = 5;
+        double mutationRate = 0.80;
+        double crossoverRate = 0.80;
+        int tournamentSize = 2;
         // TODO Auto-generated method stub
         choiceBoxCrossover.setItems(crossoverList);
         choiceBoxCrossover.setValue("Add");
@@ -67,15 +74,37 @@ public class TSPSolverController implements Initializable {
         // Get the cities from the data set; 
 
         citiesList.addAll(TSPSolver.getCityNames());
-        gridPaneOptions.add(chkComboBoxCities, 1, 6);
-    }
 
+        chkComboBoxCities.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
+            public void onChanged(ListChangeListener.Change<? extends String> c) {
+                updateUserRoute();
+                updateTourSize();
+            }
+        });
+
+        gridPaneOptions.add(chkComboBoxCities, 1, 6);
+        TSPSolver.setOutput(txtAreaOutput);
+
+        // Initilize Text fields and update TSP 
+        txtFieldPopSize.setText(Integer.toString(populationSize));
+        updatePopulationSize();
+        txtFieldMutationRate.setText(Double.toString(mutationRate));
+        updateMutationRate();
+        txtFieldCrossoverRate.setText(Double.toString(crossoverRate));
+        updateCrossoverRate();
+        txtFieldTournamentSize.setText(Integer.toString(tournamentSize));
+        updateTournamentSize();
+    }
 
 
 
     public void run() {
         updateUserRoute();
         TSPSolver.run();
+    }
+
+    public void updateTourSize() {
+        txtFieldTourSize.setText(Integer.toString(TSPSolver.getTourSize()));
     }
 
 
