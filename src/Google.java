@@ -9,6 +9,7 @@ import org.json.JSONObject;
 public class Google {
     private String to = "";
     private String from = "";
+    // Really should never push the real key...
     private String apiKey = "NiceTryPal";
     private String units = "imperial";
 
