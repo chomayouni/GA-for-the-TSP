@@ -17,13 +17,21 @@ public class Map {
     protected int[][] map;
     // Variable to hold string of cities
     protected String[] cityNames;
+    // Object for useing google API
+    private Google google;
     
 
     public Map() {
         citiesFile = new File("GA-for-the-TSP/data/cities.txt");
+        System.out.println("New map");
+        google = new Google();
         setNumberOfCities();
         setCityNames();
         createCitiesMatrix();
+    }
+
+    public void distance(String to, String from) {
+        google.distance(to, from);
     }
 
     // This method is called repeatedly to reset the scanner, for when we go into the txt file multiple times, more or less

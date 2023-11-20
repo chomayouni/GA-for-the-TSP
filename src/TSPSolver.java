@@ -23,6 +23,7 @@ public class TSPSolver {
     private Map wholeMap;
     // User defined map (Could be whole map, or any combo of cities)
     private SubMap userMap;
+
     // User defined route, used to create the user defined map
     private int[] userRoute = {};
     // General GA parameters
@@ -45,8 +46,7 @@ public class TSPSolver {
         userMap = new SubMap(userRoute);
         // MATT TO DO
     	// Application configuration
-    	printInterval = 10;
-    	
+    	printInterval = 10;    	
     	// // GA Configuration
     	// // tourSize = userMap.getNumberOfCities();
     	// populationSize = 5;
@@ -59,6 +59,10 @@ public class TSPSolver {
         // GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverRate,
 		// 		tournamentSize,tourSize,userMap.getCityMatrix());
         
+    }
+
+    private void distance(String to, String from) {
+        wholeMap.distance(to, from);
     }
 
     private void updateTSP() {
