@@ -1,35 +1,21 @@
 package src;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.junit.jupiter.api.parallel.Resources;
-
-
-import javafx.event.EventHandler;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
 
 public class TSPSolverController implements Initializable {
@@ -37,6 +23,8 @@ public class TSPSolverController implements Initializable {
     
     private TSPSolver TSPSolver;
 
+    // These are the FXML contatiners and objects, they have the @FXML tag, which is used to know that it needs 
+    //      to correspond to the contatiner that exists in the FXML
     @FXML private Button btnRun;
     @FXML private ChoiceBox choiceBoxCrossover;
     @FXML private TextField txtFieldTourSize;
@@ -47,9 +35,12 @@ public class TSPSolverController implements Initializable {
     @FXML private TextArea txtAreaOutput;
     @FXML private TextArea txtAreaConfig;
     // @FXML private CheckComboBox chkComboBoxCities;
-    private CheckComboBox chkComboBoxCities;
     @FXML private GridPane gridPaneOptions;
 
+    // Check combo box for cities
+    private CheckComboBox chkComboBoxCities;
+
+    // Observable lists to tie to the choice box and check combo box, then we will add a listner to them to update the TSP model
     private ObservableList<String> crossoverList = FXCollections.observableArrayList("Add", "Sub");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
 
@@ -96,6 +87,9 @@ public class TSPSolverController implements Initializable {
             }
         });
 
+        // Similar to above, but for the choice box. Will update the crossover function in the TSP. The chioce box
+        //      only seemed to work with using the index of the selected value, so rather than getting the string, it is
+        //      a Number type (Super class of all number types) and then just cast it to the int value to index stuff.
         choiceBoxCrossover.getSelectionModel().selectedIndexProperty().addListener(new 
         ChangeListener<Number>() {
             public void changed(ObservableValue ov, 
@@ -121,36 +115,43 @@ public class TSPSolverController implements Initializable {
     }
 
 
-
+    // Run the TSP solver
     public void run() {
         setUserRoute();
         TSPSolver.run();
     }
 
+    // Get tour size to update GUI field
     public void getTourSize() {
         txtFieldTourSize.setText(Integer.toString(TSPSolver.getTourSize()));
     }
 
+    // Sets population size in TSP from gui
     public void setPopulationSize() {
         TSPSolver.setPopulationSize(Integer.parseInt(txtFieldPopSize.getText()));
     }    
 
+    // Sets mutation rate in TSP from gui
     public void setMutationRate() {
         TSPSolver.setMutationRate(Double.parseDouble(txtFieldMutationRate.getText()));
     }
     
+    // Sets crossover rate in TSP from gui
     public void setCrossoverRate() {
         TSPSolver.setCrossoverRate(Double.parseDouble(txtFieldCrossoverRate.getText()));
     }
 
+    // Sets tournament size in TSP from gui
     public void setTournamentSize() {
         TSPSolver.setTournamentSize(Integer.parseInt(txtFieldTournamentSize.getText()));
     }
 
+    // Sets crossover function in TSP from gui
     public void setCrossoverFcn(Number idx) {
         TSPSolver.setCrossoverFcn(crossoverList.get(idx.intValue()));
     }
     
+    // Sets user route in TSP from gui
     public void setUserRoute() {
         List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
         String[] selectedCities = cities.toArray(new String[0]);

@@ -4,19 +4,24 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import org.json.JSONObject;
 
 public class Google {
-    private String to = "";
-    private String from = "";
+
     // Really should never push the real key...
     private String apiKey = "NiceTryPal";
+
+    // Hard coded units for American people
     private String units = "imperial";
 
+    // Constructor that does really nothing for now
     public Google() {
         System.out.println("Google object created");
     }
 
+    // Throw it all in a try catch, because of using the url response appraoch. WIll
+    //      fail on a timeout or maybe API key error
     public void distance(String to, String from) {
         try {
 
