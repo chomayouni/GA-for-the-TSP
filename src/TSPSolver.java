@@ -24,14 +24,16 @@ public class TSPSolver {
     // User defined map (Could be whole map, or any combo of cities)
     private SubMap userMap;
     // User defined route, used to create the user defined map
-    private int[] userRoute = {1};
+    private int[] userRoute = {};
     // General GA parameters
     private int tourSize;
     private int populationSize;
     private double mutationRate;
     private double crossoverRate;
     private int tournamentSize;
+    private TextArea txtAreaConfig;
     private TextArea txtAreaOutput;
+    private String crossoverFcn;
 
     // Degbug control for print statements
     private int printInterval;
@@ -81,6 +83,13 @@ public class TSPSolver {
         printSetup();
     } 
 
+    public void setCrossoverFcn(String crossoverFcn) {
+        this.crossoverFcn = crossoverFcn;
+        printSetup();
+        System.out.println("New Crossover Fcn is " + this.crossoverFcn);
+        // updateTSP();
+    }
+
     public void setPopulationSize(int populationSize) {
         this.populationSize = populationSize;
         printSetup();
@@ -109,18 +118,21 @@ public class TSPSolver {
         updateTSP();
     }
 
-    public void setOutput(TextArea txtAreaOutput) {
-        txtAreaOutput.setText("New TSP Solver Initialized");
+
+    public void setOutput(TextArea txtAreaOutput, TextArea txtAreaConfig) {
+        // txtAreaOutput.setText("New TSP Solver Initialized");
+        this.txtAreaConfig = txtAreaConfig;
         this.txtAreaOutput = txtAreaOutput;
     }
 
     public void printSetup() {
-        txtAreaOutput.setText("GA configuration:");
-        txtAreaOutput.appendText("\nPopulation Size set to: " + this.populationSize);
-        txtAreaOutput.appendText("\nMutation Rate set to: " + this.mutationRate);
-        txtAreaOutput.appendText("\nCrossover Rate set to: " + this.crossoverRate);
-        txtAreaOutput.appendText("\nTournament Size set to: " + this.tournamentSize);
-        txtAreaOutput.appendText("\nNew User Route includes: " +  userMap.toString());
+        txtAreaConfig.setText("Crossover Function set to: " + this.crossoverFcn);
+        txtAreaConfig.appendText("\nTour Size is: " + this.tourSize);
+        txtAreaConfig.appendText("\nPopulation Size set to: " + this.populationSize);
+        txtAreaConfig.appendText("\nMutation Rate set to: " + this.mutationRate);
+        txtAreaConfig.appendText("\nCrossover Rate set to: " + this.crossoverRate);
+        txtAreaConfig.appendText("\nTournament Size set to: " + this.tournamentSize);
+        txtAreaConfig.appendText("\nUser Route includes: " +  userMap.toString());
     }
 
     public int getTourSize() {
@@ -135,6 +147,12 @@ public class TSPSolver {
         return wholeMap.getRouteIndices(routeNames);
     }
 
+    public String getCrossoverFcn() {
+        return this.crossoverFcn;
+    }
+
+
+
     public void run() {
         // Must get fitness before GA operation loop
         txtAreaOutput.setText("Running new solver:");
@@ -148,27 +166,65 @@ public class TSPSolver {
         txtAreaOutput.appendText("\nInitial distance : " + bestTour.getFitness());
         System.out.println("");
 
-        // Perform GA operation
-        for (int i = 0; i < 200; i++) // This dictates stopping criteria
-        {
-        	GA.selection();
-        	GA.crossover();
-        	GA.mutation();
-        	GA.fitness();
-        	// Intermediate output for sanity
-        	if (i%printInterval == 0)
-        	{        
-                txtAreaOutput.appendText("\n---------------------");
-	        	bestTour = GA.getFittest();
-	        	System.out.println("Iteration "+i);
-                txtAreaOutput.appendText("\nIteration "+i);
-	        	System.out.println("Route : " + Arrays.toString(bestTour.getRoute()));
-                txtAreaOutput.appendText("\nRoute : " + Arrays.toString(bestTour.getRoute()));
-	            System.out.println("Distance : " + bestTour.getFitness());
-                txtAreaOutput.appendText("\nDistance : " + bestTour.getFitness());
-	            System.out.println("");
-        	}
+
+        // Technically faster to do the crossover check first, then call the loop
+        switch (crossoverFcn) {
+            case "Add":
+                System.out.println("Running GA with Add Crossover");
+                for (int i = 0; i < 200; i++) // This dictates stopping criteria
+                {
+                    GA.selection();
+                    GA.crossover();
+                    GA.mutation();
+                    GA.fitness();
+                    // Intermediate output for sanity
+                    if (i%printInterval == 0)
+                    {        
+                        txtAreaOutput.appendText("\n---------------------");
+                        bestTour = GA.getFittest();
+                        System.out.println("Iteration "+i);
+                        txtAreaOutput.appendText("\nIteration "+i);
+                        System.out.println("Route : " + Arrays.toString(bestTour.getRoute()));
+                        txtAreaOutput.appendText("\nRoute : " + Arrays.toString(bestTour.getRoute()));
+                        System.out.println("Distance : " + bestTour.getFitness());
+                        txtAreaOutput.appendText("\nDistance : " + bestTour.getFitness());
+                        System.out.println("");
+                    }
+                }
+                break;
+            case "Sub":
+                System.out.println("Running GA with Sub Crossover");
+                // Perform GA operation
+                for (int i = 0; i < 200; i++) // This dictates stopping criteria
+                {
+                    GA.selection();
+                    GA.crossover();
+                    GA.mutation();
+                    GA.fitness();
+                    // Intermediate output for sanity
+                    if (i%printInterval == 0)
+                    {        
+                        txtAreaOutput.appendText("\n---------------------");
+                        bestTour = GA.getFittest();
+                        System.out.println("Iteration "+i);
+                        txtAreaOutput.appendText("\nIteration "+i);
+                        System.out.println("Route : " + Arrays.toString(bestTour.getRoute()));
+                        txtAreaOutput.appendText("\nRoute : " + Arrays.toString(bestTour.getRoute()));
+                        System.out.println("Distance : " + bestTour.getFitness());
+                        txtAreaOutput.appendText("\nDistance : " + bestTour.getFitness());
+                        System.out.println("");
+                    }
+                }
+                break;
+        
+            default:
+                break;
         }
+
+
+
+
+
         txtAreaOutput.appendText("\n---------------------");
         // Print results
         bestTour = GA.getFittest();

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.parallel.Resources;
 
 
 import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -19,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -42,10 +45,10 @@ public class TSPSolverController implements Initializable {
     @FXML private TextField txtFieldCrossoverRate;
     @FXML private TextField txtFieldTournamentSize;
     @FXML private TextArea txtAreaOutput;
+    @FXML private TextArea txtAreaConfig;
     // @FXML private CheckComboBox chkComboBoxCities;
     private CheckComboBox chkComboBoxCities;
     @FXML private GridPane gridPaneOptions;
-
 
     private ObservableList<String> crossoverList = FXCollections.observableArrayList("Add", "Sub");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
@@ -63,68 +66,92 @@ public class TSPSolverController implements Initializable {
         double mutationRate = 0.80;
         double crossoverRate = 0.80;
         int tournamentSize = 2;
-        // TODO Auto-generated method stub
+        Number crossoverFcn = 0; // First one default
+
+        // Pass in the FXML txt area boxes so that the TSP can output to them. A MVC approach
+        //      in likely more proper, but, that would increase the run time. May tweak for final implementation 
+        //      when we have some graph outputs, maybe. 
+        TSPSolver.setOutput(txtAreaOutput, txtAreaConfig);
+
+        // Add the observable list to the choice box for the crossover fcn, and update TSP model with it. Not as clean an implementation,
+        //      should be able to call a method or soemthing.
         choiceBoxCrossover.setItems(crossoverList);
-        choiceBoxCrossover.setValue("Add");
-        // chkComboBoxCities = new CheckComboBox<String>(citiesList);
-        // chkComboBoxCities = null;
+        choiceBoxCrossover.setValue(crossoverList.get(crossoverFcn.intValue()));
+        setCrossoverFcn(crossoverFcn);
+
+        // Create checkComboBox for cities selection
         chkComboBoxCities = new CheckComboBox<String>(citiesList);
         chkComboBoxCities.setTitle("Cities");
-        // throw new UnsupportedOperationException("Unimplemented method 'initialize'");
-        // Get the cities from the data set; 
 
+        // Add the observable list to the checkComboBox for the cities
         citiesList.addAll(TSPSolver.getCityNames());
 
+        // Add check combo box listener, will fire when cities are added/removed. This will subsequentily update
+        //      the user route, and the tour size. getTourSize in this context, gets the tourSize from the TSP
+        //      and updated the uneditable text field in the gui
         chkComboBoxCities.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
             public void onChanged(ListChangeListener.Change<? extends String> c) {
-                updateUserRoute();
-                updateTourSize();
+                setUserRoute();
+                getTourSize();
             }
         });
 
-        gridPaneOptions.add(chkComboBoxCities, 1, 6);
-        TSPSolver.setOutput(txtAreaOutput);
+        choiceBoxCrossover.getSelectionModel().selectedIndexProperty().addListener(new 
+        ChangeListener<Number>() {
+            public void changed(ObservableValue ov, 
+            Number valie, Number new_value) {
+                setCrossoverFcn(new_value);
+            }
+            
+        });
 
-        // Initilize Text fields and update TSP 
+        // add the check combo box to the pertinent container in the gui
+        gridPaneOptions.add(chkComboBoxCities, 1, 6);
+
+        // Initilize Text fields and update TSP with pertinent information from startup
         txtFieldPopSize.setText(Integer.toString(populationSize));
-        updatePopulationSize();
+        setPopulationSize();
         txtFieldMutationRate.setText(Double.toString(mutationRate));
-        updateMutationRate();
+        setMutationRate();
         txtFieldCrossoverRate.setText(Double.toString(crossoverRate));
-        updateCrossoverRate();
+        setCrossoverRate();
         txtFieldTournamentSize.setText(Integer.toString(tournamentSize));
-        updateTournamentSize();
+        setTournamentSize();
+
     }
 
 
 
     public void run() {
-        updateUserRoute();
+        setUserRoute();
         TSPSolver.run();
     }
 
-    public void updateTourSize() {
+    public void getTourSize() {
         txtFieldTourSize.setText(Integer.toString(TSPSolver.getTourSize()));
     }
 
-
-    public void updatePopulationSize() {
+    public void setPopulationSize() {
         TSPSolver.setPopulationSize(Integer.parseInt(txtFieldPopSize.getText()));
     }    
 
-    public void updateMutationRate() {
+    public void setMutationRate() {
         TSPSolver.setMutationRate(Double.parseDouble(txtFieldMutationRate.getText()));
     }
     
-    public void updateCrossoverRate() {
+    public void setCrossoverRate() {
         TSPSolver.setCrossoverRate(Double.parseDouble(txtFieldCrossoverRate.getText()));
     }
 
-    public void updateTournamentSize() {
+    public void setTournamentSize() {
         TSPSolver.setTournamentSize(Integer.parseInt(txtFieldTournamentSize.getText()));
     }
 
-    public void updateUserRoute() {
+    public void setCrossoverFcn(Number idx) {
+        TSPSolver.setCrossoverFcn(crossoverList.get(idx.intValue()));
+    }
+    
+    public void setUserRoute() {
         List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
         String[] selectedCities = cities.toArray(new String[0]);
         int[] userRoute = TSPSolver.getRouteIndices(selectedCities);
