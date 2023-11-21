@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 
+
 public class Map {
     // file object ot point to the cities DB
     private File citiesFile;
@@ -30,6 +31,7 @@ public class Map {
     
 
     public Map() {
+        map = null;
         citiesFile = new File("GA-for-the-TSP/data/cities.txt");
         System.out.println("New map");
         google = new Google();
@@ -52,7 +54,50 @@ public class Map {
     }
 
     public void addCity(String city) {
-        System.out.println("Adding city: " + city);
+        ArrayList<Integer> newDistances = new ArrayList<>();
+
+        for (int i = 0; i < numberOfCities; i++) {
+            newDistances.add(google.getDistance(cityNames[i], city));
+        }
+        // System.out.println(newDistances.toString());
+        newDistances.add(0);
+        addCityToDatabase(newDistances, city);
+    }
+
+    private void addCityToDatabase(ArrayList<Integer> newDistances, String city) {
+        // Object to hold new data to be written. This will be built up with the existing data, grabbed from the city matrix, and them 
+        StringBuilder content = new StringBuilder();
+        
+        // This will always hit and always be just +1 for new city count
+        content.append((numberOfCities+1) + ",\n");
+
+        // Add existing city names
+        for (int i = 0; i < numberOfCities; i++) {
+            content.append(cityNames[i] + ",");
+        }
+        // Add new city name
+        content.append((city) + ",\n");
+        // Append the existing distances to the content
+        for(int i = 0; i < numberOfCities; i++) {
+            for(int j = 0; j < numberOfCities; j++) {
+                content.append((map[i][j]) + ",");
+            }
+            // append new distance
+            content.append(newDistances.get(i) + ",\n");
+        }
+
+        // Append the new distances in the last row
+        for (int i = 0; i < newDistances.size(); i++) {
+            content.append(newDistances.get(i) + ",");
+        }
+        
+
+        // Write the modified content back to the file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(citiesFile))) {
+            writer.write(content.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void printCities() {

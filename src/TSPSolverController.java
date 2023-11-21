@@ -16,6 +16,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+
 import org.controlsfx.control.CheckComboBox;
 
 public class TSPSolverController implements Initializable {
@@ -25,7 +27,7 @@ public class TSPSolverController implements Initializable {
 
     // These are the FXML contatiners and objects, they have the @FXML tag, which is used to know that it needs 
     //      to correspond to the contatiner that exists in the FXML
-    @FXML private Button btnRun;
+    @FXML private VBox mainLayout;
     @FXML private ChoiceBox choiceBoxCrossover;
     @FXML private TextField txtFieldTourSize;
     @FXML private TextField txtFieldPopSize;
@@ -35,6 +37,9 @@ public class TSPSolverController implements Initializable {
     @FXML private TextField txtFieldNewCity;
     @FXML private TextArea txtAreaOutput;
     @FXML private TextArea txtAreaConfig;
+    @FXML private Button btnRun;
+    @FXML private Button btnAdd;
+
     // @FXML private CheckComboBox chkComboBoxCities;
     @FXML private GridPane gridPaneOptions;
 
@@ -74,19 +79,20 @@ public class TSPSolverController implements Initializable {
         // Create checkComboBox for cities selection
         chkComboBoxCities = new CheckComboBox<String>(citiesList);
         chkComboBoxCities.setTitle("Cities");
-
-        // Add the observable list to the checkComboBox for the cities
+        // Add cities to list
         citiesList.addAll(TSPSolver.getCityNames());
 
-        // Add check combo box listener, will fire when cities are added/removed. This will subsequentily update
+        // create check combo box listener, will fire when cities are added/removed. This will subsequentily update
         //      the user route, and the tour size. getTourSize in this context, gets the tourSize from the TSP
         //      and updated the uneditable text field in the gui
-        chkComboBoxCities.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
+        ListChangeListener chkComboListener = new ListChangeListener<String>() {
             public void onChanged(ListChangeListener.Change<? extends String> c) {
                 setUserRoute();
                 getTourSize();
             }
-        });
+        };
+        // Add it. Broke it out so we can remove it too. 
+        addComboListener();
 
         // Similar to above, but for the choice box. Will update the crossover function in the TSP. The chioce box
         //      only seemed to work with using the index of the selected value, so rather than getting the string, it is
@@ -113,12 +119,19 @@ public class TSPSolverController implements Initializable {
         txtFieldTournamentSize.setText(Integer.toString(tournamentSize));
         setTournamentSize();
 
+        // Toggles all the cities to start as picked
+        for (int i = 0; i < citiesList.size(); i++) {
+            chkComboBoxCities.getCheckModel().toggleCheckState(i);
+        }
+
     }
 
+    private void addComboListener() {
+        chkComboBoxCities.getCheckModel().getCheckedItems().addListener(chk);
+    }
 
     // Run the TSP solver
     public void run() {
-        setUserRoute();
         TSPSolver.run();
     }
 
@@ -155,6 +168,7 @@ public class TSPSolverController implements Initializable {
     // Sets user route in TSP from gui
     public void setUserRoute() {
         List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
+        System.out.println(cities.size());
         String[] selectedCities = cities.toArray(new String[0]);
         int[] userRoute = TSPSolver.getRouteIndices(selectedCities);
         TSPSolver.setUserRoute(userRoute);
@@ -166,8 +180,12 @@ public class TSPSolverController implements Initializable {
 
     // Adds new city to database
     public void addCity() {
-        TSPSolver.addCity(txtFieldNewCity.getText());
+        chkComboBoxCities.remover
+        String city = txtFieldNewCity.getText();
+        TSPSolver.addCity(city);
+        citiesList.add(city);
     }
+
 
     
 }

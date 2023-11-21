@@ -37,27 +37,9 @@ public class TSPSolver {
     private int printInterval;
 
     public TSPSolver() {
-        // Create whole map from dataset
         map = new Map();
-        // MATT TO DO
-    	// Application configuration
     	printInterval = 10;    	
-    	// // GA Configuration
-    	// // tourSize = userMap.getNumberOfCities();
-    	// populationSize = 5;
-		// mutationRate = 0.05; // 0-1
-		// crossoverRate = 0.80; // 0-1
-		// tournamentSize = 2; // Must be less than populationSize
-		
-        // updateTSP();
-        // // Initialize GA
-        // GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverRate,
-		// 		tournamentSize,tourSize,userMap.getCityMatrix());
-        
-    }
 
-    private void distance(String to, String from) {
-        // map.distance(to, from);
     }
 
     private void updateTSP() {
@@ -152,6 +134,9 @@ public class TSPSolver {
 
     public void addCity(String city) {
         map.addCity(city);
+        map = null;
+        map = new Map();
+
     }
 
 
