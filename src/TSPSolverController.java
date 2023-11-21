@@ -32,6 +32,7 @@ public class TSPSolverController implements Initializable {
     @FXML private TextField txtFieldMutationRate;
     @FXML private TextField txtFieldCrossoverRate;
     @FXML private TextField txtFieldTournamentSize;
+    @FXML private TextField txtFieldNewCity;
     @FXML private TextArea txtAreaOutput;
     @FXML private TextArea txtAreaConfig;
     // @FXML private CheckComboBox chkComboBoxCities;
@@ -161,6 +162,11 @@ public class TSPSolverController implements Initializable {
 
         // System.out.println("Update user route method: " + selectedCities);
         // TSPSolver.setUserRoute(TSPSolver.getRouteIndices(selectedCitiesList));
+    }
+
+    // Adds new city to database
+    public void addCity() {
+        TSPSolver.addCity(txtFieldNewCity.getText());
     }
 
     

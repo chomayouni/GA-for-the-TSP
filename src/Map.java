@@ -14,9 +14,17 @@ public class Map {
     // variable to hold number of cities
     private int numberOfCities;
     // variable to hold city distances from txt file
-    protected int[][] map;
+    private int[][] map;
     // Variable to hold string of cities
-    protected String[] cityNames;
+    private String[] cityNames;
+    // Variable to hold user created Map
+    private int[][] userMap;
+    // Variable to hold string of cities tied to user map
+    private String[] userCityNames;
+    // Variable to hold number of user Cities
+    private int userNumberOfCities;
+    // User defined route, used to create the user defined map
+    private int[] userRoute = {};
     // Object for useing google API
     private Google google;
     
@@ -30,10 +38,6 @@ public class Map {
         createCitiesMatrix();
     }
 
-    public void distance(String to, String from) {
-        google.distance(to, from);
-    }
-
     // This method is called repeatedly to reset the scanner, for when we go into the txt file multiple times, more or less
     //      for debugging purposes
     private void initilizeCitiesScanner() {
@@ -45,6 +49,10 @@ public class Map {
         } catch(FileNotFoundException exception) {
             exception.printStackTrace();
         }
+    }
+
+    public void addCity(String city) {
+        System.out.println("Adding city: " + city);
     }
 
     public void printCities() {
@@ -76,6 +84,13 @@ public class Map {
         }
     }
 
+    public void setUserRoute(int[] userRoute) {
+        this.userRoute = userRoute;
+        setUserNumberOfCities();
+        createUserCitiesMatrix();
+        setUserCityNames();
+    }
+
     // This method will create map from all cities in DB
     private void createCitiesMatrix() {
         //I'm just usually reseting the scanner each time we need to go back into the txt file
@@ -99,27 +114,24 @@ public class Map {
         }
     }
 
-
-    // Return the matrix of cities
-    public int[][] getCityMatrix() {
-        return map;
+    // Method for creating cities matrix for the submap, takes in route. Refernces parent map
+    private void createUserCitiesMatrix() {
+        // Map var that will be returned
+        userMap = new int[userNumberOfCities][userNumberOfCities];
+        //Print through the matrices
+        for (int i = 0; i < userNumberOfCities; i++) {
+            for (int j = 0; j < userNumberOfCities; j++) {
+                // very dirty way to ignore the new lines in the txt file (each row)
+                try {
+                    // System.out.println("i is: " + i + ", j is: " + j);
+                    userMap[i][j] = map[userRoute[i]-1][userRoute[j]-1];
+                }
+                catch(NumberFormatException exception) {
+                    // exception.printStackTrace();
+                }
+            }
+        }
     }
-
-    //
-
-    // return the number of cities
-    public int getNumberOfCities() {
-        return numberOfCities;
-    }
-
-    // set the number of cities from the txt file
-    private void setNumberOfCities() {
-        // Reset scanner object
-        initilizeCitiesScanner();
-        // Get the number of cities from the first piece of data in txt file
-        numberOfCities = Integer.parseInt(citiesScanner.next());
-    }
-
     // set the names of cities from the txt file
     private void setCityNames() {
         // Reset scanner object
@@ -133,8 +145,56 @@ public class Map {
         }
     }
 
+    // Method for setting user route names
+    private void setUserCityNames() {
+        // Initialize the array size
+        userCityNames = new String[userNumberOfCities];
+        for (int i = 0; i < userNumberOfCities; i++) {
+            userCityNames[i] = (cityNames[userRoute[i]-1]);
+        }
+    }
+
+    // set the number of cities from the txt file
+    private void setNumberOfCities() {
+        // Reset scanner object
+        initilizeCitiesScanner();
+        // Get the number of cities from the first piece of data in txt file
+        numberOfCities = Integer.parseInt(citiesScanner.next());
+    }
+
+    // set the number of cities from the txt file
+    private void setUserNumberOfCities() {
+        userNumberOfCities = userRoute.length;
+    }
+
+    // Return the matrix of cities
+    public int[][] getCityMatrix() {
+        return map;
+    }
+
+    // return the userCityMatrix created from user route
+    public int[][] getUserCityMatrix() {
+        return userMap;
+    }
+
+    // return the number of cities
+    public int getNumberOfCities() {
+        return numberOfCities;
+    }
+
+    // return the number of cities in the users route
+    public int getUserNumberOfCities() {
+        return userNumberOfCities;
+    }
+
+    // return all city names in the dataset
     public String[] getCityNames() {
         return cityNames;
+    }
+
+    // return the city names in the user route set
+    public String[] getUserCityNames() {
+        return userCityNames;
     }
 
     // Take in route indices, return route names as Array List
@@ -159,6 +219,7 @@ public class Map {
         return routeIndices;
     }
 
+    // returns ALL cities in database in string
     public String toString() {
         String output = "";
         for (int i = 0; i < map.length; i++) {
@@ -168,6 +229,22 @@ public class Map {
 
             else {
                 output = output + (cityNames[i]);
+            }
+
+        }
+        return output;
+    }
+
+    // returns user cities in a string
+    public String toStringUser() {
+        String output = "";
+        for (int i = 0; i < userNumberOfCities; i++) {
+            if (i < (userNumberOfCities)-1) {
+                output = output + (userCityNames[i]) + ", ";
+            }
+
+            else {
+                output = output + (userCityNames[i]);
             }
 
         }

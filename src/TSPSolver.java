@@ -20,10 +20,7 @@ public class TSPSolver {
     // GA object
     private GeneticAlgorithm GA;
     // Map object (WHole database, all cities)
-    private Map wholeMap;
-    // User defined map (Could be whole map, or any combo of cities)
-    private SubMap userMap;
-
+    private Map map;
     // User defined route, used to create the user defined map
     private int[] userRoute = {};
     // General GA parameters
@@ -41,9 +38,7 @@ public class TSPSolver {
 
     public TSPSolver() {
         // Create whole map from dataset
-        wholeMap = new Map();
-        // // set a user route, and create the sub map for testing that route
-        userMap = new SubMap(userRoute);
+        map = new Map();
         // MATT TO DO
     	// Application configuration
     	printInterval = 10;    	
@@ -62,24 +57,22 @@ public class TSPSolver {
     }
 
     private void distance(String to, String from) {
-        wholeMap.distance(to, from);
+        // map.distance(to, from);
     }
 
     private void updateTSP() {
-        userMap = null;
         GA = null;
-        userMap = new SubMap(userRoute);
-        tourSize = userMap.getNumberOfCities();
+        tourSize = map.getUserNumberOfCities();
         System.out.println("New Tour Size is " + this.tourSize);
         // Initialize GA
         GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverRate,
-				tournamentSize,tourSize,userMap.getCityMatrix());
+				tournamentSize,tourSize,map.getUserCityMatrix());
     }
 
 
     public void setUserRoute(int[] userRoute) {
-        this.userRoute = userRoute;
-        System.out.println("New User Route is " + this.userRoute[0]);
+        map.setUserRoute(userRoute);
+        // System.out.println("New User Route is " + this.userRoute[0]);
         // User route and actual city data are not part of the TSP, they are part of the map object. 
         //      so those must be updated first via the update TSP then we can print the setup (which prints) 
         //      the routes
@@ -136,25 +129,30 @@ public class TSPSolver {
         txtAreaConfig.appendText("\nMutation Rate set to: " + this.mutationRate);
         txtAreaConfig.appendText("\nCrossover Rate set to: " + this.crossoverRate);
         txtAreaConfig.appendText("\nTournament Size set to: " + this.tournamentSize);
-        txtAreaConfig.appendText("\nUser Route includes: " +  userMap.toString());
+        txtAreaConfig.appendText("\nUser Route includes: " +  map.toStringUser());
     }
 
     public int getTourSize() {
         return tourSize;
     }
 
+    // return ALL city names in dataset
     public String[] getCityNames() {
-        return wholeMap.getCityNames();
+        return map.getCityNames();
     }
 
+    // return the indicies from the given string of route names
     public int[] getRouteIndices(String[] routeNames) {
-        return wholeMap.getRouteIndices(routeNames);
+        return map.getRouteIndices(routeNames);
     }
 
     public String getCrossoverFcn() {
         return this.crossoverFcn;
     }
 
+    public void addCity(String city) {
+        map.addCity(city);
+    }
 
 
     public void run() {

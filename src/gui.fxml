@@ -149,7 +149,7 @@
                               <TextField fx:id="txtFieldNewCountry" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
-                        <Button fx:id="btnAdd" layoutX="138.0" layoutY="147.0" mnemonicParsing="false" onAction="#run" prefHeight="27.0" prefWidth="78.0" text="Add" />
+                        <Button fx:id="btnAdd" layoutX="138.0" layoutY="147.0" mnemonicParsing="false" onAction="#addCity" prefHeight="27.0" prefWidth="78.0" text="Add" />
                      </children></AnchorPane>
               </items>
             </SplitPane>
