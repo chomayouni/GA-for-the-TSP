@@ -80,7 +80,7 @@ public class GeneticAlgorithm {
         
         // Find the most fit member in the population subset
         for (int i = 0; i < tournamentSize; i++)
-        {
+        { //comment
         	if (best > population.getFitness(tournament.get(i)))
         	{
         		best = population.getFitness(tournament.get(i));
