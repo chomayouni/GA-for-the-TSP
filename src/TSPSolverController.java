@@ -11,6 +11,8 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
@@ -39,6 +41,7 @@ public class TSPSolverController implements Initializable {
     @FXML private TextArea txtAreaConfig;
     @FXML private Button btnRun;
     @FXML private Button btnAdd;
+    @FXML private LineChart<String, Integer> lineChartFitness;
 
     // @FXML private CheckComboBox chkComboBoxCities;
     @FXML private GridPane gridPaneOptions;
@@ -47,8 +50,11 @@ public class TSPSolverController implements Initializable {
     private CheckComboBox chkComboBoxCities;
 
     // Observable lists to tie to the choice box and check combo box, then we will add a listner to them to update the TSP model
-    private ObservableList<String> crossoverList = FXCollections.observableArrayList("Add", "Sub");
+    private ObservableList<String> crossoverList = FXCollections.observableArrayList("Two Point Crossover", "Future Crossover 1", "Future Crossover 2");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
+
+    //
+    private ListChangeListener chkComboListener;
 
     public TSPSolverController() {
         TSPSolver = new TSPSolver();
@@ -68,7 +74,7 @@ public class TSPSolverController implements Initializable {
         // Pass in the FXML txt area boxes so that the TSP can output to them. A MVC approach
         //      in likely more proper, but, that would increase the run time. May tweak for final implementation 
         //      when we have some graph outputs, maybe. 
-        TSPSolver.setOutput(txtAreaOutput, txtAreaConfig);
+        TSPSolver.setOutput(txtAreaOutput, txtAreaConfig, lineChartFitness);
 
         // Add the observable list to the choice box for the crossover fcn, and update TSP model with it. Not as clean an implementation,
         //      should be able to call a method or soemthing.
@@ -85,22 +91,21 @@ public class TSPSolverController implements Initializable {
         // create check combo box listener, will fire when cities are added/removed. This will subsequentily update
         //      the user route, and the tour size. getTourSize in this context, gets the tourSize from the TSP
         //      and updated the uneditable text field in the gui
-        ListChangeListener chkComboListener = new ListChangeListener<String>() {
+        chkComboListener = new ListChangeListener<String>() {
             public void onChanged(ListChangeListener.Change<? extends String> c) {
                 setUserRoute();
                 getTourSize();
             }
         };
-        // Add it. Broke it out so we can remove it too. 
-        addComboListener();
-
         // Similar to above, but for the choice box. Will update the crossover function in the TSP. The chioce box
         //      only seemed to work with using the index of the selected value, so rather than getting the string, it is
         //      a Number type (Super class of all number types) and then just cast it to the int value to index stuff.
+        //      As opposed to before, we can just add it here, as we do not need to toggle it on and off in order to update the list. 
+        //      THis list is static unlike the cities list. 
         choiceBoxCrossover.getSelectionModel().selectedIndexProperty().addListener(new 
         ChangeListener<Number>() {
             public void changed(ObservableValue ov, 
-            Number valie, Number new_value) {
+            Number value, Number new_value) {
                 setCrossoverFcn(new_value);
             }
             
@@ -123,11 +128,18 @@ public class TSPSolverController implements Initializable {
         for (int i = 0; i < citiesList.size(); i++) {
             chkComboBoxCities.getCheckModel().toggleCheckState(i);
         }
-
+       // Add it. Broke it out so we can remove it too. 
+        addComboListener();
+        setUserRoute();
+        getTourSize();
     }
 
     private void addComboListener() {
-        chkComboBoxCities.getCheckModel().getCheckedItems().addListener(chk);
+        chkComboBoxCities.getCheckModel().getCheckedItems().addListener(chkComboListener);
+    }
+
+    private void removeComboListener() {
+        chkComboBoxCities.getCheckModel().getCheckedItems().removeListener(chkComboListener);
     }
 
     // Run the TSP solver
@@ -168,7 +180,6 @@ public class TSPSolverController implements Initializable {
     // Sets user route in TSP from gui
     public void setUserRoute() {
         List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
-        System.out.println(cities.size());
         String[] selectedCities = cities.toArray(new String[0]);
         int[] userRoute = TSPSolver.getRouteIndices(selectedCities);
         TSPSolver.setUserRoute(userRoute);
@@ -180,10 +191,11 @@ public class TSPSolverController implements Initializable {
 
     // Adds new city to database
     public void addCity() {
-        chkComboBoxCities.remover
+        removeComboListener();
         String city = txtFieldNewCity.getText();
         TSPSolver.addCity(city);
         citiesList.add(city);
+        addComboListener();
     }
 
 

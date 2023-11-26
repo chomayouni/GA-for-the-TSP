@@ -40,6 +40,14 @@ public class Map {
         createCitiesMatrix();
     }
 
+    // Reload from database, used when adding cities
+    public void reload() {
+        map = null;
+        System.out.println("Reloading data from database");
+        setNumberOfCities();
+        setCityNames();
+        createCitiesMatrix();
+    }
     // This method is called repeatedly to reset the scanner, for when we go into the txt file multiple times, more or less
     //      for debugging purposes
     private void initilizeCitiesScanner() {
@@ -58,8 +66,12 @@ public class Map {
 
         for (int i = 0; i < numberOfCities; i++) {
             newDistances.add(google.getDistance(cityNames[i], city));
+            // newDistances.add(google.getDistance("Detroit", "New York"));
+            // System.out.println(newDistances.toString());
+
         }
         // System.out.println(newDistances.toString());
+        // This is the 0 for the city -> city (self to self) which can just be manually added
         newDistances.add(0);
         addCityToDatabase(newDistances, city);
     }
@@ -131,6 +143,11 @@ public class Map {
 
     public void setUserRoute(int[] userRoute) {
         this.userRoute = userRoute;
+        System.out.print("User route is ");
+        for (int i = 0; i < this.userRoute.length; i++) {
+            System.out.print(this.userRoute[i] + ", ");
+        }
+        System.out.println();
         setUserNumberOfCities();
         createUserCitiesMatrix();
         setUserCityNames();
@@ -138,6 +155,7 @@ public class Map {
 
     // This method will create map from all cities in DB
     private void createCitiesMatrix() {
+        map = null;
         //I'm just usually reseting the scanner each time we need to go back into the txt file
         initilizeCitiesScanner();
         //Skip the number of cities, and name of cities
@@ -149,6 +167,7 @@ public class Map {
         for (int i = 0; i < numberOfCities; i++) {
             for (int j = 0; j < numberOfCities; j++) {
                 // very dirty way to ignore the new lines in the txt file (each row)
+                // System.out.println("i = " + i + ", j = " + j);
                 try {
                     map[i][j] = Integer.parseInt(citiesScanner.next());
                 }
@@ -161,6 +180,7 @@ public class Map {
 
     // Method for creating cities matrix for the submap, takes in route. Refernces parent map
     private void createUserCitiesMatrix() {
+        userMap = null;
         // Map var that will be returned
         userMap = new int[userNumberOfCities][userNumberOfCities];
         //Print through the matrices
@@ -179,6 +199,8 @@ public class Map {
     }
     // set the names of cities from the txt file
     private void setCityNames() {
+        cityNames = null;
+        System.out.println("set city names call");
         // Reset scanner object
         initilizeCitiesScanner();
         // Initialize the array size
@@ -187,6 +209,7 @@ public class Map {
         citiesScanner.nextLine();
         for (int i = 0; i < numberOfCities; i++) {
             cityNames[i] = citiesScanner.next();
+            System.out.println(cityNames[i]);
         }
     }
 
@@ -253,11 +276,16 @@ public class Map {
 
     // Take in route names, return route indices
     public int[] getRouteIndices(String[] routeNames) {
+        // System.out.println("route indices call");
         int[] routeIndices = new int[routeNames.length];
         for (int i = 0; i < routeIndices.length; i++) {
+            // System.out.println("route city name is  " + routeNames[i] + ", checking against the following:");
             for (int j = 0; j < cityNames.length; j++) {
-                if (routeNames[i] == cityNames[j]) {
+                // System.out.println("city name: " + cityNames[j]);
+                if (routeNames[i].equals(cityNames[j])) {
                     routeIndices[i] = j+1;
+                    // System.out.println("hit");
+                    // System.out.println(routeIndices[i]);
                 }
             }
         }

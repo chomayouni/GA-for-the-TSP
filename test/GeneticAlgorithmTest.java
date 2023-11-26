@@ -39,8 +39,8 @@ class GeneticAlgorithmTest {
 			}
 		}
 		
-		GA = new GeneticAlgorithm(populationSize, mutationRate, crossoverRate,
-				tournamentSize,tourSize,cityMap);
+		GA = new GeneticAlgorithm(populationSize, mutationRate, "Two Point Crossover",
+			crossoverRate, tournamentSize,tourSize,cityMap);
 	}
 
 	@AfterEach

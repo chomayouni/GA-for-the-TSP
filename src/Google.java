@@ -12,8 +12,7 @@ import org.json.JSONObject;
 public class Google {
 
     // Really should never push the real key...
-    private String apiKey = "AIzaSyBamvMP3t0rSv5AhA3kMr8OsQfeAcyReEQ";
-    // private String apiKey = "Meme";
+    private String apiKey = "not this time";
 
     // Hard coded units for American people
     private String units = "imperial";
@@ -83,6 +82,7 @@ public class Google {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        // System.out.println(output);
         return output;
     }
     

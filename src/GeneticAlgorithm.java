@@ -10,6 +10,7 @@ public class GeneticAlgorithm {
     private double mutationRate;
     private double crossoverRate;
     private int tournamentSize;
+    private String crossoverFcn;
     private int tourSize;
     private int cityMap[][];
     private int parent1Arr[];
@@ -17,11 +18,12 @@ public class GeneticAlgorithm {
     
     private Population population;
 
-    public GeneticAlgorithm(int populationSize, double mutationRate, double crossoverRate,
-    						int tournamentSize, int tourSize, int[][] cityMap)
+    public GeneticAlgorithm(int populationSize, double mutationRate, String crossoverFcn,
+							 double crossoverRate, int tournamentSize, int tourSize, int[][] cityMap)
     {
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
+		this.crossoverFcn = crossoverFcn;
         this.crossoverRate = crossoverRate;
         this.tournamentSize = tournamentSize;
         this.tourSize = tourSize;
@@ -93,6 +95,14 @@ public class GeneticAlgorithm {
 
     }
 
+	public void setCrossoverFcn(String crossoverFcn) {
+		this.crossoverFcn = crossoverFcn;
+	}
+
+	public String getCrossoverFcn() {
+		return crossoverFcn;
+	}
+
     // Crossover population
     public void crossover()
     {
@@ -100,21 +110,63 @@ public class GeneticAlgorithm {
     	Population childPop = new Population(populationSize,tourSize, false);
     	
     	Random random = new Random();
+
+		switch (crossoverFcn) {
+			case "Two Point Crossover":
+				// System.out.println("Running with " + crossoverFcn + " Two Point Crossover");
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i++)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+						childPop.setRoute(i, twoPointCrossover(parent1Arr[i],parent2Arr[i]));
+					}
+					else
+					{
+						childPop.setRoute(i, population.getRoute(parent1Arr[i]));
+					}
+				}
+				
+		
+			case "Future Crossover 1":
+				// System.out.println("Running with " + crossoverFcn + " Two Point Crossover");
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i++)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+						childPop.setRoute(i, twoPointCrossover(parent1Arr[i],parent2Arr[i]));
+					}
+					else
+					{
+						childPop.setRoute(i, population.getRoute(parent1Arr[i]));
+					}
+				}
+				break;
+
+			case "Future Crossover 2":
+				// System.out.println("Running with " + crossoverFcn + " Two Point Crossover");
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i++)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+						childPop.setRoute(i, twoPointCrossover(parent1Arr[i],parent2Arr[i]));
+					}
+					else
+					{
+						childPop.setRoute(i, population.getRoute(parent1Arr[i]));
+					}
+				}
+				break;
+			default:
+				break;
+		}
     	
-    	// Based on the crossover rate, create a new child or pass
-    	// a current member of the population forward
-    	for (int i = 0; i < populationSize; i++)
-    	{ 
-    		if (random.nextDouble() < crossoverRate)
-    		{
-    			childPop.setRoute(i, twoPointCrossover(parent1Arr[i],parent2Arr[i]));
-    		}
-    		else
-    		{
-    			childPop.setRoute(i, population.getRoute(parent1Arr[i]));
-    		}
-    	}
-    	
+
     	// Save the new population
     	population = childPop;
     }
