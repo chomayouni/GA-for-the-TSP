@@ -112,7 +112,7 @@ public class TSPSolverController implements Initializable {
         });
 
         // add the check combo box to the pertinent container in the gui
-        gridPaneOptions.add(chkComboBoxCities, 1, 6);
+        gridPaneOptions.add(chkComboBoxCities, 1, 7);
 
         // Initilize Text fields and update TSP with pertinent information from startup
         txtFieldPopSize.setText(Integer.toString(populationSize));

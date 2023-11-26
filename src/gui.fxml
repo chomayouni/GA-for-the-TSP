@@ -105,6 +105,7 @@
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -113,22 +114,24 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label fx:id="lblTourSIze" prefHeight="17.0" prefWidth="52.0" text="Tour Size" GridPane.rowIndex="1" />
-                              <TextField fx:id="txtFieldTourSize" disable="true" editable="false" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="77.0" text="0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
-                              <Label fx:id="lblPopSize" text="Population Size" GridPane.rowIndex="2" />
-                              <Label fx:id="lblMutationRate" text="Mutatation Rate" GridPane.rowIndex="3" />
-                              <Label fx:id="lblCrossoverRate" text="Crossover Rate" GridPane.rowIndex="4" />
-                              <Label fx:id="lblTournamentSize" text="Tournament Size" GridPane.rowIndex="5" />
-                              <TextField fx:id="txtFieldPopSize" onAction="#setPopulationSize" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <TextField fx:id="txtFieldMutationRate" onAction="#setMutationRate" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <TextField fx:id="txtFieldCrossoverRate" onAction="#setCrossoverRate" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <TextField fx:id="txtFieldTournamentSize" onAction="#setTournamentSize" prefHeight="25.0" prefWidth="71.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Label fx:id="lblTourSIze" prefHeight="17.0" prefWidth="52.0" text="Tour Size" GridPane.rowIndex="2" />
+                              <TextField fx:id="txtFieldTourSize" disable="true" editable="false" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="77.0" text="0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="2" />
+                              <Label fx:id="lblPopSize" text="Population Size" GridPane.rowIndex="3" />
+                              <Label fx:id="lblMutationRate" text="Mutatation Rate" GridPane.rowIndex="4" />
+                              <Label fx:id="lblCrossoverRate" text="Crossover Rate" GridPane.rowIndex="5" />
+                              <Label fx:id="lblTournamentSize" text="Tournament Size" GridPane.rowIndex="6" />
+                              <TextField fx:id="txtFieldPopSize" onAction="#setPopulationSize" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <TextField fx:id="txtFieldMutationRate" onAction="#setMutationRate" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <TextField fx:id="txtFieldCrossoverRate" onAction="#setCrossoverRate" prefHeight="25.0" prefWidth="52.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <TextField fx:id="txtFieldTournamentSize" onAction="#setTournamentSize" prefHeight="25.0" prefWidth="71.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <Label fx:id="lblCrossoverFunction" prefHeight="25.0" prefWidth="105.0" text="Crossover Function" />
                               <ChoiceBox fx:id="choiceBoxCrossover" prefHeight="27.0" prefWidth="143.0" GridPane.columnIndex="1" />
-                              <Label prefHeight="17.0" prefWidth="89.0" text="Select Cities" GridPane.rowIndex="6" />
+                              <Label prefHeight="17.0" prefWidth="89.0" text="Select Cities" GridPane.rowIndex="7" />
+                              <Label fx:id="lblCrossoverFunction1" prefHeight="25.0" prefWidth="105.0" text="Selection Function" GridPane.rowIndex="1" />
+                              <ChoiceBox fx:id="choiceBoxSelection" prefHeight="27.0" prefWidth="143.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
-                        <Button fx:id="btnRun" layoutX="138.0" layoutY="360.0" mnemonicParsing="false" onAction="#run" prefHeight="27.0" prefWidth="78.0" text="Run" />
+                        <Button fx:id="btnRun" layoutX="138.0" layoutY="403.0" mnemonicParsing="false" onAction="#run" prefHeight="27.0" prefWidth="78.0" text="Run" />
                      </children>
                   </AnchorPane>
               <AnchorPane fx:id="anchorPaneCities" prefHeight="274.0" prefWidth="265.0">
