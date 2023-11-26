@@ -162,7 +162,7 @@
                   <TextArea fx:id="txtAreaOutput" editable="false" layoutX="317.0" layoutY="516.0" prefHeight="198.0" prefWidth="428.0" />
                   <Label layoutX="91.0" layoutY="491.0" text="Genetic Algorithm Configuration" />
                   <Label layoutX="494.0" layoutY="491.0" text="Solver Output" />
-                  <LineChart fx:id="lineChartFitness" animated="false" layoutX="35.0" layoutY="38.0" legendVisible="false" prefHeight="437.0" prefWidth="687.0" title="Fitness">
+                  <LineChart fx:id="lineChartFitness" layoutX="35.0" layoutY="38.0" legendVisible="false" prefHeight="437.0" prefWidth="687.0" title="Fitness">
                     <xAxis>
                       <CategoryAxis label="Interation" side="BOTTOM" />
                     </xAxis>
