@@ -105,12 +105,12 @@ public class GeneticAlgorithm {
     	// a current member of the population forward
     	for (int i = 0; i < populationSize; i++)
     	{ 
-    		if (random.nextDouble() < crossoverRate)
-    		{
-    			childPop.setRoute(i, twoPointCrossover(parent1Arr[i],parent2Arr[i]));
+    		if (random.nextDouble() < crossoverRate){
+    			//childPop.setRoute(i, twoPointCrossover(parent1Arr[i],parent2Arr[i]));
+				//commented out the above for testing the greedy crossover 
+				childPop.setRoute(i, greedyCrossover(parent1Arr[i],parent2Arr[i]));
     		}
-    		else
-    		{
+    		else{
     			childPop.setRoute(i, population.getRoute(parent1Arr[i]));
     		}
     	}
@@ -118,7 +118,63 @@ public class GeneticAlgorithm {
     	// Save the new population
     	population = childPop;
     }
-    
+
+	private int[] greedyCrossover(int parent1Idx, int parent2Idx) {
+		int[] parent1 = population.getRoute(parent1Idx);
+    	int[] child = new int[tourSize+1];
+		int[] illegal_cities = new int[tourSize];
+		int illegal_cities_index = 0;
+		int last_city;
+		int shortestDistanceTracker; // covert to double after fix
+		int temporary_best_index = 0;
+		boolean done;
+    	
+    	Random random = new Random();
+    	// Do not crossover at the first or last index
+    	// as they must be the starting city
+    	int crossover = 1+random.nextInt(tourSize);
+    	
+    	
+    	for (int i = 0; i < tourSize; i++)
+    	{
+    		// Before the crossover point, take the parent
+    		if (i<crossover)
+    		{
+    			child[i] = parent1[i];
+    		}
+    		// After the crossover point, greedily look for the nearest neighbor
+    		else
+			{
+				// setup
+				last_city = child[i-1]-1;
+				for(int j = 0; j < tourSize; j++) {
+					illegal_cities[j] = -1;
+				}
+				illegal_cities_index = 0;
+				done = false;
+				shortestDistanceTracker = Integer.MAX_VALUE;
+				
+				// find the nearest neighbor.
+				for(int j = 0; j < tourSize; j++) {
+					// any time that we finds a city that is already in the child, we skip it
+					if(!contains(child, j+1)) {
+						if(cityMap[last_city][j] < shortestDistanceTracker) {
+							shortestDistanceTracker = cityMap[last_city][j];
+							temporary_best_index = j;
+						}
+					}
+				}
+				child[i] = temporary_best_index+1;
+			}
+    	}
+    	// Set the final index to the first city (untouched in for loop)
+    	child[tourSize] = 1;
+    	
+    	return child;
+	
+		
+	}
+
     private int[] twoPointCrossover(int parent1Idx, int parent2Idx)
     {
     	int[] parent1 = population.getRoute(parent1Idx);

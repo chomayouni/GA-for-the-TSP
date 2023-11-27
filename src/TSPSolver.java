@@ -9,11 +9,11 @@ public class TSPSolver {
         // I think that this will contain the GUI
 
     	// Application configuration
-    	int printInterval = 10;
+    	int printInterval = 1;
     	
     	// GA Configuration
     	int tourSize = 5; // Number of cities
-    	int populationSize = 5;
+    	int populationSize = 6;
 		double mutationRate = 0.05; // 0-1
 		double crossoverRate = 0.80; // 0-1
 		int tournamentSize = 2; // Must be less than populationSize
@@ -36,7 +36,7 @@ public class TSPSolver {
         System.out.println("");
 
         // Perform GA operation
-        for (int i = 0; i < 200; i++) // This dictates stopping criteria
+        for (int i = 0; i < 20; i++) // This dictates stopping criteria
         {
         	GA.selection();
         	GA.crossover();
