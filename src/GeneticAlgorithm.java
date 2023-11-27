@@ -64,6 +64,8 @@ public class GeneticAlgorithm {
 	    	parent1Arr[i] = tournamentSelection();
 	    	parent2Arr[i] = tournamentSelection();
     	}
+
+		
     	// Debug
     	//System.out.println(Arrays.toString(parent1Arr));
     	//System.out.println(Arrays.toString(parent2Arr));

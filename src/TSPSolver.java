@@ -32,6 +32,7 @@ public class TSPSolver {
     private double crossoverRate;
     private int tournamentSize;
     private String crossoverFcn;
+    private int numGenerations;
     // Objects for the output
     private TextArea txtAreaConfig;
     private TextArea txtAreaOutput;
@@ -42,7 +43,7 @@ public class TSPSolver {
 
     public TSPSolver() {
         map = new Map();
-    	printInterval = 10;    	
+    	printInterval = 50;    	
 
     }
 
@@ -175,7 +176,7 @@ public class TSPSolver {
         // Clear chart for new runs
         clearChart();
         // Technically faster to do the crossover check first, then call the loop
-            for (int i = 0; i < 200; i++) // This dictates stopping criteria
+            for (int i = 0; i < 1000; i++) // This dictates stopping criteria
             {
                 GA.selection();
                 GA.crossover();

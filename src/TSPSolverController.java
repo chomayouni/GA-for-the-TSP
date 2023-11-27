@@ -66,10 +66,11 @@ public class TSPSolverController implements Initializable {
         // Initial Constants, can pull this up if we want. Will initial txt fields with these as well. NOT part of this class. Should be passed 
         //      into the TSP constructor to be honest
         int populationSize = 5;
-        double mutationRate = 0.80;
+        double mutationRate = 0.05;
         double crossoverRate = 0.80;
         int tournamentSize = 2;
         Number crossoverFcn = 0; // First one default
+        int numGenerations = 200;
 
         // Pass in the FXML txt area boxes so that the TSP can output to them. A MVC approach
         //      in likely more proper, but, that would increase the run time. May tweak for final implementation 
@@ -196,6 +197,18 @@ public class TSPSolverController implements Initializable {
         TSPSolver.addCity(city);
         citiesList.add(city);
         addComboListener();
+        //         // Toggles all the cities to start as picked
+        // for (int i = 0; i < citiesList.size(); i++) {
+        //     chkComboBoxCities.getCheckModel().toggleCheckState(i);
+        // }
+        //         // Toggles all the cities to start as picked
+        // for (int i = 0; i < citiesList.size(); i++) {
+        //     chkComboBoxCities.getCheckModel().toggleCheckState(i);
+        // }
+        //         // Toggles all the cities to start as picked
+        // for (int i = 0; i < citiesList.size(); i++) {
+        //     chkComboBoxCities.getCheckModel().toggleCheckState(i);
+        // }
     }
 
 

@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class Google {
 
     // Really should never push the real key...
-    private String apiKey = "not this time";
+    private String apiKey = "no";
 
     // Hard coded units for American people
     private String units = "imperial";
@@ -25,7 +25,8 @@ public class Google {
     // Throw it all in a try catch, because of using the url response appraoch. WIll
     //      fail on a timeout or maybe API key error
     public int getDistance(String to, String from) {
-        String distance = "";
+        String output = "";
+        Double distance = 0.0;
         try {
 
             String urlString = "https://maps.googleapis.com/maps/api/distancematrix/json"
@@ -49,7 +50,7 @@ public class Google {
             JSONObject jsonResponse = new JSONObject(response.toString());
 
             // Parse out the data from the json object
-            distance = jsonResponse.getJSONArray("rows")
+            output = jsonResponse.getJSONArray("rows")
                                     .getJSONObject(0)
                                     .getJSONArray("elements")
                                     .getJSONObject(0)
@@ -68,10 +69,18 @@ public class Google {
         //      being spaces "\\s+". So, we should always have 2 parts, with the first (zeroth positon) being the actual number. We can then
         //      just parse that part like usual. HOWEVER, the comma in "X,XXX" is now an issue, so we can simply use the replace method, and
         //      replace it with nothing to remove them. 
-        String[] distanceParts = distance.split("\\s+");
+        String[] distanceParts = output.split("\\s+");
+        
         // This will overwrite the existing distance String
-        distance = distanceParts[0].replace(",", "");
-        return Integer.parseInt(distance);
+        try {
+            output = distanceParts[0].replace(",", "");
+
+        } catch (Exception e) {
+            System.out.println("No , in the string, lame way to do this but whatever");
+        }
+        distance = Double.parseDouble(output);
+        System.out.println(distance);
+        return distance.intValue();
     }
 
     public String encodeURL(String city) {

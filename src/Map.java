@@ -66,11 +66,8 @@ public class Map {
 
         for (int i = 0; i < numberOfCities; i++) {
             newDistances.add(google.getDistance(cityNames[i], city));
-            // newDistances.add(google.getDistance("Detroit", "New York"));
-            // System.out.println(newDistances.toString());
 
         }
-        // System.out.println(newDistances.toString());
         // This is the 0 for the city -> city (self to self) which can just be manually added
         newDistances.add(0);
         addCityToDatabase(newDistances, city);
