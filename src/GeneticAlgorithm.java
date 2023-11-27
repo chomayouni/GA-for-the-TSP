@@ -121,13 +121,13 @@ public class GeneticAlgorithm {
 
 	private int[] greedyCrossover(int parent1Idx, int parent2Idx) {
 		int[] parent1 = population.getRoute(parent1Idx);
-    	int[] parent2 = population.getRoute(parent2Idx);
     	int[] child = new int[tourSize+1];
 		int[] illegal_cities = new int[tourSize];
 		int illegal_cities_index = 0;
 		int last_city;
 		int shortestDistanceTracker; // covert to double after fix
 		int temporary_best_index = 0;
+		boolean done;
     	
     	Random random = new Random();
     	// Do not crossover at the first or last index
@@ -137,45 +137,34 @@ public class GeneticAlgorithm {
     	
     	for (int i = 0; i < tourSize; i++)
     	{
+    		// Before the crossover point, take the parent
     		if (i<crossover)
     		{
     			child[i] = parent1[i];
     		}
+    		// After the crossover point, greedily look for the nearest neighbor
     		else
 			{
 				// setup
-				last_city = child[i-1];
-
+				last_city = child[i-1]-1;
 				for(int j = 0; j < tourSize; j++) {
 					illegal_cities[j] = -1;
 				}
-
-				// find the nearest neighbor. 
-				do {
-
-					shortestDistanceTracker = Integer.MAX_VALUE;
-
-					for(int j = 0; j < tourSize; j++) {
-						// anythime that we finds a city that is already in the child, we add it to the illegal cities array
-						if(!contains(illegal_cities, j)) {
-							if(cityMap[last_city][j] < shortestDistanceTracker) {
-								shortestDistanceTracker = cityMap[last_city][j];
-								temporary_best_index = j;
-							}
+				illegal_cities_index = 0;
+				done = false;
+				shortestDistanceTracker = Integer.MAX_VALUE;
+				
+				// find the nearest neighbor.
+				for(int j = 0; j < tourSize; j++) {
+					// any time that we finds a city that is already in the child, we skip it
+					if(!contains(child, j+1)) {
+						if(cityMap[last_city][j] < shortestDistanceTracker) {
+							shortestDistanceTracker = cityMap[last_city][j];
+							temporary_best_index = j;
 						}
 					}
-
-					if (contains(child, temporary_best_index) == true)
-					{
-						illegal_cities[illegal_cities_index] = temporary_best_index;
-						illegal_cities_index++;
-					}
-					else
-					{
-						child[i] = temporary_best_index;
-					}
-
-				} while (contains(child, temporary_best_index) == true);
+				}
+				child[i] = temporary_best_index+1;
 			}
     	}
     	// Set the final index to the first city (untouched in for loop)
