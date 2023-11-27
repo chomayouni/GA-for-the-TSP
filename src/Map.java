@@ -76,6 +76,7 @@ public class Map {
     private void addCityToDatabase(ArrayList<Integer> newDistances, String city) {
         // Object to hold new data to be written. This will be built up with the existing data, grabbed from the city matrix, and them 
         StringBuilder content = new StringBuilder();
+        System.out.println("Adding to city database, current count is " + numberOfCities);
         
         // This will always hit and always be just +1 for new city count
         content.append((numberOfCities+1) + ",\n");
@@ -90,6 +91,7 @@ public class Map {
         for(int i = 0; i < numberOfCities; i++) {
             for(int j = 0; j < numberOfCities; j++) {
                 content.append((map[i][j]) + ",");
+                // content.append(i + "-" + j + ",");
             }
             // append new distance
             content.append(newDistances.get(i) + ",\n");
@@ -167,11 +169,14 @@ public class Map {
                 // System.out.println("i = " + i + ", j = " + j);
                 try {
                     map[i][j] = Integer.parseInt(citiesScanner.next());
+                    System.out.print(map[i][j] + ",");
                 }
                 catch(NumberFormatException exception) {
-                    // exception.printStackTrace();
+                    // System.out.println("Here");
                 }
             }
+            System.out.println();
+            citiesScanner.nextLine();
         }
     }
 

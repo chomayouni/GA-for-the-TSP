@@ -70,7 +70,7 @@ public class TSPSolverController implements Initializable {
         double crossoverRate = 0.80;
         int tournamentSize = 2;
         Number crossoverFcn = 0; // First one default
-        int numGenerations = 200;
+        int numGenerations = 10000;
 
         // Pass in the FXML txt area boxes so that the TSP can output to them. A MVC approach
         //      in likely more proper, but, that would increase the run time. May tweak for final implementation 

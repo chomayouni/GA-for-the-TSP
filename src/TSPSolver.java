@@ -43,7 +43,7 @@ public class TSPSolver {
 
     public TSPSolver() {
         map = new Map();
-    	printInterval = 50;    	
+    	printInterval = 200;    	
 
     }
 
@@ -162,6 +162,7 @@ public class TSPSolver {
 
     public void run() {
         // Must get fitness before GA operation loop
+        updateTSP();
         txtAreaOutput.setText("Running new solver:");
         GA.fitness();
 
@@ -176,7 +177,7 @@ public class TSPSolver {
         // Clear chart for new runs
         clearChart();
         // Technically faster to do the crossover check first, then call the loop
-            for (int i = 0; i < 1000; i++) // This dictates stopping criteria
+            for (int i = 0; i < 10000; i++) // This dictates stopping criteria
             {
                 GA.selection();
                 GA.crossover();
