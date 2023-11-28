@@ -61,7 +61,15 @@ public class Map {
         }
     }
 
-    public void addCity(String city) {
+    public Boolean addCity(String city) {
+        // check if city already exists
+        for (int i = 0; i < numberOfCities; i++) {
+            if (cityNames[i].equals(city)) {
+                System.out.println("City already exists");
+                return false;
+            }
+        }
+
         ArrayList<Integer> newDistances = new ArrayList<>();
 
         for (int i = 0; i < numberOfCities; i++) {
@@ -71,6 +79,7 @@ public class Map {
         // This is the 0 for the city -> city (self to self) which can just be manually added
         newDistances.add(0);
         addCityToDatabase(newDistances, city);
+        return true;
     }
 
     private void addCityToDatabase(ArrayList<Integer> newDistances, String city) {
@@ -169,13 +178,13 @@ public class Map {
                 // System.out.println("i = " + i + ", j = " + j);
                 try {
                     map[i][j] = Integer.parseInt(citiesScanner.next());
-                    System.out.print(map[i][j] + ",");
+                    // System.out.print(map[i][j] + ",");
                 }
                 catch(NumberFormatException exception) {
                     // System.out.println("Here");
                 }
             }
-            System.out.println();
+            // System.out.println();
             citiesScanner.nextLine();
         }
     }
