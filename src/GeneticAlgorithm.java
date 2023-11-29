@@ -1,8 +1,11 @@
 package src;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GeneticAlgorithm {
@@ -165,7 +168,8 @@ public class GeneticAlgorithm {
     	{ 
     		if (random.nextDouble() < crossoverRate)
     		{
-    			children = onePointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+//    			children = onePointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+    			children = cx2Crossover(parent1Arr[i/2],parent2Arr[i/2]);
 //				children = greedyCrossover(parent1Arr[i/2],parent2Arr[i/2]);
 //    			children = twoPointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
     			// Each set of parents should create two children
@@ -197,7 +201,79 @@ public class GeneticAlgorithm {
     	population = childPop;
     }
 
-    // Paper four
+    // Paper four crossover
+    public int[][] cx2Crossover(int parent1Idx, int parent2Idx) {
+    	int[] parent1 = population.getRoute(parent1Idx);
+    	int[] parent2 = population.getRoute(parent2Idx);
+        int[][] children = new int[2][tourSize+1];
+        List<Integer> cycle1 = new ArrayList<Integer>();
+        List<Integer> cycle2 = new ArrayList<Integer>();
+
+        // This crossover creates children by following
+        // "cycles" of cities and their corresponding indices
+        // in both parents. Essentially, you take a starting city
+        // from parent2. You find that cities index in parent 1, then
+        // look at the city in the corresponding index in parent 2.
+        // Once again find this cities index in parent 1, then take the
+        // corresponding city in parent 2. Through a repetition of this
+        // (do once, take for child 1, do twice, take for child 2, repeat)
+        // the children are created.
+        int startPos = 0;
+        while (true) {
+            // Create the cycles.
+        	cycle1.add(startPos);
+            int value = parent2[startPos];
+            int index = indexOf(parent1, value);
+            value = parent2[index];
+            index = indexOf(parent1, value);
+            cycle2.add(index);
+            value = parent2[index];
+            index = indexOf(parent1, value);
+            int startIdx = -1;
+            // Continue finding the cycle until it loops back on itself
+            while (index != startPos && startIdx != index) {
+            	startIdx = index;
+                cycle1.add(index);
+                value = parent2[index];
+                index = indexOf(parent1, value);
+                value = parent2[index];
+                index = indexOf(parent1, value);
+                cycle2.add(index);
+                value = parent2[index];
+                index = indexOf(parent1, value);
+            }
+            // Generate the children using the cycles
+            for (int i = 0; i < cycle1.size(); i++) {
+            	int tempIdx = cycle1.get(i);
+                children[0][i] = parent2[tempIdx];
+                tempIdx = cycle2.get(i);
+                children[1][i] = parent2[tempIdx];
+            }
+
+            // Check if the cycles created complete children. If not,
+            // find the starting point for the next cycle
+            if (Arrays.stream(children[0]).distinct().count() == tourSize+1) {
+                break;
+            }
+            else
+            {
+                Set<Integer> remainingIndices = new HashSet<>();
+                for (int i = 0; i < tourSize; i++) {
+                    if (!cycle1.contains(i)) {
+                        remainingIndices.add(i);
+                    }
+                }
+                startPos = remainingIndices.stream().min(Integer::compareTo).orElse(-1);
+            }
+        }
+        // Last city must always be the starting city
+        children[0][tourSize] = 1;
+        children[1][tourSize] = 1;
+
+        return children;
+    }
+
+    // Paper five
 	private int[][] greedyCrossover(int parent1Idx, int parent2Idx) {
 		int[] parent1 = population.getRoute(parent1Idx);
 		int[] parent2 = population.getRoute(parent2Idx);
@@ -425,6 +501,17 @@ public class GeneticAlgorithm {
     			return true;
     	}
     	return false;
+    }
+    
+    // Utility function, returns the index of a value
+    // if it is in an array
+    public static int indexOf(int[] array, int value) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == value) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     // Mutate population
