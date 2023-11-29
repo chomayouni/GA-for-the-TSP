@@ -32,6 +32,7 @@ public class Map {
 
     public Map() {
         map = null;
+        
         citiesFile = new File("GA-for-the-TSP/data/cities.txt");
         System.out.println("New map");
         google = new Google();

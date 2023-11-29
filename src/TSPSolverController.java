@@ -233,7 +233,11 @@ public class TSPSolverController implements Initializable {
     // Run the TSP solver
     public void run() {
         // Disable buttons
-        disableInterface();
+        setNumGenerations();
+        setPopulationSize();
+        setMutationRate();
+        setCrossoverRate();
+        setTournamentSize();
 
         // CANT do this do to not properly implemented MVC pattern. JavaFX thread is needed within the TSPSolver.run call stack (Updating graph and output), so we cant break it out of into its own thread. 
         //      One quick and dirty thing I can try, is to have the TSPSolver never actualy updated the gui, but build the two models (It does this now, but for the output only) and then on the return call to this method run(), call a seperate TSP method to 
