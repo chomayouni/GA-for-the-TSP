@@ -61,7 +61,7 @@ public class TSPSolver {
         tourSize = map.getUserNumberOfCities();
         System.out.println("New Tour Size is " + this.tourSize);
         // Initialize GA
-        GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverFcn, selectionFcn,
+        GA =  new GeneticAlgorithm(crossoverFcn, selectionFcn, populationSize, mutationRate,
                 crossoverRate, tournamentSize,tourSize,map.getUserCityMatrix());
     }
 

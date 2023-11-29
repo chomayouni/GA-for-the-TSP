@@ -52,8 +52,8 @@ public class TSPSolverController implements Initializable {
     private CheckComboBox<String> chkComboBoxCities;
 
     // Observable lists to tie to the choice box and check combo box, then we will add a listner to them to update the TSP model
-    private ObservableList<String> crossoverList = FXCollections.observableArrayList("Two Point Crossover", "Future Crossover 1", "Future Crossover 2");
-    private ObservableList<String> selectionList = FXCollections.observableArrayList("Tournament Selection", "Future Selection 1", "Future Selection 2");
+    private ObservableList<String> crossoverList = FXCollections.observableArrayList("One-Point Crossover", "Two-Point Crossover", "CX2 Crossover", "Greedy Crossover");
+    private ObservableList<String> selectionList = FXCollections.observableArrayList("Tournament Selection", "Proportional Selection");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
 
     //
@@ -67,8 +67,8 @@ public class TSPSolverController implements Initializable {
         double mutationRate = 0.05;
         double crossoverRate = 0.80;
         int tournamentSize = 2;
-        String crossoverFcn = crossoverList.get(0); // First one default
-        String selectionFcn = selectionList.get(0); // first one default
+        String crossoverFcn = crossoverList.get(2); // First one default
+        String selectionFcn = selectionList.get(1); // first one default
         TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, crossoverFcn, selectionFcn);
     }
 
@@ -102,7 +102,7 @@ public class TSPSolverController implements Initializable {
 
     private void initializeChoiceBoxSelection() {
         choiceBoxSelection.setItems(selectionList);
-        choiceBoxSelection.setValue(selectionList.get(0));
+        choiceBoxSelection.setValue(selectionList.get(1));
         // Will update the selection function in the TSP automatically on change. Will also update the config show. 
         choiceBoxSelection.getSelectionModel().selectedIndexProperty().addListener(new
         ChangeListener<Number>() {
@@ -119,7 +119,7 @@ public class TSPSolverController implements Initializable {
         // Add the observable list to the choice box for the crossover fcn, and update TSP model with it. Not as clean an implementation,
         //      should be able to call a method or soemthing.
         choiceBoxCrossover.setItems(crossoverList);
-        choiceBoxCrossover.setValue(crossoverList.get(0));
+        choiceBoxCrossover.setValue(crossoverList.get(2));
         
         // Will update the crossover function in the TSP. The choice box
         //      only seemed to work with using the index of the selected value, so rather than getting the string, it is
