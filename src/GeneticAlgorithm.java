@@ -34,8 +34,8 @@ public class GeneticAlgorithm {
         this.tournamentSize = tournamentSize;
         this.tourSize = tourSize;
         this.cityMap = cityMap;
-        parent1Arr = new int[populationSize/2];
-        parent2Arr = new int[populationSize/2];
+        parent1Arr = new int[(int)Math.ceil((double)populationSize/2)];
+        parent2Arr = new int[(int)Math.ceil((double)populationSize/2)];
         
         // Can add initialization logic here
         population = new Population(populationSize,tourSize, true);
@@ -186,24 +186,38 @@ public class GeneticAlgorithm {
 				{ 
 					if (random.nextDouble() < crossoverRate)
 					{
-		   				children = onePointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+						children = onePointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
 						// Each set of parents should create two children
-						for (int j = 0; j < 2; j++)
+						if (i == populationSize-1 && i%2 == 0)
 						{
-							childPop.setRoute(i+j, children[j]);
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
 						}
 					}
 					else
 					{
-						for (int j = 0; j < 2; j++)
+						if (i == populationSize-1 && i%2 == 0)
 						{
-							if (j == 0)
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
 							{
-								childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
-							}
-							else
-							{
-								childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
 							}
 						}
 					}
@@ -224,25 +238,38 @@ public class GeneticAlgorithm {
 				{ 
 					if (random.nextDouble() < crossoverRate)
 					{
-
 		   				children = twoPointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
 						// Each set of parents should create two children
-						for (int j = 0; j < 2; j++)
+						if (i == populationSize-1 && i%2 == 0)
 						{
-							childPop.setRoute(i+j, children[j]);
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
 						}
 					}
 					else
 					{
-						for (int j = 0; j < 2; j++)
+						if (i == populationSize-1 && i%2 == 0)
 						{
-							if (j == 0)
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
 							{
-								childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
-							}
-							else
-							{
-								childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
 							}
 						}
 					}
@@ -263,24 +290,37 @@ public class GeneticAlgorithm {
 				{ 
 					if (random.nextDouble() < crossoverRate)
 					{
-						children = cx2Crossover(parent1Arr[i/2],parent2Arr[i/2]);
-						// Each set of parents should create two children
-						for (int j = 0; j < 2; j++)
+		   				children = cx2Crossover(parent1Arr[i/2],parent2Arr[i/2]);
+						if (i == populationSize-1 && i%2 == 0)
 						{
-							childPop.setRoute(i+j, children[j]);
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
 						}
 					}
 					else
 					{
-						for (int j = 0; j < 2; j++)
+						if (i == populationSize-1 && i%2 == 0)
 						{
-							if (j == 0)
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
 							{
-								childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
-							}
-							else
-							{
-								childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
 							}
 						}
 					}
@@ -302,22 +342,36 @@ public class GeneticAlgorithm {
 					{
 						children = greedyCrossover(parent1Arr[i/2],parent2Arr[i/2]);
 						// Each set of parents should create two children
-						for (int j = 0; j < 2; j++)
+						if (i == populationSize-1 && i%2 == 0)
 						{
-							childPop.setRoute(i+j, children[j]);
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
 						}
 					}
 					else
 					{
-						for (int j = 0; j < 2; j++)
+						if (i == populationSize-1 && i%2 == 0)
 						{
-							if (j == 0)
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
 							{
-								childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
-							}
-							else
-							{
-								childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
 							}
 						}
 					}

@@ -180,61 +180,6 @@ public class TSPSolverController implements Initializable {
         chkComboBoxCities.getCheckModel().getCheckedItems().removeListener(chkComboListener);
     }
 
-    // Run the TSP solver
-    public void run() {
-        TSPSolver.run();
-    }
-
-    // Get tour size to update GUI field
-    public void getTourSize() {
-        txtFieldTourSize.setText(Integer.toString(TSPSolver.getTourSize()));
-    }
-    // Sets number of generations in TSP from gui
-    public void setNumGenerations() {
-        TSPSolver.setNumGenerations(Integer.parseInt(txtFieldNumGenerations.getText()));
-    }
-
-    // Sets population size in TSP from gui
-    public void setPopulationSize() {
-        TSPSolver.setPopulationSize(Integer.parseInt(txtFieldPopSize.getText()));
-    }    
-
-    // Sets mutation rate in TSP from gui
-    public void setMutationRate() {
-        TSPSolver.setMutationRate(Double.parseDouble(txtFieldMutationRate.getText()));
-    }
-    
-    // Sets crossover rate in TSP from gui
-    public void setCrossoverRate() {
-        TSPSolver.setCrossoverRate(Double.parseDouble(txtFieldCrossoverRate.getText()));
-    }
-
-    // Sets tournament size in TSP from gui
-    public void setTournamentSize() {
-        TSPSolver.setTournamentSize(Integer.parseInt(txtFieldTournamentSize.getText()));
-    }
-
-    // Sets crossover function in TSP from gui
-    public void setCrossoverFcn(Number idx) {
-        TSPSolver.setCrossoverFcn(crossoverList.get(idx.intValue()));
-    }
-
-    // Sets selection function in TSP from gui
-    public void setSelectionFcn(Number idx) {
-        TSPSolver.setSelectionFcn(selectionList.get(idx.intValue()));
-    }
-    
-    // Sets user route in TSP from gui
-    public void setUserRoute() {
-        List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
-        String[] selectedCities = cities.toArray(new String[0]);
-        int[] userRoute = TSPSolver.getRouteIndices(selectedCities);
-        TSPSolver.setUserRoute(userRoute);
-
-        // Update tour size, since the user route has changed
-        getTourSize();
-    }
-
     private void disableInterface() {
         btnAdd.setDisable(true);
         btnRun.setDisable(true);
@@ -285,6 +230,78 @@ public class TSPSolverController implements Initializable {
             });
         }).start();
 
+    }
+
+    // Run the TSP solver
+    public void run() {
+        // Disable buttons
+        disableInterface();
+
+        // CANT do this do to not properly implemented MVC pattern. JavaFX thread is needed within the TSPSolver.run call stack (Updating graph and output), so we cant break it out of into its own thread. 
+        //      One quick and dirty thing I can try, is to have the TSPSolver never actualy updated the gui, but build the two models (It does this now, but for the output only) and then on the return call to this method run(), call a seperate TSP method to 
+        //      show it. 
+        // Break out the non javaFX stuff into a seperate thread, this allows us to disable the buttons, then schedule them to be re-enabled AFTER
+        // new Thread() {
+        //     public void run() {
+        //         TSPSolver.run();
+        //         // Enable buttons
+        //         Platform.runLater(() -> {
+        //             enableInterface();
+        //         });
+        //     }
+        // }.start();
+        TSPSolver.run();
+        enableInterface();
+    }
+
+    // Get tour size to update GUI field
+    public void getTourSize() {
+        txtFieldTourSize.setText(Integer.toString(TSPSolver.getTourSize()));
+    }
+    // Sets number of generations in TSP from gui
+    public void setNumGenerations() {
+        TSPSolver.setNumGenerations(Integer.parseInt(txtFieldNumGenerations.getText()));
+    }
+
+    // Sets population size in TSP from gui
+    public void setPopulationSize() {
+        TSPSolver.setPopulationSize(Integer.parseInt(txtFieldPopSize.getText()));
+    }    
+
+    // Sets mutation rate in TSP from gui
+    public void setMutationRate() {
+        TSPSolver.setMutationRate(Double.parseDouble(txtFieldMutationRate.getText()));
+    }
+    
+    // Sets crossover rate in TSP from gui
+    public void setCrossoverRate() {
+        TSPSolver.setCrossoverRate(Double.parseDouble(txtFieldCrossoverRate.getText()));
+    }
+
+    // Sets tournament size in TSP from gui
+    public void setTournamentSize() {
+        TSPSolver.setTournamentSize(Integer.parseInt(txtFieldTournamentSize.getText()));
+    }
+
+    // Sets crossover function in TSP from gui
+    public void setCrossoverFcn(Number idx) {
+        TSPSolver.setCrossoverFcn(crossoverList.get(idx.intValue()));
+    }
+
+    // Sets selection function in TSP from gui
+    public void setSelectionFcn(Number idx) {
+        TSPSolver.setSelectionFcn(selectionList.get(idx.intValue()));
+    }
+    
+    // Sets user route in TSP from gui
+    public void setUserRoute() {
+        List<String> cities = chkComboBoxCities.getCheckModel().getCheckedItems();
+        String[] selectedCities = cities.toArray(new String[0]);
+        int[] userRoute = TSPSolver.getRouteIndices(selectedCities);
+        TSPSolver.setUserRoute(userRoute);
+
+        // Update tour size, since the user route has changed
+        getTourSize();
     }
     
 }
