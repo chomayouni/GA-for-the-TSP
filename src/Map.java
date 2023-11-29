@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 
 public class Map {
-    // file object ot point to the cities DB
+    // file object to point to the cities DB
     private File citiesFile;
-    // scanner object which is used to parse text in the associiated file
+    // scanner object which is used to parse text in the associated file
     private Scanner citiesScanner;
     // variable to hold number of cities
     private int numberOfCities;
