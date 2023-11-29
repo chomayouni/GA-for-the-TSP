@@ -457,17 +457,11 @@ public class GeneticAlgorithm {
                 value = parent2[index];
                 index = indexOf(parent1, value);
             }
-            // Generate the children using the cycles
-            for (int i = 0; i < cycle1.size(); i++) {
-            	int tempIdx = cycle1.get(i);
-                children[0][i] = parent2[tempIdx];
-                tempIdx = cycle2.get(i);
-                children[1][i] = parent2[tempIdx];
-            }
+            
 
-            // Check if the cycles created complete children. If not,
+            // Check if the cycles are complete. If not,
             // find the starting point for the next cycle
-            if (Arrays.stream(children[0]).distinct().count() == tourSize+1) {
+        	if (cycle1.size() == tourSize) {
                 break;
             }
             else
@@ -480,6 +474,14 @@ public class GeneticAlgorithm {
                 }
                 startPos = remainingIndices.stream().min(Integer::compareTo).orElse(-1);
             }
+        }
+        
+        // Generate the children using the cycles
+        for (int i = 0; i < tourSize; i++) {
+        	int tempIdx = cycle1.get(i);
+            children[0][i] = parent2[tempIdx];
+            tempIdx = cycle2.get(i);
+            children[1][i] = parent2[tempIdx];
         }
         // Last city must always be the starting city
         children[0][tourSize] = 1;
@@ -798,7 +800,6 @@ public class GeneticAlgorithm {
     	}
     	return population.getTour(bestIndex);
     }
-    
 
 	// get population size
 	public int getPopulationSize() {
