@@ -74,7 +74,7 @@ public class GeneticAlgorithm {
 
 		switch (selectionFcn) {
 			case "Tournament Selection":
-				System.out.println("Performing " + selectionFcn);
+				// System.out.println("Performing " + selectionFcn);
 				for (int i = 0; i < populationSize/2; i++)
 				{
 					parent1Arr[i] = tournamentSelection();
@@ -82,7 +82,7 @@ public class GeneticAlgorithm {
 				}
 				break;
 			case "Proportional Selection":
-				System.out.println("Performing " + selectionFcn);
+				// System.out.println("Performing " + selectionFcn);
 				for (int i = 0; i < populationSize/2; i++)
 				{
 					parent1Arr[i] = proportionalSelection();
@@ -90,6 +90,7 @@ public class GeneticAlgorithm {
 				}
 				break;
 			default:
+				System.out.println("Invalid selection function passed into GA");
 				break;
 		}
     }
@@ -178,7 +179,7 @@ public class GeneticAlgorithm {
     	
 		switch (crossoverFcn) {
 			case "One-Point Crossover":
-				System.out.println("Performing " + crossoverFcn);
+				// System.out.println("Performing " + crossoverFcn);
 				// Based on the crossover rate, create a new child or pass
 				// a current member of the population forward
 				for (int i = 0; i < populationSize; i+=2)
@@ -216,7 +217,7 @@ public class GeneticAlgorithm {
 				break;
 		
 			case "Two-Point Crossover":
-				System.out.println("Performing " + crossoverFcn);
+				// System.out.println("Performing " + crossoverFcn);
 				// Based on the crossover rate, create a new child or pass
 				// a current member of the population forward
 				for (int i = 0; i < populationSize; i+=2)
@@ -255,7 +256,7 @@ public class GeneticAlgorithm {
 				break;
 
 			case "CX2 Crossover":
-				System.out.println("Performing " + crossoverFcn);
+				// System.out.println("Performing " + crossoverFcn);
 				// Based on the crossover rate, create a new child or pass
 				// a current member of the population forward
 				for (int i = 0; i < populationSize; i+=2)
@@ -292,7 +293,7 @@ public class GeneticAlgorithm {
 				population = childPop;
 				break;
 			case "Greedy Crossover":
-				System.out.println("Performing " + crossoverFcn);
+				// System.out.println("Performing " + crossoverFcn);
 				// Based on the crossover rate, create a new child or pass
 				// a current member of the population forward
 				for (int i = 0; i < populationSize; i+=2)
@@ -329,7 +330,7 @@ public class GeneticAlgorithm {
 				population = childPop;
 				break;
 			default:
-				System.out.println("Incorrect crossover function passed into GA");
+				System.out.println("Invalid crossover function passed into GA");
 				break;
 		}
 

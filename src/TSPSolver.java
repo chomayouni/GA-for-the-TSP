@@ -134,6 +134,7 @@ public class TSPSolver {
                .append("</td><td>")
                .append(bestTour.getFitness())
                .append("</td></tr>");
+               updateChart(0, bestTour.getFitness());
     
         for (int i = 0; i < numGenerations; i++) {
             GA.selection();

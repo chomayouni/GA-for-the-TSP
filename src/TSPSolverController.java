@@ -63,12 +63,12 @@ public class TSPSolverController implements Initializable {
         // Initial Constants, can pull this up if we want. Will initial txt fields with these as well. NOT part of this class. Should be passed 
         //      into the TSP constructor to be honest
         int numGenerations = 10000;
-        int populationSize = 5;
+        int populationSize = 10;
         double mutationRate = 0.05;
         double crossoverRate = 0.80;
         int tournamentSize = 2;
-        String crossoverFcn = crossoverList.get(2); // First one default
-        String selectionFcn = selectionList.get(1); // first one default
+        String crossoverFcn = crossoverList.get(0); // First one default
+        String selectionFcn = selectionList.get(0); // first one default
         TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, crossoverFcn, selectionFcn);
     }
 
@@ -102,7 +102,7 @@ public class TSPSolverController implements Initializable {
 
     private void initializeChoiceBoxSelection() {
         choiceBoxSelection.setItems(selectionList);
-        choiceBoxSelection.setValue(selectionList.get(1));
+        choiceBoxSelection.setValue(selectionList.get(0));
         // Will update the selection function in the TSP automatically on change. Will also update the config show. 
         choiceBoxSelection.getSelectionModel().selectedIndexProperty().addListener(new
         ChangeListener<Number>() {
@@ -119,7 +119,7 @@ public class TSPSolverController implements Initializable {
         // Add the observable list to the choice box for the crossover fcn, and update TSP model with it. Not as clean an implementation,
         //      should be able to call a method or soemthing.
         choiceBoxCrossover.setItems(crossoverList);
-        choiceBoxCrossover.setValue(crossoverList.get(2));
+        choiceBoxCrossover.setValue(crossoverList.get(0));
         
         // Will update the crossover function in the TSP. The choice box
         //      only seemed to work with using the index of the selected value, so rather than getting the string, it is
