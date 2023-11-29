@@ -1,42 +1,16 @@
 package src;
 
 import java.util.Arrays;
-import java.util.List;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import javafx.application.Application;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.common.input.CharInput;
 
 public class TSPSolver {
     // GA object
     private GeneticAlgorithm GA;
     // Map object (WHole database, all cities)
     private Map map;
-    // User defined route, used to create the user defined map
-    private int[] userRoute = {};
-    // General GA parameters, most of which user has control over (Tour size is set but number of cities in data)
-    private int tourSize;
-    private int populationSize;
-    private double mutationRate;
-    private double crossoverRate;
-    private int tournamentSize;
-    private String crossoverFcn;
-    private String selectionFcn;
-    private int numGenerations;
+
     // Objects for the output
     private WebView webViewConfig;
     private WebView webViewOutput;
@@ -44,37 +18,32 @@ public class TSPSolver {
     private LineChart<String, Integer> lineChartFitness;
     private XYChart.Series<String, Integer> fitnessData;
 
+    // Control for running the GA, should be in GA object, but thats A LOT of refactoring
+    private int numGenerations;
+
     // Constructor for the solver. Will also create a map. 
     public TSPSolver(int numGenerations, int populationSize, double mutationRate, double crossoverRate, int tournamentSize, String crossoverFcn, String selectionFcn) {
         this.numGenerations = numGenerations;
-        this.populationSize = populationSize;
-        this.mutationRate = mutationRate;
-        this.crossoverRate = crossoverRate;
-        this.tournamentSize = tournamentSize;
-        this.crossoverFcn = crossoverFcn;
-        this.selectionFcn = selectionFcn;
+        // Create new Map object to handle database stuff. 
         map = new Map();
+        // Created before any user cites are set, so just go off of the base map (all the database). Will be updated imediately due
+        //      to TSPSoverController setting other defaults, and control stack following through
+        GA = new GeneticAlgorithm(crossoverFcn, selectionFcn, populationSize, mutationRate,
+                crossoverRate, tournamentSize,map.getNumberOfCities(),map.getCityMatrix());
+
     }
 
-    private void updateTSP() {
-        GA = null;
-        tourSize = map.getUserNumberOfCities();
-        System.out.println("New Tour Size is " + this.tourSize);
-        // Initialize GA
-        GA =  new GeneticAlgorithm(crossoverFcn, selectionFcn, populationSize, mutationRate,
-                crossoverRate, tournamentSize,tourSize,map.getUserCityMatrix());
-    }
 
     private void showConfig() {        
         String content = "<table>"
-        + "<tr><th>Crossover Function</th><td>" + this.crossoverFcn + "</td></tr>"
-        + "<tr><th>Selection Function</th><td>" + this.selectionFcn + "</td></tr>"
-        + "<tr><th>Number of Generations</th><td>" + this.numGenerations + "</td></tr>"
-        + "<tr><th>Tour Size</th><td>" + this.tourSize + "</td></tr>"
-        + "<tr><th>Population Size</th><td>" + this.populationSize + "</td></tr>"
-        + "<tr><th>Mutation Rate</th><td>" + this.mutationRate + "</td></tr>"
-        + "<tr><th>Crossover Rate</th><td>" + this.crossoverRate + "</td></tr>"
-        + "<tr><th>Tournament Size</th><td>" + this.tournamentSize + "</td></tr>"
+        + "<tr><th>Crossover Function</th><td>" + GA.getCrossoverFcn() + "</td></tr>"
+        + "<tr><th>Selection Function</th><td>" + GA.getSelectionFcn() + "</td></tr>"
+        + "<tr><th>Number of Generations</th><td>" + numGenerations + "</td></tr>"
+        + "<tr><th>Tour Size</th><td>" + GA.getTourSize() + "</td></tr>"
+        + "<tr><th>Population Size</th><td>" + GA.getPopulationSize() + "</td></tr>"
+        + "<tr><th>Mutation Rate</th><td>" + GA.getMutationRate() + "</td></tr>"
+        + "<tr><th>Crossover Rate</th><td>" + GA.getCrossoverRate() + "</td></tr>"
+        + "<tr><th>Tournament Size</th><td>" + GA.getTournamentSize() + "</td></tr>"
         + "<tr><th>User Route</th><td>" + map.toStringUser() + "</td></tr>"
         + "</table>";
     // webViewConfig.applyCss();
@@ -115,7 +84,8 @@ public class TSPSolver {
 
     public void run() {
         // Must get fitness before GA operation loop
-        updateTSP();
+        // updateTSP();
+        GA.newPopulation();
         GA.fitness();
     
         // Print best initial solution
@@ -181,57 +151,64 @@ public class TSPSolver {
         // User route and actual city data are not part of the TSP, they are part of the map object. 
         //      so those must be updated first via the update TSP then we can print the setup (which prints) 
         //      the routes
-        updateTSP();
+        GA.setTourSize(map.getUserNumberOfCities());
+        GA.setCityMap(map.getUserCityMatrix());
         showConfig();
     } 
 
     public void setCrossoverFcn(String crossoverFcn) {
-        this.crossoverFcn = crossoverFcn;
+        // this.crossoverFcn = crossoverFcn;
+        GA.setCrossoverFcn(crossoverFcn);
         showConfig();
-        System.out.println("New Crossover Fcn is " + this.crossoverFcn);
+        System.out.println("New Crossover Fcn is " + GA.getCrossoverFcn());
         // updateTSP();
     }
 
     public void setSelectionFcn(String selectionFcn) {
-        this.selectionFcn = selectionFcn;
+        // this.selectionFcn = selectionFcn;
+        GA.setSelectionFcn(selectionFcn);
         showConfig();
-        System.out.println("New Selection Fcn is " + this.selectionFcn);
+        System.out.println("New Selection Fcn is " + GA.getSelectionFcn());
         // updateTSP();
     }
 
     public void setPopulationSize(int populationSize) {
-        this.populationSize = populationSize;
+        // this.populationSize = populationSize;
+        GA.setPopulationSize(populationSize);
         showConfig();
-        System.out.println("New Population Size is " + this.populationSize);
-        updateTSP();
+        System.out.println("New Population Size is " + GA.getPopulationSize());
+        // updateTSP();
     }
 
     public void setMutationRate(double mutationRate) {
-        this.mutationRate = mutationRate;
+        // this.mutationRate = mutationRate;
+        GA.setMutationRate(mutationRate);
         showConfig();
-        System.out.println("New Mutation Rate is " + this.mutationRate);
-        updateTSP();
+        System.out.println("New Mutation Rate is " + GA.getMutationRate());
+        // updateTSP();
     }
 
     public void setCrossoverRate(double crossoverRate) {
-        this.crossoverRate = crossoverRate;
+        // this.crossoverRate = crossoverRate;
+        GA.setCrossoverRate(crossoverRate);
         showConfig();
-        System.out.println("New Crossover Rate is " + this.crossoverRate);
-        updateTSP();
+        System.out.println("New Crossover Rate is " + GA.getCrossoverRate());
+        // updateTSP();
     }
 
     public void setTournamentSize(int tournamentSize) {
-        this.tournamentSize = tournamentSize;
+        // this.tournamentSize = tournamentSize;
+        GA.setTournamentSize(tournamentSize);
         showConfig();
-        System.out.println("New Tournament Size is " + this.tournamentSize);
-        updateTSP();
+        System.out.println("New Tournament Size is " + GA.getTournamentSize());
+        // updateTSP();
     }
 
     public void setNumGenerations(int numGenerations) {
         this.numGenerations = numGenerations;
         showConfig();
         System.out.println("New Number of Generations is " + this.numGenerations);
-        updateTSP();
+        // updateTSP();
     }
 
 
@@ -252,27 +229,27 @@ public class TSPSolver {
     }
 
     public int getNumGenerations() {
-        return this.numGenerations;
+        return numGenerations;
     }
 
     public int getPopulationSize() {
-        return this.populationSize;
+        return GA.getPopulationSize();
     }
 
     public double getMutationRate() {
-        return this.mutationRate;
+        return GA.getMutationRate();
     }
 
     public double getCrossoverRate() {
-        return this.crossoverRate;
+        return GA.getCrossoverRate();
     }
 
     public int getTournamentSize() {
-        return this.tournamentSize;
+        return GA.getTournamentSize();
     }
 
     public int getTourSize() {
-        return tourSize;
+        return GA.getTourSize();
     }
 
     // return ALL city names in dataset
@@ -287,12 +264,12 @@ public class TSPSolver {
 
     // Return the current crossover function
     public String getCrossoverFcn() {
-        return this.crossoverFcn;
+        return GA.getCrossoverFcn();
     }
 
     // Return the current selection function
     public String getSelectionFcn() {
-        return this.selectionFcn;
+        return GA.getSelectionFcn();
     }
 
 }

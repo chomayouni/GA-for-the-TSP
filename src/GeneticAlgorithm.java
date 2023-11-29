@@ -34,12 +34,24 @@ public class GeneticAlgorithm {
         this.tournamentSize = tournamentSize;
         this.tourSize = tourSize;
         this.cityMap = cityMap;
-        parent1Arr = new int[(int)Math.ceil((double)populationSize/2)];
-        parent2Arr = new int[(int)Math.ceil((double)populationSize/2)];
+
+		// Initialize the population
+		newPopulation();
+        // parent1Arr = new int[(int)Math.ceil((double)populationSize/2)];
+        // parent2Arr = new int[(int)Math.ceil((double)populationSize/2)];
         
-        // Can add initialization logic here
-        population = new Population(populationSize,tourSize, true);
+        // // Can add initialization logic here
+        // population = new Population(populationSize,tourSize, true);
     }
+
+
+	// Create a new population
+	public void newPopulation()
+	{
+		parent1Arr = new int[(int)Math.ceil((double)populationSize/2)];
+		parent2Arr = new int[(int)Math.ceil((double)populationSize/2)];
+		population = new Population(populationSize,tourSize, true);
+	}
 
     // Calculate fitness for each individual
     // To reduce calculations, we use the COST as fitness
@@ -776,5 +788,87 @@ public class GeneticAlgorithm {
     	return population.getTour(bestIndex);
     }
     
+
+	// get population size
+	public int getPopulationSize() {
+		return populationSize;
+	}
+
+	// get mutation rate
+	public double getMutationRate() {
+		return mutationRate;
+	}
+	
+	// get crossover rate
+	public double getCrossoverRate() {
+		return crossoverRate;
+	}
+
+	// get tournament size
+	public int getTournamentSize() {
+		return tournamentSize;
+	}
+
+	// get tour size
+	public int getTourSize() {
+		return tourSize;
+	}
+
+	// get crossover function
+	public String getCrossoverFcn() {
+		return crossoverFcn;
+	}
+
+	// get selection function
+	public String getSelectionFcn() {
+		return selectionFcn;
+	}
+
+	// get city map
+	public int[][] getCityMap() {
+		return cityMap;
+	}
+
+	// set population size
+	public void setPopulationSize(int populationSize) {
+		this.populationSize = populationSize;
+		newPopulation();
+	}
+
+	// set mutation rate
+	public void setMutationRate(double mutationRate) {
+		this.mutationRate = mutationRate;
+	}
+
+	// set crossover rate
+	public void setCrossoverRate(double crossoverRate) {
+		this.crossoverRate = crossoverRate;
+	}
+
+	// set tournament size
+	public void setTournamentSize(int tournamentSize) {
+		this.tournamentSize = tournamentSize;
+	}
+
+	// set tour size
+	public void setTourSize(int tourSize) {
+		this.tourSize = tourSize;
+		newPopulation();
+	}
+
+	// set crossover function
+	public void setCrossoverFcn(String crossoverFcn) {
+		this.crossoverFcn = crossoverFcn;
+	}
+
+	// set selection function
+	public void setSelectionFcn(String selectionFcn) {
+		this.selectionFcn = selectionFcn;
+	}
+
+	// set city map
+	public void setCityMap(int[][] cityMap) {
+		this.cityMap = cityMap;
+	}
 }
 
