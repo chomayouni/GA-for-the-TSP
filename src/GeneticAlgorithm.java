@@ -636,114 +636,11 @@ public class GeneticAlgorithm {
     	// Create the first child
     	for (int i = 0; i < tourSize; i++)
     	{
-    		// Before the crossover point, take the parent
     		if (i<crossover)
     		{
     			children[0][i] = parent1[i];
     		}
-    		// After the crossover point, greedily look for the nearest neighbor
     		else
-			{
-				// setup
-				last_city = children[1][i-1]-1;
-				for(int j = 0; j < tourSize; j++) {
-					illegal_cities[j] = -1;
-				}
-				shortestDistanceTracker = Integer.MAX_VALUE;
-				
-				// find the nearest neighbor.
-				for(int j = 0; j < tourSize; j++) {
-					// any time that we finds a city that is already in the child, we skip it
-					if(!contains(children[1], j+1)) {
-						if(cityMap[last_city][j] < shortestDistanceTracker) {
-							shortestDistanceTracker = cityMap[last_city][j];
-							temporary_best_index = j;
-						}
-					}
-				}
-				children[1][i] = temporary_best_index+1;
-			}
-    	}
-    	// Set the final index to the first city (untouched in for loop)
-    	children[1][tourSize] = 1;
-    	
-    	return children;
-	}
-	
-    // Paper three
-    private int[][] twoPointCrossover(int parent1, int parent2) {
-    	// Initialize the two child chromosomes
-        int[][] children = new int[2][tourSize+1];
-        Arrays.fill(children[0], -1);
-        Arrays.fill(children[1], -1);
-
-        // Select the two points to crossover
-        int startPoint = (int) (Math.random() * tourSize);
-        int endPoint = (int) (Math.random() * tourSize);
-
-        // Ensure the start point is before the end point
-        if (startPoint > endPoint) {
-            int temp = startPoint;
-            startPoint = endPoint;
-            endPoint = temp;
-        }
-        
-        // Create the first child
-        // Take parent one inside of the two crossover points
-        System.arraycopy(population.getRoute(parent1), startPoint, children[0], startPoint, endPoint - startPoint);
-
-        // Take parent two outside of the two crossover points if possible
-        for (int i = 0; i < tourSize; i++) {
-            if (children[0][i] == -1) {
-                for (int city : population.getRoute(parent2)) {
-                    if (!contains(children[0], city)) {
-                        children[0][i] = city;
-                        break;
-                    }
-                }
-            }
-        }
-        // Final city must be the starting city
-        children[0][tourSize] = 1;
-        
-        // Create the second child
-        // Take parent two inside of the two crossover points
-        System.arraycopy(population.getRoute(parent2), startPoint, children[1], startPoint, endPoint - startPoint);
-
-        // Take parent one outside of the two crossover points if possible
-        for (int i = 0; i < tourSize; i++) {
-            if (children[1][i] == -1) {
-                for (int city : population.getRoute(parent1)) {
-                    if (!contains(children[1], city)) {
-                        children[1][i] = city;
-                        break;
-                    }
-                }
-            }
-        }
-        // Final city must be the starting city
-        children[1][tourSize] = 1;
-        
-        return children;
-    }
-
-    // NOTE this is for paper three, it is unclear whether they use
-    // one-point crossover or two-point crossover
-    private int[][] onePointCrossover(int parent1Idx, int parent2Idx)
-    {
-    	int[] parent1 = population.getRoute(parent1Idx);
-    	int[] parent2 = population.getRoute(parent2Idx);
-    	int[][] children = new int[2][tourSize+1];
-    	
-    	Random random = new Random();
-    	// Do not crossover at the first or last index
-    	// as they must be the starting city
-    	int crossover = 1+random.nextInt(tourSize);
-    	
-    	// Create the first child
-    	for (int i = 0; i < tourSize; i++)
-    	{
-    		if (i<crossover)
     		{
     			if (contains(children[0], parent2[i]) == true)
     			{

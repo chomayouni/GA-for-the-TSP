@@ -26,13 +26,15 @@ public class Map {
     private int userNumberOfCities;
     // User defined route, used to create the user defined map
     private int[] userRoute = {};
-    // Object for useing google API
+    // Object for using google API
     private Google google;
     
 
     public Map() {
         map = null;
-        citiesFile = new File("GA-for-the-TSP/data/cities.txt");
+        String currentDir = System.getProperty("user.dir");
+        System.out.println("Current dir using System:" + currentDir);
+        citiesFile = new File(currentDir + "/data/cities.txt");
         System.out.println("New map");
         google = new Google();
         setNumberOfCities();
