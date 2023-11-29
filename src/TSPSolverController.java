@@ -188,6 +188,7 @@ public class TSPSolverController implements Initializable {
         txtFieldCrossoverRate.setDisable(true);
         txtFieldTournamentSize.setDisable(true);
         chkComboBoxCities.setDisable(true);
+        txtFieldNewCity.setDisable(true);
     }
 
     private void enableInterface() {
@@ -200,6 +201,7 @@ public class TSPSolverController implements Initializable {
         txtFieldCrossoverRate.setDisable(false);
         txtFieldTournamentSize.setDisable(false);
         chkComboBoxCities.setDisable(false);
+        txtFieldNewCity.setDisable(false);
     }
 
     // Adds new city to database
