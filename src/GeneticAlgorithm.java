@@ -17,25 +17,41 @@ public class GeneticAlgorithm {
     private int cityMap[][];
     private int parent1Arr[];
     private int parent2Arr[];
+
+	private String crossoverFcn;
+	private String selectionFcn;
     
     private Population population;
 
-    public GeneticAlgorithm(int populationSize, double mutationRate, double crossoverRate,
+    public GeneticAlgorithm(String crossoverFcn, String selectionFcn, int populationSize, double mutationRate, double crossoverRate,
     						int tournamentSize, int tourSize, int[][] cityMap)
     {
+		this.crossoverFcn = crossoverFcn;
+		this.selectionFcn = selectionFcn;
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.crossoverRate = crossoverRate;
         this.tournamentSize = tournamentSize;
         this.tourSize = tourSize;
         this.cityMap = cityMap;
-        parent1Arr = new int[(int)Math.ceil((double)populationSize/2)];
-        parent2Arr = new int[(int)Math.ceil((double)populationSize/2)];
+
+		// Initialize the population
+		newPopulation();
+        // parent1Arr = new int[(int)Math.ceil((double)populationSize/2)];
+        // parent2Arr = new int[(int)Math.ceil((double)populationSize/2)];
         
-        
-        // Can add initialization logic here
-        population = new Population(populationSize,tourSize, true);
+        // // Can add initialization logic here
+        // population = new Population(populationSize,tourSize, true);
     }
+
+
+	// Create a new population
+	public void newPopulation()
+	{
+		parent1Arr = new int[(int)Math.ceil((double)populationSize/2)];
+		parent2Arr = new int[(int)Math.ceil((double)populationSize/2)];
+		population = new Population(populationSize,tourSize, true);
+	}
 
     // Calculate fitness for each individual
     // To reduce calculations, we use the COST as fitness
@@ -67,18 +83,28 @@ public class GeneticAlgorithm {
 
     public void selection()
     {
-    	// TODO
-    	for (int i = 0; i < populationSize/2; i++)
-    	{
-	    	parent1Arr[i] = tournamentSelection();
-	    	parent2Arr[i] = tournamentSelection();
-//	    	parent1Arr[i] = proportionalSelection();
-//	    	parent2Arr[i] = proportionalSelection();
-    	}
-    	
-    	// Debug
-    	// System.out.println("(selection) parent1Arr : " + Arrays.toString(parent1Arr));
-    	// System.out.println("(selection) parent2Arr : " + Arrays.toString(parent2Arr));
+
+		switch (selectionFcn) {
+			case "Tournament Selection":
+				// System.out.println("Performing " + selectionFcn);
+				for (int i = 0; i < populationSize/2; i++)
+				{
+					parent1Arr[i] = tournamentSelection();
+					parent2Arr[i] = tournamentSelection();
+				}
+				break;
+			case "Proportional Selection":
+				// System.out.println("Performing " + selectionFcn);
+				for (int i = 0; i < populationSize/2; i++)
+				{
+					parent1Arr[i] = proportionalSelection();
+					parent2Arr[i] = proportionalSelection();
+				}
+				break;
+			default:
+				System.out.println("Invalid selection function passed into GA");
+				break;
+		}
     }
 
     // Paper 4 Selection
@@ -163,57 +189,220 @@ public class GeneticAlgorithm {
     	
     	Random random = new Random();
     	
-    	// Based on the crossover rate, create a new child or pass
-    	// a current member of the population forward
-    	for (int i = 0; i < populationSize; i+=2)
-    	{ 
-    		if (random.nextDouble() < crossoverRate)
-    		{
-    			children = onePointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
-//    			children = cx2Crossover(parent1Arr[i/2],parent2Arr[i/2]);
-//				children = greedyCrossover(parent1Arr[i/2],parent2Arr[i/2]);
-//    			children = twoPointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
-    			// Each set of parents should create two children
-    			if (i == populationSize-1 && i%2 == 0)
-    			{
-    				childPop.setRoute(i, children[0]);
-    			}
-    			else
-    			{
-	    			for (int j = 0; j < 2; j++)
-	    			{
-		    			childPop.setRoute(i+j, children[j]);
-	    			}
-    			}
-    		}
-    		else
-    		{
-    			if (i == populationSize-1 && i%2 == 0)
-    			{
-    				childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
-    			}
-    			else
-    			{
-	    			for (int j = 0; j < 2; j++)
-	    			{
-	    				if (j == 0)
-	    				{
-	    					childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
-	    				}
-	    				else
-	    				{
-	    					childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
-	    				}
-	    			}
-    			}
-    		}
-    	}
-    	// Debug
-    	// for (int i = 0; i < populationSize; i++)
-    	// 	 System.out.println("(crossover) childPop " + i + " : " + Arrays.toString(childPop.getRoute(i)));
-    	
-    	// Save the new population
-    	population = childPop;
+		switch (crossoverFcn) {
+			case "One-Point Crossover":
+				// System.out.println("Performing " + crossoverFcn);
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i+=2)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+						children = onePointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+						// Each set of parents should create two children
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
+						}
+					}
+					else
+					{
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
+							}
+						}
+					}
+				}
+				// Debug
+				// for (int i = 0; i < populationSize; i++)
+				// 	 System.out.println("(crossover) childPop " + i + " : " + Arrays.toString(childPop.getRoute(i)));
+				
+				// Save the new population
+				population = childPop;
+				break;
+		
+			case "Two-Point Crossover":
+				// System.out.println("Performing " + crossoverFcn);
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i+=2)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+		   				children = twoPointCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+						// Each set of parents should create two children
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
+						}
+					}
+					else
+					{
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
+							}
+						}
+					}
+				}
+				// Debug
+				// for (int i = 0; i < populationSize; i++)
+				// 	 System.out.println("(crossover) childPop " + i + " : " + Arrays.toString(childPop.getRoute(i)));
+				
+				// Save the new population
+				population = childPop;
+				break;
+
+			case "CX2 Crossover":
+				// System.out.println("Performing " + crossoverFcn);
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i+=2)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+		   				children = cx2Crossover(parent1Arr[i/2],parent2Arr[i/2]);
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
+						}
+					}
+					else
+					{
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
+							}
+						}
+					}
+				}
+				// Debug
+				// for (int i = 0; i < populationSize; i++)
+				// 	 System.out.println("(crossover) childPop " + i + " : " + Arrays.toString(childPop.getRoute(i)));
+				
+				// Save the new population
+				population = childPop;
+				break;
+			case "Greedy Crossover":
+				// System.out.println("Performing " + crossoverFcn);
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i+=2)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+						children = greedyCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+						// Each set of parents should create two children
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
+						}
+					}
+					else
+					{
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
+							}
+						}
+					}
+				}
+				// Debug
+				// for (int i = 0; i < populationSize; i++)
+				// 	 System.out.println("(crossover) childPop " + i + " : " + Arrays.toString(childPop.getRoute(i)));
+				
+				// Save the new population
+				population = childPop;
+				break;
+			default:
+				System.out.println("Invalid crossover function passed into GA");
+				break;
+		}
+
+
+
+
     }
 
     // Paper four crossover
@@ -447,11 +636,114 @@ public class GeneticAlgorithm {
     	// Create the first child
     	for (int i = 0; i < tourSize; i++)
     	{
+    		// Before the crossover point, take the parent
     		if (i<crossover)
     		{
     			children[0][i] = parent1[i];
     		}
+    		// After the crossover point, greedily look for the nearest neighbor
     		else
+			{
+				// setup
+				last_city = children[1][i-1]-1;
+				for(int j = 0; j < tourSize; j++) {
+					illegal_cities[j] = -1;
+				}
+				shortestDistanceTracker = Integer.MAX_VALUE;
+				
+				// find the nearest neighbor.
+				for(int j = 0; j < tourSize; j++) {
+					// any time that we finds a city that is already in the child, we skip it
+					if(!contains(children[1], j+1)) {
+						if(cityMap[last_city][j] < shortestDistanceTracker) {
+							shortestDistanceTracker = cityMap[last_city][j];
+							temporary_best_index = j;
+						}
+					}
+				}
+				children[1][i] = temporary_best_index+1;
+			}
+    	}
+    	// Set the final index to the first city (untouched in for loop)
+    	children[1][tourSize] = 1;
+    	
+    	return children;
+	}
+	
+    // Paper three
+    private int[][] twoPointCrossover(int parent1, int parent2) {
+    	// Initialize the two child chromosomes
+        int[][] children = new int[2][tourSize+1];
+        Arrays.fill(children[0], -1);
+        Arrays.fill(children[1], -1);
+
+        // Select the two points to crossover
+        int startPoint = (int) (Math.random() * tourSize);
+        int endPoint = (int) (Math.random() * tourSize);
+
+        // Ensure the start point is before the end point
+        if (startPoint > endPoint) {
+            int temp = startPoint;
+            startPoint = endPoint;
+            endPoint = temp;
+        }
+        
+        // Create the first child
+        // Take parent one inside of the two crossover points
+        System.arraycopy(population.getRoute(parent1), startPoint, children[0], startPoint, endPoint - startPoint);
+
+        // Take parent two outside of the two crossover points if possible
+        for (int i = 0; i < tourSize; i++) {
+            if (children[0][i] == -1) {
+                for (int city : population.getRoute(parent2)) {
+                    if (!contains(children[0], city)) {
+                        children[0][i] = city;
+                        break;
+                    }
+                }
+            }
+        }
+        // Final city must be the starting city
+        children[0][tourSize] = 1;
+        
+        // Create the second child
+        // Take parent two inside of the two crossover points
+        System.arraycopy(population.getRoute(parent2), startPoint, children[1], startPoint, endPoint - startPoint);
+
+        // Take parent one outside of the two crossover points if possible
+        for (int i = 0; i < tourSize; i++) {
+            if (children[1][i] == -1) {
+                for (int city : population.getRoute(parent1)) {
+                    if (!contains(children[1], city)) {
+                        children[1][i] = city;
+                        break;
+                    }
+                }
+            }
+        }
+        // Final city must be the starting city
+        children[1][tourSize] = 1;
+        
+        return children;
+    }
+
+    // NOTE this is for paper three, it is unclear whether they use
+    // one-point crossover or two-point crossover
+    private int[][] onePointCrossover(int parent1Idx, int parent2Idx)
+    {
+    	int[] parent1 = population.getRoute(parent1Idx);
+    	int[] parent2 = population.getRoute(parent2Idx);
+    	int[][] children = new int[2][tourSize+1];
+    	
+    	Random random = new Random();
+    	// Do not crossover at the first or last index
+    	// as they must be the starting city
+    	int crossover = 1+random.nextInt(tourSize);
+    	
+    	// Create the first child
+    	for (int i = 0; i < tourSize; i++)
+    	{
+    		if (i<crossover)
     		{
     			if (contains(children[0], parent2[i]) == true)
     			{
@@ -599,5 +891,87 @@ public class GeneticAlgorithm {
     	return population.getTour(bestIndex);
     }
     
+
+	// get population size
+	public int getPopulationSize() {
+		return populationSize;
+	}
+
+	// get mutation rate
+	public double getMutationRate() {
+		return mutationRate;
+	}
+	
+	// get crossover rate
+	public double getCrossoverRate() {
+		return crossoverRate;
+	}
+
+	// get tournament size
+	public int getTournamentSize() {
+		return tournamentSize;
+	}
+
+	// get tour size
+	public int getTourSize() {
+		return tourSize;
+	}
+
+	// get crossover function
+	public String getCrossoverFcn() {
+		return crossoverFcn;
+	}
+
+	// get selection function
+	public String getSelectionFcn() {
+		return selectionFcn;
+	}
+
+	// get city map
+	public int[][] getCityMap() {
+		return cityMap;
+	}
+
+	// set population size
+	public void setPopulationSize(int populationSize) {
+		this.populationSize = populationSize;
+		newPopulation();
+	}
+
+	// set mutation rate
+	public void setMutationRate(double mutationRate) {
+		this.mutationRate = mutationRate;
+	}
+
+	// set crossover rate
+	public void setCrossoverRate(double crossoverRate) {
+		this.crossoverRate = crossoverRate;
+	}
+
+	// set tournament size
+	public void setTournamentSize(int tournamentSize) {
+		this.tournamentSize = tournamentSize;
+	}
+
+	// set tour size
+	public void setTourSize(int tourSize) {
+		this.tourSize = tourSize;
+		newPopulation();
+	}
+
+	// set crossover function
+	public void setCrossoverFcn(String crossoverFcn) {
+		this.crossoverFcn = crossoverFcn;
+	}
+
+	// set selection function
+	public void setSelectionFcn(String selectionFcn) {
+		this.selectionFcn = selectionFcn;
+	}
+
+	// set city map
+	public void setCityMap(int[][] cityMap) {
+		this.cityMap = cityMap;
+	}
 }
 
