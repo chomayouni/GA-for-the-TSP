@@ -37,8 +37,9 @@ public class TSPSolver {
     private String crossoverFcn;
     private int numGenerations;
     // Objects for the output
-    private TextArea txtAreaOutput;
     private WebView webViewConfig;
+    private WebView webViewOutput;
+    // Objects for the fitness graph
     private LineChart<String, Integer> lineChartFitness;
     private XYChart.Series<String, Integer> fitnessData;
     // Control var for the line chart scaling, set it artficially big so it will scale down
@@ -64,26 +65,7 @@ public class TSPSolver {
                 crossoverRate, tournamentSize,tourSize,map.getUserCityMatrix());
     }
 
-    public void showConfig() {
-        // txtAreaConfig.setText("Crossover Function set to: " + this.crossoverFcn);
-        // txtAreaConfig.appendText("\nNumber of Generations set to: " + this.numGenerations);
-        // txtAreaConfig.appendText("\nTour Size is: " + this.tourSize);
-        // txtAreaConfig.appendText("\nPopulation Size set to: " + this.populationSize);
-        // txtAreaConfig.appendText("\nMutation Rate set to: " + this.mutationRate);
-        // txtAreaConfig.appendText("\nCrossover Rate set to: " + this.crossoverRate);
-        // txtAreaConfig.appendText("\nTournament Size set to: " + this.tournamentSize);
-        // txtAreaConfig.appendText("\nUser Route includes: " +  map.toStringUser());
-        
-        // String cssFilePath = System.getProperty("user.dir") + "/GA-for-the-TSP/css/GAConfigStyle.css";
-        // File cssFile = new File(cssFilePath);
-        // String cssUrl = "";
-        // try {
-        //     cssUrl = cssFile.toURI().toURL().toExternalForm();
-        // } catch (MalformedURLException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // }
-
+    private void showConfig() {        
         String content = "<table>"
         + "<tr><th>Crossover Function</th><td>" + this.crossoverFcn + "</td></tr>"
         + "<tr><th>Number of Generations</th><td>" + this.numGenerations + "</td></tr>"
@@ -94,8 +76,13 @@ public class TSPSolver {
         + "<tr><th>Tournament Size</th><td>" + this.tournamentSize + "</td></tr>"
         + "<tr><th>User Route</th><td>" + map.toStringUser() + "</td></tr>"
         + "</table>";
-    webViewConfig.applyCss();
+    // webViewConfig.applyCss();
     webViewConfig.getEngine().loadContent(content);
+    }
+
+    private void showOutput(String content) {
+        // webViewOutput.applyCss();
+        webViewOutput.getEngine().loadContent(content);
     }
 
     // Add a city to the data base
@@ -103,11 +90,11 @@ public class TSPSolver {
         // Check to make sure city is not already in the db
         if (map.addCity(city)) {
             map.reload();
-            txtAreaOutput.setText(city + " added to database");
+            // txtAreaOutput.setText(city + " added to database");
             return true;
             
         } else {
-            txtAreaOutput.setText(city + " already in database");
+            // txtAreaOutput.setText(city + " already in database");
             return false;
         }
 
@@ -128,50 +115,60 @@ public class TSPSolver {
     public void run() {
         // Must get fitness before GA operation loop
         updateTSP();
-        txtAreaOutput.setText("Running new solver:");
         GA.fitness();
-
+    
         // Print best initial solution
         Tour bestTour = GA.getFittest();
         System.out.println("Initial route : " + Arrays.toString(bestTour.getRoute()));
-        txtAreaOutput.appendText("\nInitial route : " + Arrays.toString(bestTour.getRoute()));
         System.out.println("Initial distance : " + bestTour.getFitness());
-        txtAreaOutput.appendText("\nInitial distance : " + bestTour.getFitness());
         System.out.println("");
-
-        // Clear chart for new runs
+    
+        // Clear chart for new runs, create new content for the output
         clearChart();
-        // Technically faster to do the crossover check first, then call the loop
-            for (int i = 0; i < numGenerations; i++) // This dictates stopping criteria
-            {
-                GA.selection();
-                GA.crossover();
-                GA.mutation();
-                GA.fitness();
-                // Intermediate output for sanity
-                if (i%(numGenerations/25) == 0)
-                {        
-                    txtAreaOutput.appendText("\n---------------------");
-                    bestTour = GA.getFittest();
-                    // System.out.println("Iteration "+i);
-                    txtAreaOutput.appendText("\nIteration "+i);
-                    // System.out.println("Route : " + Arrays.toString(bestTour.getRoute()));
-                    txtAreaOutput.appendText("\nRoute : " + Arrays.toString(bestTour.getRoute()));
-                    // System.out.println("Distance : " + bestTour.getFitness());
-                    txtAreaOutput.appendText("\nDistance : " + bestTour.getFitness());
-                    updateChart(i, bestTour.getFitness());
-                    // System.out.println("");
-                }
+        StringBuilder content = new StringBuilder("<table><tr><th>Iteration</th><th>Route</th><th>Distance</th></tr>");
+    
+        // Add initial solution to the table
+        content.append("<tr><td>Initial</td><td>")
+               .append(Arrays.toString(bestTour.getRoute()))
+               .append("</td><td>")
+               .append(bestTour.getFitness())
+               .append("</td></tr>");
+    
+        for (int i = 0; i < numGenerations; i++) {
+            GA.selection();
+            GA.crossover();
+            GA.mutation();
+            GA.fitness();
+    
+            if ((i%(numGenerations/25) == 0) && (i != 0)) {        
+                bestTour = GA.getFittest();
+    
+                // Add current record to the table
+                content.append("<tr><td>").append(i)
+                       .append("</td><td>").append(Arrays.toString(bestTour.getRoute()))
+                       .append("</td><td>").append(bestTour.getFitness())
+                       .append("</td></tr>");
+    
+                updateChart(i, bestTour.getFitness());
             }
-        txtAreaOutput.appendText("\n---------------------");
-        // Print results
+        }
+    
+        // Add final solution to the table
         bestTour = GA.getFittest();
+        content.append("<tr><td>Final</td><td>")
+               .append(Arrays.toString(bestTour.getRoute()))
+               .append("</td><td>")
+               .append(bestTour.getFitness())
+               .append("</td></tr>");
+        // Finish the table
+        content.append("</table>");
+        // Show the table. 
+        showOutput(content.toString());
+    
+        // Print results to the console
         System.out.println("Finished");
-        txtAreaOutput.appendText("\nFinished");
         System.out.println("Final distance: " + bestTour.getFitness());
-        txtAreaOutput.appendText("\nFinal distance: " + bestTour.getFitness());
         System.out.println("Final Solution:");
-        txtAreaOutput.appendText("\nFinal Solution: " + (Arrays.toString(bestTour.getRoute())));
         System.out.println(Arrays.toString(bestTour.getRoute()));
     }
 
@@ -229,13 +226,16 @@ public class TSPSolver {
     }
 
 
-    public void setOutput(TextArea txtAreaOutput, LineChart<String, Integer> lineChartFitness, WebView webViewConfig) {
+    public void setOutput(WebView webViewConfig, WebView webViewOutput, LineChart<String, Integer> lineChartFitness) {
         // txtAreaOutput.setText("New TSP Solver Initialized");
-        this.txtAreaOutput = txtAreaOutput;
-        this.lineChartFitness = lineChartFitness;
         this.webViewConfig = webViewConfig;
         webViewConfig.getEngine().setUserStyleSheetLocation(getClass().getResource("../css/GAConfigStyle.css").toString());
 
+        this.webViewOutput = webViewOutput;
+        webViewOutput.getEngine().setUserStyleSheetLocation(getClass().getResource("../css/GASolverStyle.css").toString());
+
+
+        this.lineChartFitness = lineChartFitness;
         fitnessData = new XYChart.Series<>();
         lineChartFitness.getData().add(fitnessData);
         updateChart(5, 5);

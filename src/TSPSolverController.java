@@ -40,12 +40,12 @@ public class TSPSolverController implements Initializable {
     @FXML private TextField txtFieldCrossoverRate;
     @FXML private TextField txtFieldTournamentSize;
     @FXML private TextField txtFieldNewCity;
-    @FXML private TextArea txtAreaOutput;
     @FXML private Button btnRun;
     @FXML private Button btnAdd;
     @FXML private LineChart<String, Integer> lineChartFitness;
     @FXML private GridPane gridPaneOptions;
     @FXML private WebView webViewConfig;
+    @FXML private WebView webViewOutput;
 
     // Check combo box for cities
     private CheckComboBox chkComboBoxCities;
@@ -74,7 +74,7 @@ public class TSPSolverController implements Initializable {
         // Pass in the FXML txt area boxes so that the TSP can output to them. A MVC approach
         //      in likely more proper, but, that would increase the run time. May tweak for final implementation 
         //      when we have some graph outputs, maybe. 
-        TSPSolver.setOutput(txtAreaOutput, lineChartFitness, webViewConfig);
+        TSPSolver.setOutput(webViewConfig, webViewOutput, lineChartFitness);
 
         // Initialize the choice box for the crossover function as well as supporting stuff.
         initializeChoiceBoxCrossover();
@@ -99,15 +99,15 @@ public class TSPSolverController implements Initializable {
 
     private void initializeTxtAreaOutputs() {
         // Add listener to the solver output, so that it will auto scroll both to the left and bottom
-        txtAreaOutput.textProperty().addListener(new ChangeListener<Object>() {
-            @Override
-            public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
-                // Sets it to go to bottom
-                txtAreaOutput.setScrollTop(Double.MAX_VALUE); 
-                // Sets it to go to left
-                txtAreaOutput.setScrollLeft(Double.MIN_VALUE);
-            }
-        });
+        // txtAreaOutput.textProperty().addListener(new ChangeListener<Object>() {
+        //     @Override
+        //     public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
+        //         // Sets it to go to bottom
+        //         txtAreaOutput.setScrollTop(Double.MAX_VALUE); 
+        //         // Sets it to go to left
+        //         txtAreaOutput.setScrollLeft(Double.MIN_VALUE);
+        //     }
+        // });
 
         // // add listener to the config output, so that it will auto scroll to TOP and left
         // txtAreaConfig.textProperty().addListener(new ChangeListener<Object>() {
