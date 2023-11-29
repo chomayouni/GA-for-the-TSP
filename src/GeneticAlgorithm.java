@@ -11,6 +11,7 @@ public class GeneticAlgorithm {
     private double crossoverRate;
     private int tournamentSize;
     private String crossoverFcn;
+	private String selectionFcn;
     private int tourSize;
     private int cityMap[][];
     private int parent1Arr[];
@@ -18,12 +19,13 @@ public class GeneticAlgorithm {
     
     private Population population;
 
-    public GeneticAlgorithm(int populationSize, double mutationRate, String crossoverFcn,
+    public GeneticAlgorithm(int populationSize, double mutationRate, String crossoverFcn, String selectionFcn,
 							 double crossoverRate, int tournamentSize, int tourSize, int[][] cityMap)
     {
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
 		this.crossoverFcn = crossoverFcn;
+		this.selectionFcn = selectionFcn;
         this.crossoverRate = crossoverRate;
         this.tournamentSize = tournamentSize;
         this.tourSize = tourSize;
@@ -58,17 +60,36 @@ public class GeneticAlgorithm {
 
     public void selection()
     {
-    	// TODO
-    	for (int i = 0; i < populationSize; i++)
-    	{
-	    	parent1Arr[i] = tournamentSelection();
-	    	parent2Arr[i] = tournamentSelection();
-    	}
+		switch (selectionFcn) {
+			case "Tournament Selection":
+				// System.out.println("Running with " + selectionFcn + " for Selection Function");
+				for (int i = 0; i < populationSize; i++)
+				{
+					parent1Arr[i] = tournamentSelection();
+					parent2Arr[i] = tournamentSelection();
+				}
+				break;
 
-		
-    	// Debug
-    	//System.out.println(Arrays.toString(parent1Arr));
-    	//System.out.println(Arrays.toString(parent2Arr));
+			case "Future Selection 1":
+				// System.out.println("Running with " + selectionFcn + " for Selection Function (Still tourney though)");
+				for (int i = 0; i < populationSize; i++)
+				{
+					parent1Arr[i] = tournamentSelection();
+					parent2Arr[i] = tournamentSelection();
+				}
+				break;
+
+			case "Future Selection 2":
+				// System.out.println("Running with " + selectionFcn + " for Selection Function  (Still tourney though)");
+				for (int i = 0; i < populationSize; i++)
+				{
+					parent1Arr[i] = tournamentSelection();
+					parent2Arr[i] = tournamentSelection();
+				}
+				break;
+			default:
+				break;
+		}
     }
 
 
@@ -97,9 +118,7 @@ public class GeneticAlgorithm {
 
     }
 
-	public void setCrossoverFcn(String crossoverFcn) {
-		this.crossoverFcn = crossoverFcn;
-	}
+
 
 	public String getCrossoverFcn() {
 		return crossoverFcn;
@@ -115,7 +134,7 @@ public class GeneticAlgorithm {
 
 		switch (crossoverFcn) {
 			case "Two Point Crossover":
-				// System.out.println("Running with " + crossoverFcn + " Two Point Crossover");
+				// System.out.println("Running with " + crossoverFcn + " for Crossover Function");
 				// Based on the crossover rate, create a new child or pass
 				// a current member of the population forward
 				for (int i = 0; i < populationSize; i++)
@@ -132,7 +151,7 @@ public class GeneticAlgorithm {
 				
 		
 			case "Future Crossover 1":
-				// System.out.println("Running with " + crossoverFcn + " Two Point Crossover");
+				// System.out.println("Running with " + crossoverFcn + " for Crossover Function (Still two point though)");
 				// Based on the crossover rate, create a new child or pass
 				// a current member of the population forward
 				for (int i = 0; i < populationSize; i++)
@@ -149,7 +168,7 @@ public class GeneticAlgorithm {
 				break;
 
 			case "Future Crossover 2":
-				// System.out.println("Running with " + crossoverFcn + " Two Point Crossover");
+				// System.out.println("Running with " + crossoverFcn + " for Crossover Function (Still two point though)");
 				// Based on the crossover rate, create a new child or pass
 				// a current member of the population forward
 				for (int i = 0; i < populationSize; i++)

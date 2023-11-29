@@ -32,7 +32,8 @@ public class TSPSolverController implements Initializable {
     // These are the FXML contatiners and objects, they have the @FXML tag, which is used to know that it needs 
     //      to correspond to the contatiner that exists in the FXML
     @FXML private VBox mainLayout;
-    @FXML private ChoiceBox choiceBoxCrossover;
+    @FXML private ChoiceBox<String> choiceBoxCrossover;
+    @FXML private ChoiceBox<String> choiceBoxSelection;
     @FXML private TextField txtFieldNumGenerations;
     @FXML private TextField txtFieldTourSize;
     @FXML private TextField txtFieldPopSize;
@@ -48,10 +49,11 @@ public class TSPSolverController implements Initializable {
     @FXML private WebView webViewOutput;
 
     // Check combo box for cities
-    private CheckComboBox chkComboBoxCities;
+    private CheckComboBox<String> chkComboBoxCities;
 
     // Observable lists to tie to the choice box and check combo box, then we will add a listner to them to update the TSP model
     private ObservableList<String> crossoverList = FXCollections.observableArrayList("Two Point Crossover", "Future Crossover 1", "Future Crossover 2");
+    private ObservableList<String> selectionList = FXCollections.observableArrayList("Tournament Selection", "Future Selection 1", "Future Selection 2");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
 
     //
@@ -66,7 +68,8 @@ public class TSPSolverController implements Initializable {
         double crossoverRate = 0.80;
         int tournamentSize = 2;
         String crossoverFcn = crossoverList.get(0); // First one default
-        TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, crossoverFcn);
+        String selectionFcn = selectionList.get(0); // first one default
+        TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, crossoverFcn, selectionFcn);
     }
 
     @Override
@@ -79,11 +82,11 @@ public class TSPSolverController implements Initializable {
         // Initialize the choice box for the crossover function as well as supporting stuff.
         initializeChoiceBoxCrossover();
 
+        // Initialize the choice box fo the selection fcn as well as supporting stuff
+        initializeChoiceBoxSelection();
+
         // Initialize the check combo box for the cities as well as supporting stuff. 
         initializeChkComboBoxCities();
-
-        // Initilize the textArea object for the GUI, adding listener so they auto scroll
-        initializeTxtAreaOutputs();
 
         // Initilize GUI with TSP settings
         // Initilize Text fields and update TSP with pertinent information from startup
@@ -97,31 +100,18 @@ public class TSPSolverController implements Initializable {
         setUserRoute();
     }
 
-    private void initializeTxtAreaOutputs() {
-        // Add listener to the solver output, so that it will auto scroll both to the left and bottom
-        // txtAreaOutput.textProperty().addListener(new ChangeListener<Object>() {
-        //     @Override
-        //     public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
-        //         // Sets it to go to bottom
-        //         txtAreaOutput.setScrollTop(Double.MAX_VALUE); 
-        //         // Sets it to go to left
-        //         txtAreaOutput.setScrollLeft(Double.MIN_VALUE);
-        //     }
-        // });
-
-        // // add listener to the config output, so that it will auto scroll to TOP and left
-        // txtAreaConfig.textProperty().addListener(new ChangeListener<Object>() {
-        //     @Override
-        //     public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
-        //         // Sets it to go to top
-        //         txtAreaConfig.setScrollTop(Double.MIN_VALUE); 
-        //         // Sets it to go to left
-        //         txtAreaConfig.setScrollLeft(Double.MIN_VALUE);
-        //     }
-        // });
-
-        // txtAreaOutput.setText("Initialized....");
-        // txtAreaConfig.setText("Initialized....");
+    private void initializeChoiceBoxSelection() {
+        choiceBoxSelection.setItems(selectionList);
+        choiceBoxSelection.setValue(selectionList.get(0));
+        // Will update the selection function in the TSP automatically on change. Will also update the config show. 
+        choiceBoxSelection.getSelectionModel().selectedIndexProperty().addListener(new
+        ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, 
+            Number value, Number new_value) {
+                // System.out.println("Selection changed from " + value.intValue() + " to " + new_value.intValue());
+                setSelectionFcn(new_value.intValue());
+            } 
+        });
     }
 
 
@@ -227,6 +217,11 @@ public class TSPSolverController implements Initializable {
     // Sets crossover function in TSP from gui
     public void setCrossoverFcn(Number idx) {
         TSPSolver.setCrossoverFcn(crossoverList.get(idx.intValue()));
+    }
+
+    // Sets selection function in TSP from gui
+    public void setSelectionFcn(Number idx) {
+        TSPSolver.setSelectionFcn(selectionList.get(idx.intValue()));
     }
     
     // Sets user route in TSP from gui

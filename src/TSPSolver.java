@@ -35,6 +35,7 @@ public class TSPSolver {
     private double crossoverRate;
     private int tournamentSize;
     private String crossoverFcn;
+    private String selectionFcn;
     private int numGenerations;
     // Objects for the output
     private WebView webViewConfig;
@@ -42,17 +43,16 @@ public class TSPSolver {
     // Objects for the fitness graph
     private LineChart<String, Integer> lineChartFitness;
     private XYChart.Series<String, Integer> fitnessData;
-    // Control var for the line chart scaling, set it artficially big so it will scale down
-    private Integer chartLowBound = 100000;
 
-
-    public TSPSolver(int numGenerations, int populationSize, double mutationRate, double crossoverRate, int tournamentSize, String crossoverFcn) {
+    // Constructor for the solver. Will also create a map. 
+    public TSPSolver(int numGenerations, int populationSize, double mutationRate, double crossoverRate, int tournamentSize, String crossoverFcn, String selectionFcn) {
         this.numGenerations = numGenerations;
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.crossoverRate = crossoverRate;
         this.tournamentSize = tournamentSize;
         this.crossoverFcn = crossoverFcn;
+        this.selectionFcn = selectionFcn;
         map = new Map();
     }
 
@@ -61,13 +61,14 @@ public class TSPSolver {
         tourSize = map.getUserNumberOfCities();
         System.out.println("New Tour Size is " + this.tourSize);
         // Initialize GA
-        GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverFcn,
+        GA =  new GeneticAlgorithm(populationSize, mutationRate, crossoverFcn, selectionFcn,
                 crossoverRate, tournamentSize,tourSize,map.getUserCityMatrix());
     }
 
     private void showConfig() {        
         String content = "<table>"
         + "<tr><th>Crossover Function</th><td>" + this.crossoverFcn + "</td></tr>"
+        + "<tr><th>Selection Function</th><td>" + this.selectionFcn + "</td></tr>"
         + "<tr><th>Number of Generations</th><td>" + this.numGenerations + "</td></tr>"
         + "<tr><th>Tour Size</th><td>" + this.tourSize + "</td></tr>"
         + "<tr><th>Population Size</th><td>" + this.populationSize + "</td></tr>"
@@ -190,6 +191,13 @@ public class TSPSolver {
         // updateTSP();
     }
 
+    public void setSelectionFcn(String selectionFcn) {
+        this.selectionFcn = selectionFcn;
+        showConfig();
+        System.out.println("New Selection Fcn is " + this.selectionFcn);
+        // updateTSP();
+    }
+
     public void setPopulationSize(int populationSize) {
         this.populationSize = populationSize;
         showConfig();
@@ -279,6 +287,11 @@ public class TSPSolver {
     // Return the current crossover function
     public String getCrossoverFcn() {
         return this.crossoverFcn;
+    }
+
+    // Return the current selection function
+    public String getSelectionFcn() {
+        return this.selectionFcn;
     }
 
 }
