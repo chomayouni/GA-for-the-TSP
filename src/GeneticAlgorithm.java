@@ -98,6 +98,7 @@ public class GeneticAlgorithm {
 				for (int i = 0; i < populationSize/2; i++)
 				{
 					parent1Arr[i] = proportionalSelection();
+					
 					parent2Arr[i] = proportionalSelection();
 				}
 				break;
@@ -111,20 +112,30 @@ public class GeneticAlgorithm {
     private int proportionalSelection() {
     	double totalFitness = 0;
     	double runningSumFitness = 0;
-    	double[] survivalProbability = new double[populationSize];
+    	double[] survivalProbability = new double[populationSize];    	
+    	double minFitness = (double)Double.MAX_VALUE;
+    	
+    	// Find the minimum fitness to normalize
+    	for (int i = 0; i < populationSize; i++)
+    	{
+    		if (population.getFitness(i) < minFitness)
+    		{
+    			minFitness = population.getFitness(i);
+    		}
+    	}
+    	
+    	minFitness--;
+    	
     	// Calculate total fitness 
     	for (int i = 0; i < populationSize; i++)
         {
-        	totalFitness += 1/population.getFitness(i);
+        	totalFitness += 1/(population.getFitness(i)-minFitness);
         }
     	
     	// Normalize, store each population members index for survival probability
     	for (int i = 0; i < populationSize; i++)
         {
-    		runningSumFitness += (1/population.getFitness(i))/totalFitness;
-    		
-    		// Debug
-    		// System.out.println("runningSumFitness : " + runningSumFitness);
+    		runningSumFitness += (1/(population.getFitness(i)-minFitness))/totalFitness;
         	survivalProbability[i] = runningSumFitness;
         }
     	
@@ -132,9 +143,9 @@ public class GeneticAlgorithm {
     	double randomValue = (double) (Math.random());
 
     	// Debugging
-    	// System.out.println("totalFitness :" + totalFitness);
-    	// System.out.println("survivalProbability : " + Arrays.toString(survivalProbability));
-        // System.out.println("randomValue :" + randomValue);
+//    	 System.out.println("totalFitness :" + totalFitness);
+//    	 System.out.println("survivalProbability : " + Arrays.toString(survivalProbability));
+//       System.out.println("randomValue :" + randomValue);
         
         // Select a parent based on proportional fitness (weighted roulette)
         for (int i = 0; i < populationSize; i++)
@@ -156,7 +167,7 @@ public class GeneticAlgorithm {
     // Selection not from paper
     private int tournamentSelection()
     {
-        double best = Double.MAX_VALUE;
+        double best = (double)Double.MAX_VALUE;
         int index = 0;
         
         // Create a random subset of the population
@@ -446,17 +457,11 @@ public class GeneticAlgorithm {
                 value = parent2[index];
                 index = indexOf(parent1, value);
             }
-            // Generate the children using the cycles
-            for (int i = 0; i < cycle1.size(); i++) {
-            	int tempIdx = cycle1.get(i);
-                children[0][i] = parent2[tempIdx];
-                tempIdx = cycle2.get(i);
-                children[1][i] = parent2[tempIdx];
-            }
+            
 
-            // Check if the cycles created complete children. If not,
+            // Check if the cycles are complete. If not,
             // find the starting point for the next cycle
-            if (Arrays.stream(children[0]).distinct().count() == tourSize+1) {
+        	if (cycle1.size() == tourSize) {
                 break;
             }
             else
@@ -469,6 +474,14 @@ public class GeneticAlgorithm {
                 }
                 startPos = remainingIndices.stream().min(Integer::compareTo).orElse(-1);
             }
+        }
+        
+        // Generate the children using the cycles
+        for (int i = 0; i < tourSize; i++) {
+        	int tempIdx = cycle1.get(i);
+            children[0][i] = parent2[tempIdx];
+            tempIdx = cycle2.get(i);
+            children[1][i] = parent2[tempIdx];
         }
         // Last city must always be the starting city
         children[0][tourSize] = 1;
@@ -508,7 +521,7 @@ public class GeneticAlgorithm {
 				for(int j = 0; j < tourSize; j++) {
 					illegal_cities[j] = -1;
 				}
-				shortestDistanceTracker = Integer.MAX_VALUE;
+				shortestDistanceTracker = (int)Integer.MAX_VALUE;
 				
 				// find the nearest neighbor.
 				for(int j = 0; j < tourSize; j++) {
@@ -542,7 +555,7 @@ public class GeneticAlgorithm {
 				for(int j = 0; j < tourSize; j++) {
 					illegal_cities[j] = -1;
 				}
-				shortestDistanceTracker = Integer.MAX_VALUE;
+				shortestDistanceTracker = (int)Integer.MAX_VALUE;
 				
 				// find the nearest neighbor.
 				for(int j = 0; j < tourSize; j++) {
@@ -775,7 +788,7 @@ public class GeneticAlgorithm {
     // Get most fit individual
     public Tour getFittest()
     {
-    	double bestFitness = Double.MAX_VALUE;
+    	double bestFitness = (double)Double.MAX_VALUE;
     	int bestIndex = 0;
     	for (int i = 0; i < populationSize; i++)
     	{
@@ -787,7 +800,6 @@ public class GeneticAlgorithm {
     	}
     	return population.getTour(bestIndex);
     }
-    
 
 	// get population size
 	public int getPopulationSize() {
