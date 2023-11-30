@@ -85,6 +85,7 @@ public class TSPSolver {
             GA.crossover();
             GA.mutation();
             GA.fitness();
+            // System.out.println("numGeneration is " + i);
     
             if ((i%(numGenerations/25) == 0) && (i != 0)) {        
                 bestTour = GA.getFittest();
@@ -227,7 +228,7 @@ public class TSPSolver {
 
     // Set output for the config table
     public String getConfigTable() {
-        if (map.getDataset().equals("Cutsom")) {
+        if (map.getDataset().equals("Custom")) {
             String configOutput = "<table>"
             + "<tr><th>Crossover Function</th><td>" + GA.getCrossoverFcn() + "</td></tr>"
             + "<tr><th>Selection Function</th><td>" + GA.getSelectionFcn() + "</td></tr>"
