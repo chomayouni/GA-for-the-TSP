@@ -39,6 +39,7 @@ public class TSPSolverController implements Initializable {
     @FXML private VBox mainLayout;
     @FXML private ChoiceBox<String> choiceBoxCrossover;
     @FXML private ChoiceBox<String> choiceBoxSelection;
+    @FXML private ChoiceBox<String> choiceBoxDataset;
     @FXML private TextField txtFieldNumGenerations;
     @FXML private TextField txtFieldTourSize;
     @FXML private TextField txtFieldPopSize;
@@ -49,7 +50,8 @@ public class TSPSolverController implements Initializable {
     @FXML private Button btnRun;
     @FXML private Button btnAdd;
     @FXML private LineChart<String, Integer> lineChartFitness;
-    @FXML private GridPane gridPaneOptions;
+    @FXML private GridPane gridPanConfig;
+    @FXML private GridPane gridPaneDataset;
     @FXML private WebView webViewConfig;
     @FXML private WebView webViewOutput;
     @FXML private CategoryAxis categoryAxisXFitness;
@@ -61,6 +63,7 @@ public class TSPSolverController implements Initializable {
     // Observable lists to tie to the choice box and check combo box, then we will add a listner to them to update the TSP model
     private ObservableList<String> crossoverList = FXCollections.observableArrayList("One-Point Crossover", "Two-Point Crossover", "CX2 Crossover", "Greedy Crossover");
     private ObservableList<String> selectionList = FXCollections.observableArrayList("Tournament Selection", "Proportional Selection");
+    private ObservableList<String> datasetList = FXCollections.observableArrayList("Custom", "CO04", "GRID04", "HA30", "KN57", "LAU15", "SGB128", "SH07", "SP11", "UK12", "USCA312", "USCAP", "WG22", "WG59");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
 
     // List change listener, we 
@@ -86,6 +89,9 @@ public class TSPSolverController implements Initializable {
 
         // Initialize the choice box fo the selection fcn as well as supporting stuff
         initializeChoiceBoxSelection();
+
+        // Initialize the choice box for the dataset as well as supporting stuff
+        initializeChoiceBoxDataset();
 
         // Initialize the check combo box for the cities as well as supporting stuff. 
         initializeChkComboBoxCities();
@@ -117,15 +123,14 @@ public class TSPSolverController implements Initializable {
             public void changed(ObservableValue<? extends Number> ov, 
             Number value, Number new_value) {
                 // System.out.println("Selection changed from " + value.intValue() + " to " + new_value.intValue());
-                setSelectionFcn(new_value.intValue());
+                setSelectionFcn(selectionList.get(new_value.intValue()));
             } 
         });
     }
 
 
     private void initializeChoiceBoxCrossover() {
-        // Add the observable list to the choice box for the crossover fcn, and update TSP model with it. Not as clean an implementation,
-        //      should be able to call a method or soemthing.
+        // Add the observable list to the choice box for the crossover fcn
         choiceBoxCrossover.setItems(crossoverList);
         choiceBoxCrossover.setValue(crossoverList.get(0));
         
@@ -138,14 +143,28 @@ public class TSPSolverController implements Initializable {
         ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov, 
             Number value, Number new_value) {
-                setCrossoverFcn(new_value.intValue());
+                setCrossoverFcn(crossoverList.get(new_value.intValue()));
             } 
         });
     }
 
+    private void initializeChoiceBoxDataset() {
+        // Add the observable list to the choice box for the dataset
+        choiceBoxDataset.setItems(datasetList);
+        choiceBoxDataset.setValue(datasetList.get(0));
+
+        // add the listener for when the data set choice box is changed. 
+        choiceBoxDataset.getSelectionModel().selectedIndexProperty().addListener(new 
+        ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, 
+            Number value, Number new_value) {
+                System.out.println("Dataset changed from " + datasetList.get(value.intValue()) + " to " + datasetList.get(new_value.intValue()));
+            } 
+        });
+    }
 
     private void initializeChkComboBoxCities() {
-        // Create checkComboBox for cities selection
+        // Create checkComboBox for cities 
         chkComboBoxCities = new CheckComboBox<String>(citiesList);
         chkComboBoxCities.setTitle("Cities");
         // Add cities to list
@@ -168,7 +187,7 @@ public class TSPSolverController implements Initializable {
         addChkComboListener();
 
         // Lastly, add the check combo box to the pertinent container in the gui
-        gridPaneOptions.add(chkComboBoxCities, 1, 8);
+        gridPaneDataset.add(chkComboBoxCities, 1, 1);
     }
 
     // Toggles the elements in the city list
@@ -338,14 +357,14 @@ public class TSPSolverController implements Initializable {
     }
 
     // Sets crossover function in TSP from gui
-    public void setCrossoverFcn(Number idx) {
-        TSPSolver.setCrossoverFcn(crossoverList.get(idx.intValue()));
+    public void setCrossoverFcn(String arg) {
+        TSPSolver.setCrossoverFcn(arg);
         getConfigTable();
     }
 
     // Sets selection function in TSP from gui
-    public void setSelectionFcn(Number idx) {
-        TSPSolver.setSelectionFcn(selectionList.get(idx.intValue()));
+    public void setSelectionFcn(String arg) {
+        TSPSolver.setSelectionFcn(arg);
         getConfigTable();
     }
     
