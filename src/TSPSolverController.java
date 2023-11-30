@@ -1,6 +1,7 @@
 package src;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -13,14 +14,20 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ValueAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+import javafx.util.Pair;
 
 import org.controlsfx.control.CheckComboBox;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.CategoryAxis;
 
 public class TSPSolverController implements Initializable {
 
@@ -45,6 +52,8 @@ public class TSPSolverController implements Initializable {
     @FXML private GridPane gridPaneOptions;
     @FXML private WebView webViewConfig;
     @FXML private WebView webViewOutput;
+    @FXML private CategoryAxis categoryAxisXFitness;
+    @FXML private NumberAxis numberAxisYFitness;
 
     // Check combo box for cities
     private CheckComboBox<String> chkComboBoxCities;
@@ -54,7 +63,7 @@ public class TSPSolverController implements Initializable {
     private ObservableList<String> selectionList = FXCollections.observableArrayList("Tournament Selection", "Proportional Selection");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
 
-    //
+    // List change listener, we 
     private ListChangeListener<String> chkComboListener;
 
     public TSPSolverController() {
@@ -72,11 +81,6 @@ public class TSPSolverController implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        // Pass in the FXML txt area boxes so that the TSP can output to them. A MVC approach
-        //      in likely more proper, but, that would increase the run time. May tweak for final implementation 
-        //      when we have some graph outputs, maybe. 
-        TSPSolver.setOutput(webViewConfig, webViewOutput, lineChartFitness);
-
         // Initialize the choice box for the crossover function as well as supporting stuff.
         initializeChoiceBoxCrossover();
 
@@ -85,6 +89,11 @@ public class TSPSolverController implements Initializable {
 
         // Initialize the check combo box for the cities as well as supporting stuff. 
         initializeChkComboBoxCities();
+
+        // Initilize the css for the output windows webviews
+        webViewConfig.getEngine().setUserStyleSheetLocation(getClass().getResource("../css/GAConfigStyle.css").toString());
+        webViewOutput.getEngine().setUserStyleSheetLocation(getClass().getResource("../css/GASolverStyle.css").toString());
+
 
         // Initilize GUI with TSP settings
         // Initilize Text fields and update TSP with pertinent information from startup
@@ -97,6 +106,7 @@ public class TSPSolverController implements Initializable {
         // Update user route with the defaults, also updated tour szie. 
         setUserRoute();
     }
+
 
     private void initializeChoiceBoxSelection() {
         choiceBoxSelection.setItems(selectionList);
@@ -182,6 +192,7 @@ public class TSPSolverController implements Initializable {
         btnAdd.setDisable(true);
         btnRun.setDisable(true);
         choiceBoxCrossover.setDisable(true);
+        choiceBoxSelection.setDisable(true);
         txtFieldNumGenerations.setDisable(true);
         txtFieldPopSize.setDisable(true);
         txtFieldMutationRate.setDisable(true);
@@ -194,6 +205,7 @@ public class TSPSolverController implements Initializable {
     private void enableInterface() {
         btnAdd.setDisable(false);
         btnRun.setDisable(false);
+        choiceBoxSelection.setDisable(false);
         choiceBoxCrossover.setDisable(false);
         txtFieldNumGenerations.setDisable(false);
         txtFieldPopSize.setDisable(false);
@@ -234,67 +246,107 @@ public class TSPSolverController implements Initializable {
 
     // Run the TSP solver
     public void run() {
-        // Disable buttons
+        // Grab any changes the user didnt hit enter on
         setNumGenerations();
         setPopulationSize();
         setMutationRate();
         setCrossoverRate();
         setTournamentSize();
+        // get the current config table for output
+        getConfigTable();
+        // disable interface
+        disableInterface();
+        // Run the TSP solver in a seperate thread
+        new Thread(() -> {
+            // Run the TSP solver
+            TSPSolver.run();
+            // Enable the interface
+            Platform.runLater(() -> {
+                getTSPTable();
+                getFitnessChart();
+                enableInterface();
+            });
+        }).start();
 
-        // CANT do this do to not properly implemented MVC pattern. JavaFX thread is needed within the TSPSolver.run call stack (Updating graph and output), so we cant break it out of into its own thread. 
-        //      One quick and dirty thing I can try, is to have the TSPSolver never actualy updated the gui, but build the two models (It does this now, but for the output only) and then on the return call to this method run(), call a seperate TSP method to 
-        //      show it. 
-        // Break out the non javaFX stuff into a seperate thread, this allows us to disable the buttons, then schedule them to be re-enabled AFTER
-        // new Thread() {
-        //     public void run() {
-        //         TSPSolver.run();
-        //         // Enable buttons
-        //         Platform.runLater(() -> {
-        //             enableInterface();
-        //         });
-        //     }
-        // }.start();
-        TSPSolver.run();
-        enableInterface();
+    }
+
+    public void getConfigTable() {
+        webViewConfig.getEngine().loadContent(TSPSolver.getConfigTable());
+    }
+
+    public void getTSPTable() {
+        webViewOutput.getEngine().loadContent(TSPSolver.getTSPTableData());
+    }
+
+    public void getFitnessChart() {
+        // Objects for the XYChart fitness graph
+        lineChartFitness.getData().clear();
+        Integer minFitness = Integer.MAX_VALUE;
+        Integer maxFitness = Integer.MIN_VALUE;
+        XYChart.Series<String, Integer> fitnessSeries = new XYChart.Series<String, Integer>();
+        Pair<ArrayList<String>, ArrayList<Double>> fitnessData = TSPSolver.getFitnessData();
+        for(int i = 0; i < fitnessData.getKey().size(); i++) {
+            fitnessSeries.getData().add(new XYChart.Data<String, Integer>(fitnessData.getKey().get(i), fitnessData.getValue().get(i).intValue()));
+            if (fitnessData.getValue().get(i).intValue() < minFitness) {
+                minFitness = fitnessData.getValue().get(i).intValue();
+            }
+            if (fitnessData.getValue().get(i).intValue() > maxFitness) {
+                maxFitness = fitnessData.getValue().get(i).intValue();
+            }
+        }
+        lineChartFitness.getData().add(fitnessSeries);
+        numberAxisYFitness.setAutoRanging(false);
+        numberAxisYFitness.setTickUnit(1000);
+        numberAxisYFitness.setMinorTickVisible(false);
+        numberAxisYFitness.setUpperBound((maxFitness + (int)(maxFitness * 0.1)) - ((maxFitness + (int)(maxFitness * 0.1)) % 100));
+        numberAxisYFitness.setLowerBound((minFitness - (int)(minFitness * 0.1)) - ((minFitness - (int)(minFitness * 0.1)) % 100));
     }
 
     // Get tour size to update GUI field
     public void getTourSize() {
         txtFieldTourSize.setText(Integer.toString(TSPSolver.getTourSize()));
+        getConfigTable();
     }
     // Sets number of generations in TSP from gui
     public void setNumGenerations() {
         TSPSolver.setNumGenerations(Integer.parseInt(txtFieldNumGenerations.getText()));
+        getConfigTable();
     }
 
     // Sets population size in TSP from gui
     public void setPopulationSize() {
         TSPSolver.setPopulationSize(Integer.parseInt(txtFieldPopSize.getText()));
+        getConfigTable();
     }    
 
     // Sets mutation rate in TSP from gui
     public void setMutationRate() {
         TSPSolver.setMutationRate(Double.parseDouble(txtFieldMutationRate.getText()));
+        getConfigTable();
     }
     
     // Sets crossover rate in TSP from gui
     public void setCrossoverRate() {
         TSPSolver.setCrossoverRate(Double.parseDouble(txtFieldCrossoverRate.getText()));
+        getConfigTable();
     }
 
     // Sets tournament size in TSP from gui
     public void setTournamentSize() {
         TSPSolver.setTournamentSize(Integer.parseInt(txtFieldTournamentSize.getText()));
+        getConfigTable();
     }
 
     // Sets crossover function in TSP from gui
     public void setCrossoverFcn(Number idx) {
         TSPSolver.setCrossoverFcn(crossoverList.get(idx.intValue()));
+        getConfigTable();
     }
 
     // Sets selection function in TSP from gui
     public void setSelectionFcn(Number idx) {
         TSPSolver.setSelectionFcn(selectionList.get(idx.intValue()));
+        getConfigTable();
     }
     
     // Sets user route in TSP from gui
@@ -306,6 +358,7 @@ public class TSPSolverController implements Initializable {
 
         // Update tour size, since the user route has changed
         getTourSize();
+        getConfigTable();
     }
     
 }
