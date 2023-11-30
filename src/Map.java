@@ -169,7 +169,9 @@ public class Map {
         initilizeCitiesScanner();
         //Skip the number of cities, and name of cities
         citiesScanner.nextLine();
-        citiesScanner.nextLine();
+        if (dataset.equals("Custom")) {
+            citiesScanner.nextLine();
+        }
         // Map var that will be returned
         map = new int[numberOfCities][numberOfCities];
         //Print through the matrices
