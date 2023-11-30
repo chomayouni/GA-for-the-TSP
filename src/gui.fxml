@@ -51,7 +51,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox fx:id="mainLayout" prefHeight="1135.0" prefWidth="1720.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.TSPSolverController">
+<VBox fx:id="mainLayout" prefHeight="883.0" prefWidth="1461.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.TSPSolverController">
   <children>
     <MenuBar prefHeight="0.0" prefWidth="1163.0" VBox.vgrow="NEVER">
       <menus>
@@ -92,9 +92,9 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.1782421634910879" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.17272104180945852" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-            <SplitPane dividerPositions="0.4359205776173285, 0.6796028880866426" orientation="VERTICAL" prefHeight="742.0" prefWidth="402.0">
+            <SplitPane dividerPositions="0.5327102803738317, 0.6577102803738317" orientation="VERTICAL" prefHeight="742.0" prefWidth="402.0">
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="478.0" prefWidth="296.0">
                      <children>
@@ -174,9 +174,9 @@
             </SplitPane>
         <AnchorPane prefHeight="1136.0" prefWidth="1409.0">
                <children>
-                  <Label layoutX="125.0" layoutY="656.0" text="Genetic Algorithm Configuration" />
-                  <Label layoutX="825.0" layoutY="656.0" text="Solver Output" />
-                  <LineChart fx:id="lineChartFitness" alternativeColumnFillVisible="true" animated="false" layoutX="23.0" layoutY="33.0" legendVisible="false" prefHeight="607.0" prefWidth="1288.0" title="Fitness">
+                  <Label layoutX="125.0" layoutY="546.0" text="Genetic Algorithm Configuration" />
+                  <Label layoutX="769.0" layoutY="546.0" text="Solver Output" />
+                  <LineChart fx:id="lineChartFitness" alternativeColumnFillVisible="true" animated="false" layoutX="25.0" layoutY="14.0" legendVisible="false" prefHeight="530.0" prefWidth="978.0" title="Fitness">
                     <xAxis>
                       <CategoryAxis fx:id="categoryAxisXFitness" label="Interation" prefHeight="53.0" prefWidth="1210.0" side="BOTTOM" />
                     </xAxis>
@@ -184,8 +184,8 @@
                       <NumberAxis fx:id="numberAxisYFitness" label="Fitness (Miles)" side="LEFT" />
                     </yAxis>
                   </LineChart>
-                  <WebView fx:id="webViewConfig" layoutX="25.0" layoutY="691.0" prefHeight="403.0" prefWidth="373.0" />
-                  <WebView fx:id="webViewOutput" layoutX="408.0" layoutY="691.0" prefHeight="403.0" prefWidth="986.0" />
+                  <WebView fx:id="webViewConfig" layoutX="25.0" layoutY="576.0" prefHeight="263.0" prefWidth="373.0" />
+                  <WebView fx:id="webViewOutput" layoutX="409.0" layoutY="576.0" prefHeight="263.0" prefWidth="795.0" />
                </children></AnchorPane>
       </items>
     </SplitPane>

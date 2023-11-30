@@ -20,11 +20,12 @@ public class TSPSolver {
     private int numGenerations;
 
     // Constructor for the solver. Will also create a map. 
-    public TSPSolver(int numGenerations, int populationSize, double mutationRate, double crossoverRate, int tournamentSize, String crossoverFcn, String selectionFcn) {
+    public TSPSolver(int numGenerations, int populationSize, double mutationRate, double crossoverRate, int tournamentSize, String crossoverFcn, String selectionFcn, String dataset) {
         // set initial num generations
         this.numGenerations = numGenerations;
         // Create new Map object to handle database stuff. 
-        map = new Map();
+        map = new Map(dataset);
+        map.reload();
         // Created before any user cites are set, so just go off of the base map (all the database). Will be updated imediately due
         //      to TSPSoverController setting other defaults, and control stack following through
         GA = new GeneticAlgorithm(crossoverFcn, selectionFcn, populationSize, mutationRate,
@@ -165,6 +166,12 @@ public class TSPSolver {
         System.out.println("New Number of Generations is " + this.numGenerations);
     }
 
+    public void setDataset(String dataset) {
+        map.setDataset(dataset);
+        GA.setTourSize(map.getNumberOfCities());
+        GA.setCityMap(map.getCityMatrix());
+    }
+
     public Pair<ArrayList<String>, ArrayList<Double>> getFitnessData() {
         return new Pair<ArrayList<String>, ArrayList<Double>>(fitnessXData, fitnessYData);
     }
@@ -213,20 +220,41 @@ public class TSPSolver {
         return GA.getSelectionFcn();
     }
 
+    // Return the current dataset  
+    public String getDataset() {
+        return map.getDataset();
+    }
+
     // Set output for the config table
-    public String getConfigTable() {        
-        String configOutput = "<table>"
-        + "<tr><th>Crossover Function</th><td>" + GA.getCrossoverFcn() + "</td></tr>"
-        + "<tr><th>Selection Function</th><td>" + GA.getSelectionFcn() + "</td></tr>"
-        + "<tr><th>Number of Generations</th><td>" + numGenerations + "</td></tr>"
-        + "<tr><th>Tour Size</th><td>" + GA.getTourSize() + "</td></tr>"
-        + "<tr><th>Population Size</th><td>" + GA.getPopulationSize() + "</td></tr>"
-        + "<tr><th>Mutation Rate</th><td>" + GA.getMutationRate() + "</td></tr>"
-        + "<tr><th>Crossover Rate</th><td>" + GA.getCrossoverRate() + "</td></tr>"
-        + "<tr><th>Tournament Size</th><td>" + GA.getTournamentSize() + "</td></tr>"
-        + "<tr><th>User Route</th><td>" + map.toStringUser() + "</td></tr>"
-        + "</table>";
+    public String getConfigTable() {
+        if (map.getDataset() == "Custom") {
+            String configOutput = "<table>"
+            + "<tr><th>Crossover Function</th><td>" + GA.getCrossoverFcn() + "</td></tr>"
+            + "<tr><th>Selection Function</th><td>" + GA.getSelectionFcn() + "</td></tr>"
+            + "<tr><th>Number of Generations</th><td>" + numGenerations + "</td></tr>"
+            + "<tr><th>Tour Size</th><td>" + GA.getTourSize() + "</td></tr>"
+            + "<tr><th>Population Size</th><td>" + GA.getPopulationSize() + "</td></tr>"
+            + "<tr><th>Mutation Rate</th><td>" + GA.getMutationRate() + "</td></tr>"
+            + "<tr><th>Crossover Rate</th><td>" + GA.getCrossoverRate() + "</td></tr>"
+            + "<tr><th>Tournament Size</th><td>" + GA.getTournamentSize() + "</td></tr>"
+            + "<tr><th>Custom Route</th><td>" + map.toStringUser() + "</td></tr>"
+            + "</table>";
+            return configOutput;
+        } 
+        else {
+            String configOutput = "<table>"
+            + "<tr><th>Crossover Function</th><td>" + GA.getCrossoverFcn() + "</td></tr>"
+            + "<tr><th>Selection Function</th><td>" + GA.getSelectionFcn() + "</td></tr>"
+            + "<tr><th>Number of Generations</th><td>" + numGenerations + "</td></tr>"
+            + "<tr><th>Tour Size</th><td>" + GA.getTourSize() + "</td></tr>"
+            + "<tr><th>Population Size</th><td>" + GA.getPopulationSize() + "</td></tr>"
+            + "<tr><th>Mutation Rate</th><td>" + GA.getMutationRate() + "</td></tr>"
+            + "<tr><th>Crossover Rate</th><td>" + GA.getCrossoverRate() + "</td></tr>"
+            + "<tr><th>Tournament Size</th><td>" + GA.getTournamentSize() + "</td></tr>"
+            + "<tr><th>Dataset</th><td>" + map.getDataset() + "</td></tr>"
+            + "</table>";
         return configOutput;
+        }
     }
 
     public String getTSPTableData() {

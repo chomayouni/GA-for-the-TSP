@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -26,7 +25,6 @@ import javafx.scene.web.WebView;
 import javafx.util.Pair;
 
 import org.controlsfx.control.CheckComboBox;
-import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
 
 public class TSPSolverController implements Initializable {
@@ -63,7 +61,7 @@ public class TSPSolverController implements Initializable {
     // Observable lists to tie to the choice box and check combo box, then we will add a listner to them to update the TSP model
     private ObservableList<String> crossoverList = FXCollections.observableArrayList("One-Point Crossover", "Two-Point Crossover", "CX2 Crossover", "Greedy Crossover");
     private ObservableList<String> selectionList = FXCollections.observableArrayList("Tournament Selection", "Proportional Selection");
-    private ObservableList<String> datasetList = FXCollections.observableArrayList("Custom", "CO04", "GRID04", "HA30", "KN57", "LAU15", "SGB128", "SH07", "SP11", "UK12", "USCA312", "USCAP", "WG22", "WG59");
+    private ObservableList<String> datasetList = FXCollections.observableArrayList("Custom", "smallBackup", "CO04", "GRID04", "HA30", "KN57", "LAU15", "SGB128", "SH07", "SP11", "UK12", "USCA312", "USCAP", "WG22", "WG59");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
 
     // List change listener, we 
@@ -77,11 +75,14 @@ public class TSPSolverController implements Initializable {
         double mutationRate = 0.05;
         double crossoverRate = 0.80;
         int tournamentSize = 2;
-        String crossoverFcn = crossoverList.get(0); // First one default
-        String selectionFcn = selectionList.get(0); // first one default
-        TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, crossoverFcn, selectionFcn);
+        String initialCrossoverFcn = crossoverList.get(0); // First one default
+        String initialSelectionFcn = selectionList.get(0); // first one default
+        String initialDataset = datasetList.get(0); // first one default
+        TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, initialCrossoverFcn, initialSelectionFcn, initialDataset);
     }
 
+    // This method is automatically called after the FXML is loaded, it is the "constructor" for the FXML. Need to place any FXMLlogic in here, as the normal, TSPSOlverController constructor does not
+    //      have access to the FXML objects yet. 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         // Initialize the choice box for the crossover function as well as supporting stuff.
@@ -158,7 +159,9 @@ public class TSPSolverController implements Initializable {
         ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov, 
             Number value, Number new_value) {
-                System.out.println("Dataset changed from " + datasetList.get(value.intValue()) + " to " + datasetList.get(new_value.intValue()));
+                // System.out.println("Dataset changed from " + datasetList.get(value.intValue()) + " to " + datasetList.get(new_value.intValue()));
+                setDataset(datasetList.get(new_value.intValue()));  
+                getTourSize();
             } 
         });
     }
@@ -365,6 +368,11 @@ public class TSPSolverController implements Initializable {
     // Sets selection function in TSP from gui
     public void setSelectionFcn(String arg) {
         TSPSolver.setSelectionFcn(arg);
+        getConfigTable();
+    }
+
+    public void setDataset(String arg) {
+        TSPSolver.setDataset(arg);
         getConfigTable();
     }
     

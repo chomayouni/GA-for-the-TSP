@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class Map {
     // file object ot point to the cities DB
     private File citiesFile;
+    // dataset name for the file path fro the File object
+    private String dataset;
     // scanner object which is used to parse text in the associiated file
     private Scanner citiesScanner;
     // variable to hold number of cities
@@ -28,10 +30,10 @@ public class Map {
     private Google google;
     
 
-    public Map() {
+    public Map(String dataset) {
         map = null;
-        
-        citiesFile = new File("GA-for-the-TSP/data/cities.txt");
+        this.dataset = dataset;
+        citiesFile = new File("GA-for-the-TSP/data/" + this.dataset + ".txt");
         System.out.println("New map");
         google = new Google();
         setNumberOfCities();
@@ -42,7 +44,7 @@ public class Map {
     // Reload from database, used when adding cities
     public void reload() {
         map = null;
-        System.out.println("Reloading data from database");
+        System.out.println("Reloading data from dataset");
         setNumberOfCities();
         setCityNames();
         createCitiesMatrix();
@@ -245,6 +247,15 @@ public class Map {
         userNumberOfCities = userRoute.length;
     }
 
+    // Sets the dataset and resets the CitiesFile object. Lastly, reload the map to update all the changes from teh new dataset. 
+    public void setDataset(String dataset) {
+        this.dataset = dataset;
+        citiesFile = null;
+        citiesFile = new File("GA-for-the-TSP/data/" + this.dataset + ".txt");
+        System.out.println("New Dataset is " + this.dataset);
+        reload();
+    }
+
     // Return the matrix of cities
     public int[][] getCityMatrix() {
         return map;
@@ -273,6 +284,11 @@ public class Map {
     // return the city names in the user route set
     public String[] getUserCityNames() {
         return userCityNames;
+    }
+
+    //  get the current dataset
+    public String getDataset() {
+        return dataset;
     }
 
     // Take in route indices, return route names as Array List
