@@ -18,6 +18,10 @@ public class TSPSolver {
     private LineChart<String, Integer> lineChartFitness;
     private XYChart.Series<String, Integer> fitnessData;
 
+    // String for the config output and Stringbuilder sovlerOutput;
+    private String configOutput;
+    private StringBuilder solverOutput;
+
     // Control for running the GA, should be in GA object, but thats A LOT of refactoring
     private int numGenerations;
 
@@ -35,7 +39,7 @@ public class TSPSolver {
 
 
     private void showConfig() {        
-        String content = "<table>"
+        configOutput = "<table>"
         + "<tr><th>Crossover Function</th><td>" + GA.getCrossoverFcn() + "</td></tr>"
         + "<tr><th>Selection Function</th><td>" + GA.getSelectionFcn() + "</td></tr>"
         + "<tr><th>Number of Generations</th><td>" + numGenerations + "</td></tr>"
@@ -47,12 +51,25 @@ public class TSPSolver {
         + "<tr><th>User Route</th><td>" + map.toStringUser() + "</td></tr>"
         + "</table>";
     // webViewConfig.applyCss();
-    webViewConfig.getEngine().loadContent(content);
+    webViewConfig.getEngine().loadContent(configOutput);
     }
 
-    private void showOutput(String content) {
+    private void updateChartData(int i, double fitness) {
+        fitnessData.getData().add(new XYChart.Data(Integer.toString(i), fitness));
+        lineChartFitness.getData().remove(fitnessData);
+        // lineChartFitness.getData().add(fitnessData);
+    }
+
+    private void clearChart() {
+        fitnessData.getData().clear();
+        lineChartFitness.getData().removeAll(fitnessData);
+    }
+
+
+    public void showOutput() {
         // webViewOutput.applyCss();
-        webViewOutput.getEngine().loadContent(content);
+        webViewOutput.getEngine().loadContent(solverOutput.toString());
+        lineChartFitness.getData().add(fitnessData);
     }
 
     // Add a city to the data base
@@ -70,18 +87,6 @@ public class TSPSolver {
 
     }
 
-    private void updateChart(int i, double fitness) {
-        fitnessData.getData().add(new XYChart.Data(Integer.toString(i), fitness));
-        lineChartFitness.getData().remove(fitnessData);
-        lineChartFitness.getData().add(fitnessData);
-    }
-
-    private void clearChart() {
-        fitnessData.getData().clear();
-        lineChartFitness.getData().removeAll(fitnessData);
-    }
-
-
     public void run() {
         // Must get fitness before GA operation loop
         // updateTSP();
@@ -96,15 +101,15 @@ public class TSPSolver {
     
         // Clear chart for new runs, create new content for the output
         clearChart();
-        StringBuilder content = new StringBuilder("<table><tr><th>Iteration</th><th>Route</th><th>Distance</th></tr>");
+        solverOutput = new StringBuilder("<table><tr><th>Iteration</th><th>Route</th><th>Distance</th></tr>");
     
         // Add initial solution to the table
-        content.append("<tr><td>Initial</td><td>")
+        solverOutput.append("<tr><td>Initial</td><td>")
                .append(Arrays.toString(bestTour.getRoute()))
                .append("</td><td>")
                .append(bestTour.getFitness())
                .append("</td></tr>");
-               updateChart(0, bestTour.getFitness());
+            //    updateChartData(0, bestTour.getFitness());
     
         for (int i = 0; i < numGenerations; i++) {
             GA.selection();
@@ -116,26 +121,26 @@ public class TSPSolver {
                 bestTour = GA.getFittest();
     
                 // Add current record to the table
-                content.append("<tr><td>").append(i)
+                solverOutput.append("<tr><td>").append(i)
                        .append("</td><td>").append(Arrays.toString(bestTour.getRoute()))
                        .append("</td><td>").append(bestTour.getFitness())
                        .append("</td></tr>");
     
-                updateChart(i, bestTour.getFitness());
+                updateChartData(i, bestTour.getFitness());
             }
         }
     
         // Add final solution to the table
         bestTour = GA.getFittest();
-        content.append("<tr><td>Final</td><td>")
+        solverOutput.append("<tr><td>Final</td><td>")
                .append(Arrays.toString(bestTour.getRoute()))
                .append("</td><td>")
                .append(bestTour.getFitness())
                .append("</td></tr>");
         // Finish the table
-        content.append("</table>");
+        solverOutput.append("</table>");
         // Show the table. 
-        showOutput(content.toString());
+        // showOutput(content.toString());
     
         // Print results to the console
         System.out.println("Finished");
@@ -224,7 +229,7 @@ public class TSPSolver {
         this.lineChartFitness = lineChartFitness;
         fitnessData = new XYChart.Series<>();
         lineChartFitness.getData().add(fitnessData);
-        updateChart(5, 5);
+        // updateChartData(5, 5);
         clearChart();
     }
 

@@ -182,6 +182,7 @@ public class TSPSolverController implements Initializable {
         btnAdd.setDisable(true);
         btnRun.setDisable(true);
         choiceBoxCrossover.setDisable(true);
+        choiceBoxSelection.setDisable(true);
         txtFieldNumGenerations.setDisable(true);
         txtFieldPopSize.setDisable(true);
         txtFieldMutationRate.setDisable(true);
@@ -194,6 +195,7 @@ public class TSPSolverController implements Initializable {
     private void enableInterface() {
         btnAdd.setDisable(false);
         btnRun.setDisable(false);
+        choiceBoxSelection.setDisable(false);
         choiceBoxCrossover.setDisable(false);
         txtFieldNumGenerations.setDisable(false);
         txtFieldPopSize.setDisable(false);
@@ -240,22 +242,29 @@ public class TSPSolverController implements Initializable {
         setMutationRate();
         setCrossoverRate();
         setTournamentSize();
+        disableInterface();
 
         // CANT do this do to not properly implemented MVC pattern. JavaFX thread is needed within the TSPSolver.run call stack (Updating graph and output), so we cant break it out of into its own thread. 
         //      One quick and dirty thing I can try, is to have the TSPSolver never actualy updated the gui, but build the two models (It does this now, but for the output only) and then on the return call to this method run(), call a seperate TSP method to 
         //      show it. 
         // Break out the non javaFX stuff into a seperate thread, this allows us to disable the buttons, then schedule them to be re-enabled AFTER
-        // new Thread() {
-        //     public void run() {
-        //         TSPSolver.run();
-        //         // Enable buttons
-        //         Platform.runLater(() -> {
-        //             enableInterface();
-        //         });
-        //     }
-        // }.start();
-        TSPSolver.run();
-        enableInterface();
+        new Thread() {
+            public void run() {
+                TSPSolver.run();
+                // Enable buttons
+                Platform.runLater(() -> {
+                    TSPSolver.showOutput();
+                    enableInterface();
+                });
+            }
+        }.start();
+        // TSPSolver.run();
+        // enableInterface();
+    }
+
+    // showOuput
+    public void showOutput() {
+        // TSPSolver.showOutput();
     }
 
     // Get tour size to update GUI field
