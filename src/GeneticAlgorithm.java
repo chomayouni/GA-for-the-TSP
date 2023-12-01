@@ -305,6 +305,56 @@ public class GeneticAlgorithm {
 				population = childPop;
 				break;
 
+			case "CX Crossover":
+				// System.out.println("Performing " + crossoverFcn);
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i+=2)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+		   				children = cxCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
+						}
+					}
+					else
+					{
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
+							}
+						}
+					}
+				}
+				// Debug
+				// for (int i = 0; i < populationSize; i++)
+				// 	 System.out.println("(crossover) childPop " + i + " : " + Arrays.toString(childPop.getRoute(i)));
+				
+				// Save the new population
+				population = childPop;
+				break;
 			case "CX2 Crossover":
 				// System.out.println("Performing " + crossoverFcn);
 				// Based on the crossover rate, create a new child or pass
@@ -399,6 +449,10 @@ public class GeneticAlgorithm {
 						}
 					}
 				}
+				// Save the new population
+				population = childPop;
+				break;
+				
 			case "PMX Crossover":
 				// System.out.println("Performing " + crossoverFcn);
 				// Based on the crossover rate, create a new child or pass
@@ -443,6 +497,9 @@ public class GeneticAlgorithm {
 						}
 					}
 				}
+				// Save the new population
+				population = childPop;
+				break;
 				
 			case "OX Crossover":
 				// System.out.println("Performing " + crossoverFcn);
@@ -499,10 +556,6 @@ public class GeneticAlgorithm {
 				System.out.println("Invalid crossover function passed into GA");
 				break;
 		}
-
-
-
-
     }
     
     // Paper four Order Crossover
@@ -660,6 +713,82 @@ public class GeneticAlgorithm {
         
         // Last city must always be the starting city
         children[0][tourSize] = 1;
+        children[1][tourSize] = 1;
+        
+    	return children;
+    }
+    
+    public int[][] cxCrossover(int parent1Idx, int parent2Idx)
+    {
+    	int[] parent1 = population.getRoute(parent1Idx);
+    	int[] parent2 = population.getRoute(parent2Idx);
+    	int[][] children = new int[2][tourSize+1];
+    	Arrays.fill(children[0], -1);
+        Arrays.fill(children[1], -1);
+        List<Integer> cycle1 = new ArrayList<Integer>();
+        List<Integer> values1 = new ArrayList<Integer>();
+        List<Integer> cycle2 = new ArrayList<Integer>();
+        List<Integer> values2 = new ArrayList<Integer>();
+        int startPos = 1;
+           
+        // Create the first cycle.
+    	cycle1.add(startPos);
+    	values1.add(parent1[startPos]);
+    	int value = parent2[startPos];
+    	values1.add(value);
+    	int index = indexOf(parent1,value);
+    	while (index != startPos) 
+    	{
+    		cycle1.add(index);
+    		value = parent2[index];
+    		values1.add(value);
+    		index = indexOf(parent1,value);
+    	}
+    	
+    	// Create the second cycle.
+    	startPos = 1;
+    	cycle2.add(startPos);
+    	values2.add(parent2[startPos]);
+    	value = parent1[startPos];
+    	values2.add(value);
+    	index = indexOf(parent2,value);
+    	while (index != startPos) 
+    	{
+    		cycle2.add(index);
+    		value = parent1[index];
+    		values2.add(value);
+    		index = indexOf(parent2,value);
+    	}
+    	
+    	// Populate the first child using the first cycle
+    	for (int i = 0; i < cycle1.size(); i++)
+    	{
+    		children[0][cycle1.get(i)] = values1.get(i);
+    	}
+    	
+    	// Populate the second child using the second child
+    	for (int i = 0; i < cycle2.size(); i++)
+    	{
+    		children[1][cycle2.get(i)] = values2.get(i);
+    	}
+    	
+    	// Fill in missing cities from opposing parent
+    	for (int i = 1; i < tourSize; i++)
+    	{
+    		if (children[0][i] == -1)
+    		{
+    			children[0][i] = parent2[i];
+    		}
+    		if (children[1][i] == -1)
+    		{
+    			children[1][i] = parent1[i];
+    		}
+    	}
+    	
+    	// First and last city must always be the starting city
+    	children[0][0] = 1;
+        children[1][0] = 1;
+    	children[0][tourSize] = 1;
         children[1][tourSize] = 1;
         
     	return children;
