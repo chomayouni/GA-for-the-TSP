@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 
 public class Map {
-    // file object ot point to the cities DB
+    // file object to point to the cities DB
     private File citiesFile;
     // dataset name for the file path fro the File object
     private String dataset;
@@ -26,7 +26,7 @@ public class Map {
     private int userNumberOfCities;
     // User defined route, used to create the user defined map
     private int[] userRoute = {};
-    // Object for useing google API
+    // Object for using google API
     private Google google;
     
 
