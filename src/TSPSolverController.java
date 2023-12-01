@@ -61,7 +61,7 @@ public class TSPSolverController implements Initializable {
     // Observable lists to tie to the choice box and check combo box, then we will add a listner to them to update the TSP model
     private ObservableList<String> crossoverList = FXCollections.observableArrayList("One-Point Crossover", "Two-Point Crossover", "CX2 Crossover", "Greedy Crossover");
     private ObservableList<String> selectionList = FXCollections.observableArrayList("Tournament Selection", "Proportional Selection");
-    private ObservableList<String> datasetList = FXCollections.observableArrayList("Custom", "CO04", "GRID04", "HA30", "KN57", "LAU15", "SGB128", "SH07", "SP11", "UK12", "USCA312", "USCAP", "WG22", "WG59");
+    private ObservableList<String> datasetList = FXCollections.observableArrayList("Custom", "CO04", "HA30", "KN57", "LAU15", "SGB128", "SH07", "SP11", "UK12", "USCA312", "WG22", "WG59");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
 
     // List change listener, we 
@@ -215,6 +215,8 @@ public class TSPSolverController implements Initializable {
         btnRun.setDisable(true);
         choiceBoxCrossover.setDisable(true);
         choiceBoxSelection.setDisable(true);
+        choiceBoxDataset.setDisable(true);
+        chkComboBoxCities.setDisable(true);
         txtFieldNumGenerations.setDisable(true);
         txtFieldPopSize.setDisable(true);
         txtFieldMutationRate.setDisable(true);
@@ -225,7 +227,6 @@ public class TSPSolverController implements Initializable {
     }
 
     private void enableInterface() {
-        btnAdd.setDisable(false);
         btnRun.setDisable(false);
         choiceBoxSelection.setDisable(false);
         choiceBoxCrossover.setDisable(false);
@@ -235,7 +236,13 @@ public class TSPSolverController implements Initializable {
         txtFieldCrossoverRate.setDisable(false);
         txtFieldTournamentSize.setDisable(false);
         chkComboBoxCities.setDisable(false);
-        txtFieldNewCity.setDisable(false);
+
+        // Conditionally turn on only if custom data set is being used. 
+        if (choiceBoxDataset.getValue().equals("Custom")) {
+            btnAdd.setDisable(false);
+            txtFieldNewCity.setDisable(false);
+            chkComboBoxCities.setDisable(false);
+        }
     }
 
     // Adds new city to database
@@ -372,6 +379,15 @@ public class TSPSolverController implements Initializable {
     }
 
     public void setDataset(String arg) {
+        if (arg.equals("Custom")) {
+            btnAdd.setDisable(false);
+            txtFieldNewCity.setDisable(false);
+            chkComboBoxCities.setDisable(false);
+        } else {
+            btnAdd.setDisable(true);
+            txtFieldNewCity.setDisable(true);
+            chkComboBoxCities.setDisable(true);
+        }
         TSPSolver.setDataset(arg);
         getConfigTable();
     }
