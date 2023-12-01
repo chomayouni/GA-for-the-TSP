@@ -59,7 +59,7 @@ public class TSPSolverController implements Initializable {
     private CheckComboBox<String> chkComboBoxCities;
 
     // Observable lists to tie to the choice box and check combo box, then we will add a listner to them to update the TSP model
-    private ObservableList<String> crossoverList = FXCollections.observableArrayList("One-Point Crossover", "Two-Point Crossover", "CX2 Crossover", "Greedy Crossover");
+    private ObservableList<String> crossoverList = FXCollections.observableArrayList("One-Point Crossover", "Two-Point Crossover", "CX2 Crossover", "Greedy Crossover", "PMX Crossover");
     private ObservableList<String> selectionList = FXCollections.observableArrayList("Tournament Selection", "Proportional Selection");
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
 

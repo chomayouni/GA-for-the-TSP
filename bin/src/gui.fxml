@@ -163,10 +163,10 @@
                   <Label layoutX="825.0" layoutY="656.0" text="Solver Output" />
                   <LineChart fx:id="lineChartFitness" alternativeColumnFillVisible="true" animated="false" layoutX="23.0" layoutY="33.0" legendVisible="false" prefHeight="607.0" prefWidth="1288.0" title="Fitness">
                     <xAxis>
-                      <CategoryAxis label="Interation" prefHeight="53.0" prefWidth="1210.0" side="BOTTOM" />
+                      <CategoryAxis fx:id="categoryAxisXFitness" label="Interation" prefHeight="53.0" prefWidth="1210.0" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                      <NumberAxis label="Fitness (Miles)" side="LEFT" />
+                      <NumberAxis fx:id="numberAxisYFitness" label="Fitness (Miles)" side="LEFT" />
                     </yAxis>
                   </LineChart>
                   <WebView fx:id="webViewConfig" layoutX="25.0" layoutY="691.0" prefHeight="498.0" prefWidth="373.0" />

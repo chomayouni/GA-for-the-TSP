@@ -399,6 +399,50 @@ public class GeneticAlgorithm {
 						}
 					}
 				}
+			case "PMX Crossover":
+				// System.out.println("Performing " + crossoverFcn);
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i+=2)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+						children = pmxCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+						// Each set of parents should create two children
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
+						}
+					}
+					else
+					{
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
+							}
+						}
+					}
+				}
 				// Debug
 				// for (int i = 0; i < populationSize; i++)
 				// 	 System.out.println("(crossover) childPop " + i + " : " + Arrays.toString(childPop.getRoute(i)));
@@ -415,9 +459,115 @@ public class GeneticAlgorithm {
 
 
     }
+    
+    // Paper four partially-mapped crossover
+    public int[][] pmxCrossover(int parent1Idx, int parent2Idx)
+    {
+    	int[] parent1 = population.getRoute(parent1Idx);
+    	int[] parent2 = population.getRoute(parent2Idx);
+    	int[][] children = new int[2][tourSize+1];
+    	Arrays.fill(children[0], -1);
+        Arrays.fill(children[1], -1);
+    	
+    	// Select the two points to crossover
+        int startPoint = (int) (Math.random() * tourSize);
+        int endPoint = (int) (Math.random() * tourSize);
+
+        // Ensure the start point is before the end point
+        if (startPoint > endPoint) {
+            int temp = startPoint;
+            startPoint = endPoint;
+            endPoint = temp;
+        }
+    	
+        // Children take the opposing parents between the points
+        for (int i = startPoint; i < endPoint; i++)
+        {
+        	children[0][i] = parent2[i];
+        	children[1][i] = parent1[i];
+        }
+        
+        // If possible, take the original parent outside of the two points
+        for (int i = 0; i < tourSize; i++)
+        {
+        	if (i < startPoint || i >= endPoint)
+        	{
+        		if (!contains(children[0], parent1[i]))
+        		{
+        			children[0][i] = parent1[i];
+        		}
+        		if (!contains(children[1], parent2[i]))
+        		{
+        			children[1][i] = parent2[i];
+        		}
+        	}
+        }
+        
+        // Fill in the remaining indices by swapping the locations
+        // of missing cities in parent 1 and parent 2.
+        for (int i = 0; i < tourSize; i++)
+        {
+        	if (children[0][i] == -1)
+        	{
+        		int index = i;
+    			int value = parent1[index];
+    			index = indexOf(parent2,value);
+    			while(true)
+    			{
+        			value = parent1[index];
+        			if (!contains(children[0],value))
+        			{
+        				children[0][i] = value;
+        				break;
+        			}
+        			index = indexOf(parent2,value);
+        			System.out.println("(PMX) Debug startPoint" + startPoint);
+        			System.out.println("(PMX) Debug endPoint" + endPoint);
+        			System.out.println("(PMX) Debug index" + index);
+        			System.out.println("(PMX) Debug value" + value);
+        			System.out.println("(PMX) Debug children1 : " + Arrays.toString(children[0]));
+        			System.out.println("(PMX) Debug parent1 : " + Arrays.toString(parent1));
+        			System.out.println("(PMX) Debug parent2 : " + Arrays.toString(parent2));
+        		}
+        	}
+        	if (children[1][i] == -1)
+        	{
+        		int index = i;	
+    			int value = parent2[index];
+    			index = indexOf(parent1,value);
+    			while(true)
+        		{
+        			value = parent2[index];
+        			if (!contains(children[1],value))
+        			{
+        				children[1][i] = value;
+        				break;
+        			}
+        			index = indexOf(parent1,value);
+        			System.out.println("(PMX) Debug startPoint" + startPoint);
+        			System.out.println("(PMX) Debug endPoint" + endPoint);
+        			System.out.println("(PMX) Debug index" + index);
+        			System.out.println("(PMX) Debug value" + value);
+        			System.out.println("(PMX) Debug children2 : " + Arrays.toString(children[1]));
+        			System.out.println("(PMX) Debug parent1 : " + Arrays.toString(parent1));
+        			System.out.println("(PMX) Debug parent2 : " + Arrays.toString(parent2));
+        		}
+        	}
+        }
+        
+        // Last city must always be the starting city
+        children[0][tourSize] = 1;
+        children[1][tourSize] = 1;
+        
+        System.out.println("(PMX) Child 1 : " + Arrays.toString(children[0]));
+        System.out.println("(PMX) Child 2 : " + Arrays.toString(children[0]));
+        
+    	return children;
+    }
 
     // Paper four crossover
-    public int[][] cx2Crossover(int parent1Idx, int parent2Idx) {
+    public int[][] cx2Crossover(int parent1Idx, int parent2Idx)
+    {
     	int[] parent1 = population.getRoute(parent1Idx);
     	int[] parent2 = population.getRoute(parent2Idx);
         int[][] children = new int[2][tourSize+1];
