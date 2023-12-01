@@ -443,6 +443,51 @@ public class GeneticAlgorithm {
 						}
 					}
 				}
+				
+			case "OX Crossover":
+				// System.out.println("Performing " + crossoverFcn);
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i+=2)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+						children = oxCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+						// Each set of parents should create two children
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, children[0]);
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								childPop.setRoute(i+j, children[j]);
+							}
+						}
+					}
+					else
+					{
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
+							}
+						}
+					}
+				}
 				// Debug
 				// for (int i = 0; i < populationSize; i++)
 				// 	 System.out.println("(crossover) childPop " + i + " : " + Arrays.toString(childPop.getRoute(i)));
@@ -458,6 +503,78 @@ public class GeneticAlgorithm {
 
 
 
+    }
+    
+    // Paper four Order Crossover
+    public int[][] oxCrossover(int parent1Idx, int parent2Idx)
+    {
+    	int[] parent1 = population.getRoute(parent1Idx);
+    	int[] parent2 = population.getRoute(parent2Idx);
+    	int[][] children = new int[2][tourSize+1];
+    	Arrays.fill(children[0], -1);
+        Arrays.fill(children[1], -1);
+        List<Integer> subTour1 = new ArrayList<Integer>();
+        List<Integer> subTour2 = new ArrayList<Integer>();
+        
+        // Select the two points to crossover
+        int startPoint = Math.max(1,(int) (Math.random() * tourSize));
+        int endPoint = Math.max(1,(int) (Math.random() * tourSize));
+
+        // Ensure the start point is before the end point
+        if (startPoint > endPoint) {
+            int temp = startPoint;
+            startPoint = endPoint;
+            endPoint = temp;
+        }
+        
+        // Children take the matching parents between the points
+        for (int i = startPoint; i < endPoint; i++)
+        {
+        	children[0][i] = parent1[i];
+        	children[1][i] = parent2[i];
+        }
+        
+        // Create sub tours
+        int idx = endPoint;
+        do
+        {
+        	if (!contains(children[0],parent2[idx]))
+        	{
+        		subTour1.add(parent2[idx]);
+        	}
+        	if (!contains(children[1],parent1[idx]))
+        	{
+        		subTour2.add(parent1[idx]);
+        	}
+        	idx++;
+        	if (idx == tourSize)
+        	{
+        		idx = 1;
+        	}
+        } while (idx != endPoint);
+        
+        // Finish populating the children from the sub tours
+        int subTourIdx = 0;
+        do
+        {
+        	
+        	children[0][idx] = subTour1.get(subTourIdx);
+        	children[1][idx] = subTour2.get(subTourIdx);
+        	subTourIdx++;
+        	idx++;
+        	if (idx == tourSize)
+        	{
+    			idx = 1;
+        	}
+        } while (idx != startPoint);
+        
+        // First and last city must always be the starting city
+    	children[0][0] = 1;
+        children[1][0] = 1;
+    	children[0][tourSize] = 1;
+        children[1][tourSize] = 1;
+        
+        return children;
     }
     
     // Paper four partially-mapped crossover
@@ -487,7 +604,7 @@ public class GeneticAlgorithm {
         	children[1][i] = parent1[i];
         }
         
-        // If possible, take the original parent outside of the two points
+        // If possible, take the matching parent outside of the two points
         for (int i = 0; i < tourSize; i++)
         {
         	if (i < startPoint || i >= endPoint)
@@ -521,13 +638,6 @@ public class GeneticAlgorithm {
         				break;
         			}
         			index = indexOf(parent2,value);
-        			System.out.println("(PMX) Debug startPoint" + startPoint);
-        			System.out.println("(PMX) Debug endPoint" + endPoint);
-        			System.out.println("(PMX) Debug index" + index);
-        			System.out.println("(PMX) Debug value" + value);
-        			System.out.println("(PMX) Debug children1 : " + Arrays.toString(children[0]));
-        			System.out.println("(PMX) Debug parent1 : " + Arrays.toString(parent1));
-        			System.out.println("(PMX) Debug parent2 : " + Arrays.toString(parent2));
         		}
         	}
         	if (children[1][i] == -1)
@@ -544,13 +654,6 @@ public class GeneticAlgorithm {
         				break;
         			}
         			index = indexOf(parent1,value);
-        			System.out.println("(PMX) Debug startPoint" + startPoint);
-        			System.out.println("(PMX) Debug endPoint" + endPoint);
-        			System.out.println("(PMX) Debug index" + index);
-        			System.out.println("(PMX) Debug value" + value);
-        			System.out.println("(PMX) Debug children2 : " + Arrays.toString(children[1]));
-        			System.out.println("(PMX) Debug parent1 : " + Arrays.toString(parent1));
-        			System.out.println("(PMX) Debug parent2 : " + Arrays.toString(parent2));
         		}
         	}
         }
@@ -558,9 +661,6 @@ public class GeneticAlgorithm {
         // Last city must always be the starting city
         children[0][tourSize] = 1;
         children[1][tourSize] = 1;
-        
-        System.out.println("(PMX) Child 1 : " + Arrays.toString(children[0]));
-        System.out.println("(PMX) Child 2 : " + Arrays.toString(children[0]));
         
     	return children;
     }
