@@ -80,12 +80,15 @@ public class TSPSolver {
         fitnessXData.add("0");
         fitnessYData.add(bestTour.getFitness());
     
+        long startTime = System.currentTimeMillis();
+        
         for (int i = 0; i < numGenerations; i++) {
             GA.selection();
             GA.crossover();
             GA.mutation();
             GA.fitness();
-            // System.out.println("numGeneration is " + i);
+
+            System.out.println("numGeneration is " + i);
     
             if ((i%(numGenerations/25) == 0) && (i != 0)) {        
                 bestTour = GA.getFittest();
@@ -100,7 +103,17 @@ public class TSPSolver {
                 fitnessYData.add(bestTour.getFitness());
             }
         }
-    
+        
+        long endTime = System.currentTimeMillis();
+        double elapsedTime = (endTime - startTime);
+        if (elapsedTime > 1000)
+        {
+        	System.out.println("Elapsed time : " + elapsedTime/1000 + " s");
+        }
+        else
+        {
+        	System.out.println("Elapsed time : " + elapsedTime + " ms");
+        }
         // Add final solution to the table
         bestTour = GA.getFittest();
         TSPSolverTableData.append("<tr><td>Final</td><td>")
