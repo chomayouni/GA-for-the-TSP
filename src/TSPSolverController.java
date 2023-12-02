@@ -211,34 +211,31 @@ public class TSPSolverController implements Initializable {
     }
 
     private void disableInterface() {
-        btnAdd.setDisable(true);
         btnRun.setDisable(true);
         choiceBoxCrossover.setDisable(true);
         choiceBoxSelection.setDisable(true);
         choiceBoxDataset.setDisable(true);
-        chkComboBoxCities.setDisable(true);
         txtFieldNumGenerations.setDisable(true);
         txtFieldPopSize.setDisable(true);
         txtFieldMutationRate.setDisable(true);
         txtFieldCrossoverRate.setDisable(true);
         txtFieldTournamentSize.setDisable(true);
-        chkComboBoxCities.setDisable(true);
-        txtFieldNewCity.setDisable(true);
     }
 
     private void enableInterface() {
         btnRun.setDisable(false);
         choiceBoxSelection.setDisable(false);
         choiceBoxCrossover.setDisable(false);
+        choiceBoxDataset.setDisable(false);
         txtFieldNumGenerations.setDisable(false);
         txtFieldPopSize.setDisable(false);
         txtFieldMutationRate.setDisable(false);
         txtFieldCrossoverRate.setDisable(false);
         txtFieldTournamentSize.setDisable(false);
-        chkComboBoxCities.setDisable(false);
 
         // Conditionally turn on only if custom data set is being used. 
-        if (choiceBoxDataset.getValue().equals("Custom")) {
+        if (TSPSolver.getDataset().equals("Custom")) {
+            System.out.println("Hello?");
             btnAdd.setDisable(false);
             txtFieldNewCity.setDisable(false);
             chkComboBoxCities.setDisable(false);
@@ -291,9 +288,12 @@ public class TSPSolverController implements Initializable {
             TSPSolver.run();
             // Enable the interface
             Platform.runLater(() -> {
+                removeChkComboListener();
                 getTSPTable();
                 getFitnessChart();
+                System.out.println("Done running");
                 enableInterface();
+                addChkComboListener();
             });
         }).start();
 
@@ -325,10 +325,16 @@ public class TSPSolverController implements Initializable {
         }
         lineChartFitness.getData().add(fitnessSeries);
         numberAxisYFitness.setAutoRanging(false);
-        numberAxisYFitness.setTickUnit(1000);
-        numberAxisYFitness.setMinorTickVisible(false);
-        numberAxisYFitness.setUpperBound((maxFitness + (int)(maxFitness * 0.1)) - ((maxFitness + (int)(maxFitness * 0.1)) % 100));
-        numberAxisYFitness.setLowerBound((minFitness - (int)(minFitness * 0.1)) - ((minFitness - (int)(minFitness * 0.1)) % 100));
+        Double tickUnit = ((0.1 * (maxFitness - minFitness)));
+        // double tickUnit = 1.0;
+        numberAxisYFitness.setTickUnit(tickUnit.intValue());
+        System.out.println("Tick Unit: " + tickUnit);
+        numberAxisYFitness.setMinorTickVisible(true);
+        System.out.println("Max: " + maxFitness + " Min: " + minFitness);
+        numberAxisYFitness.setUpperBound((maxFitness + (int)(maxFitness * 0.1)) - ((maxFitness + (int)(maxFitness * 0.05)) % 100));
+        numberAxisYFitness.setLowerBound((minFitness - (int)(minFitness * 0.1)) - ((minFitness - (int)(minFitness * 0.05)) % 100));
+        // numberAxisYFitness.setUpperBound(maxFitness + ((0.2 * (maxFitness - minFitness)) % 100));
+        // numberAxisYFitness.setLowerBound(minFitness - ((0.2 * (maxFitness - minFitness)) % 100));
     }
 
     // Get tour size to update GUI field
@@ -383,7 +389,8 @@ public class TSPSolverController implements Initializable {
             btnAdd.setDisable(false);
             txtFieldNewCity.setDisable(false);
             chkComboBoxCities.setDisable(false);
-        } else {
+        } 
+        else {
             btnAdd.setDisable(true);
             txtFieldNewCity.setDisable(true);
             chkComboBoxCities.setDisable(true);
