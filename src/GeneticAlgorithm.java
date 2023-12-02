@@ -552,10 +552,196 @@ public class GeneticAlgorithm {
 				// Save the new population
 				population = childPop;
 				break;
+			case "SCX Crossover": // This one only produces one child so its quirky
+				// System.out.println("Performing " + crossoverFcn);
+				// Based on the crossover rate, create a new child or pass
+				// a current member of the population forward
+				for (int i = 0; i < populationSize; i+=2)
+				{ 
+					if (random.nextDouble() < crossoverRate)
+					{
+						// Each set of parents should create two children
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							int[] child = scxCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+							childPop.setRoute(i, child);
+						}
+						else
+						{
+							int[] child = scxCrossover(parent1Arr[i/2],parent2Arr[i/2]);
+							childPop.setRoute(i, child);
+							if (i == populationSize-2)
+							{
+								child = scxCrossover(parent1Arr[i/2],parent2Arr[(i/2)-1]);
+								childPop.setRoute(i+1, child);
+							}
+							else
+							{
+								child = scxCrossover(parent1Arr[i/2],parent2Arr[(i/2)+1]);
+								childPop.setRoute(i+1, child);
+							}
+						}
+					}
+					else
+					{
+						if (i == populationSize-1 && i%2 == 0)
+						{
+							childPop.setRoute(i, population.getRoute(parent1Arr[i/2]));
+						}
+						else
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								if (j == 0)
+								{
+									childPop.setRoute(i+j, population.getRoute(parent1Arr[i/2]));
+								}
+								else
+								{
+									childPop.setRoute(i+j, population.getRoute(parent2Arr[i/2]));
+								}
+							}
+						}
+					}
+				}
+				// Debug
+				// for (int i = 0; i < populationSize; i++)
+				// 	 System.out.println("(crossover) childPop " + i + " : " + Arrays.toString(childPop.getRoute(i)));
+				
+				// Save the new population
+				population = childPop;
+				break;
 			default:
 				System.out.println("Invalid crossover function passed into GA");
 				break;
 		}
+    }
+
+    // Started implementing ES from https://arxiv.org/pdf/1402.4699.pdf, 
+    // then I decided it was too complicated with due date of the project coming up
+//    public int[] esCrossover(int parent1Idx, int parent2Idx)
+//    {
+//    	int[] parent1 = population.getRoute(parent1Idx);
+//    	int[] parent2 = population.getRoute(parent2Idx);
+//    	int[] child = new int[tourSize+1];
+//    	Arrays.fill(child, -1);
+//    	// First and last city must always be the starting city
+//    	child[0] = 1;
+//    	child[tourSize] = 1;
+//    	
+//    	// Make the child by tracing edges in both parents
+//    	while (true)
+//    	{
+//	    	int startCity;
+//	    	do
+//	    	{
+//	    		startCity = Math.max(2,(int) (Math.random() * tourSize));
+//	    	} while (contains(child,startCity) || contains(child,parent1[indexOf(parent1,startCity)+1]));
+//	    	
+//	    	int parentIdx = startCity;
+//	    	int childIdx = 1;
+//	    	child[childIdx] = parent1[parentIdx];
+//	    	childIdx++;
+//	    	parentIdx++;
+//	    	
+//	    	while(true)
+//	    	{
+//	    		child[childIdx] = parent1[parentIdx];
+//	    		childIdx++;
+//	    		parentIdx = indexOf(parent2, parent1[parentIdx]);
+//	    		parentIdx++;
+//		    	if (contains(child,parent2[parentIdx]))
+//		    	{
+//		    		break;
+//		    	}
+//		    	child[childIdx] = parent2[parentIdx];
+//		    	childIdx++;
+//		    	parentIdx = indexOf(parent1, parent2[parentIdx]);
+//	    	}
+//	    	if(!contains(child, -1))
+//	    	{
+//	    		break;
+//	    	}
+//    	}
+//        
+//        return child;
+//    }
+    
+    public int[] scxCrossover(int parent1Idx, int parent2Idx)
+    {
+    	int[] parent1 = population.getRoute(parent1Idx);
+    	int[] parent2 = population.getRoute(parent2Idx);
+    	int[] child = new int[tourSize+1];
+    	Arrays.fill(child, -1);
+    	// First and last city must always be the starting city
+    	child[0] = 1;
+        child[tourSize] = 1;
+        int childIdx = 1;
+        
+    	int p = parent1[0];
+    	int alpha;
+    	int beta;
+    	
+    	do
+    	{
+    		alpha = -1;
+    		beta = -1;
+	    	for (int i = indexOf(parent1,p)+1; i < tourSize+1; i++)
+	    	{
+	    		if (!contains(child,parent1[i]))
+	    		{
+	    			alpha = parent1[i];
+	    			break;
+	    		}
+	    	}
+	    	if (alpha == -1)
+	    	{
+	    		for (int i = 1; i < tourSize+1; i++)
+	    		{
+	    			if (!contains(child,i))
+	    			{
+	    				alpha = i;
+	    				break;
+	    			}
+	    		}
+	    	}
+	    	for (int i = indexOf(parent2,p)+1; i < tourSize+1; i++)
+	    	{
+	    		if (!contains(child,parent2[i]))
+	    		{
+	    			beta = parent2[i];
+	    			break;
+	    		}
+	    	}
+	    	if (beta == -1)
+	    	{
+	    		for (int i = 1; i < tourSize+1; i++)
+	    		{
+	    			if (!contains(child,i))
+	    			{
+	    				beta = i;
+	    				break;
+	    			}
+	    		}
+	    	}
+	    	
+	    	if (cityMap[p-1][alpha-1] < cityMap[p-1][beta-1])
+	    	{
+	    		p = alpha;
+	    		child[childIdx] = alpha;
+	    		
+	    	}
+	    	else
+	    	{
+	    		p = beta;
+	    	}
+	    	child[childIdx] = p;
+	    	childIdx++;
+    	} while (contains(child,-1));
+    	
+//    	System.out.println("(SCX) Child : " + Arrays.toString(child));
+    	
+        return child;
     }
     
     // Paper four Order Crossover
