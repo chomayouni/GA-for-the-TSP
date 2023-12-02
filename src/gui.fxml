@@ -108,6 +108,8 @@
                               <Label prefHeight="17.0" prefWidth="89.0" text="Select Cities" GridPane.rowIndex="1" />
                               <Label text="Select Dataset" />
                               <ChoiceBox fx:id="choiceBoxDataset" prefHeight="25.0" prefWidth="81.0" GridPane.columnIndex="1" />
+                              <Label text="Select Starting City" GridPane.rowIndex="2" />
+                              <ChoiceBox fx:id="choiceBoxStartingCity" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
                      </children></AnchorPane>
