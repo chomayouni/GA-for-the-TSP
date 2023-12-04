@@ -149,7 +149,7 @@
                <children>
                   <Label layoutX="125.0" layoutY="546.0" text="Genetic Algorithm Configuration" />
                   <Label layoutX="687.0" layoutY="546.0" text="Solver Output" />
-                  <LineChart fx:id="lineChartFitness" alternativeColumnFillVisible="true" animated="false" layoutX="-4.0" layoutY="14.0" legendVisible="false" prefHeight="741.0" prefWidth="1459.0" title="Fitness">
+                  <LineChart fx:id="lineChartFitness" alternativeColumnFillVisible="true" animated="false" createSymbols="false" layoutX="-4.0" layoutY="14.0" legendVisible="false" prefHeight="741.0" prefWidth="1459.0" title="Fitness">
                     <xAxis>
                       <CategoryAxis fx:id="categoryAxisXFitness" label="Interation" prefHeight="57.0" prefWidth="1189.0" side="BOTTOM" />
                     </xAxis>
@@ -157,8 +157,8 @@
                       <NumberAxis fx:id="numberAxisYFitness" label="Fitness (Miles)" side="LEFT" />
                     </yAxis>
                   </LineChart>
-                  <WebView fx:id="webViewConfig" layoutX="21.0" layoutY="772.0" prefHeight="207.0" prefWidth="532.0" />
-                  <WebView fx:id="webViewOutput" layoutX="559.0" layoutY="772.0" prefHeight="207.0" prefWidth="878.0" />
+                  <WebView fx:id="webViewConfig" layoutX="21.0" layoutY="758.0" prefHeight="193.0" prefWidth="532.0" />
+                  <WebView fx:id="webViewOutput" layoutX="563.0" layoutY="758.0" prefHeight="193.0" prefWidth="878.0" />
                </children></AnchorPane>
       </items>
     </SplitPane>

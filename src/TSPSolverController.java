@@ -27,6 +27,7 @@ import javafx.scene.web.WebView;
 import javafx.util.Pair;
 
 import org.controlsfx.control.CheckComboBox;
+
 import javafx.scene.chart.CategoryAxis;
 import java.nio.file.*;
 
@@ -77,6 +78,8 @@ public class TSPSolverController implements Initializable {
     private Integer minFitness = Integer.MAX_VALUE;
     private Integer maxFitness = Integer.MIN_VALUE;
 
+    // Control for avg run stuff
+    private Integer avgRunCount = 10;
 
     public TSPSolverController() {
         // Initial Constants, can pull this up if we want. Will initial txt fields with these as well. NOT part of this class. Should be passed 
@@ -92,13 +95,16 @@ public class TSPSolverController implements Initializable {
         String initialSelectionFcn = selectionList.get(0); // first one default
         String initialDataset = datasetList.get(0); // first one default
         System.out.println("Initial Dataset: " + initialDataset);
-        TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, initialCrossoverFcn, initialSelectionFcn, initialDataset);
+        TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, initialCrossoverFcn, initialSelectionFcn, initialDataset, avgRunCount);
     }
 
     // This method is automatically called after the FXML is loaded, it is the "constructor" for the FXML. Need to place any FXMLlogic in here, as the normal, TSPSOlverController constructor does not
     //      have access to the FXML objects yet. 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+        // Update button text real quick
+        btnAvg.setText("Average (" + avgRunCount + " Runs)");
+
         // Initialize the choice box for the crossover function as well as supporting stuff.
         initializeChoiceBoxCrossover();
 
@@ -238,6 +244,8 @@ public class TSPSolverController implements Initializable {
         txtFieldCrossoverRate.setDisable(true);
         txtFieldTournamentSize.setDisable(true);
         txtFieldNewCity.setDisable(true);
+        webViewOutput.getEngine().loadContent("<h1>Running...</h1>");
+
     }
 
     private void enableInterface() {
@@ -251,6 +259,7 @@ public class TSPSolverController implements Initializable {
         txtFieldMutationRate.setDisable(false);
         txtFieldCrossoverRate.setDisable(false);
         txtFieldTournamentSize.setDisable(false);
+
 
         // Conditionally turn on only if custom data set is being used. 
         if (TSPSolver.getDataset().equals("CUSTOM")) {
@@ -334,27 +343,27 @@ public class TSPSolverController implements Initializable {
         disableInterface();
         // Clear graph
         clearFitnessChart();
+        System.out.println("---------- Running avg ----------");
         // Run the TSP solver (10 times) in a separate thread
         new Thread(() -> {
             TSPSolver.clearAvgFitness();
-            for (int i = 0; i <= 10; i++) {
+            for (int i = 0; i <= avgRunCount; i++) {
                 final int finalI = i;
                 // Run the TSP solver
-                if (i < 10) {
+                if (i < avgRunCount) {
                     TSPSolver.run();
                 }            
                 // Update the interface
                 Platform.runLater(() -> {
-                    if (finalI < 10) {
+                    if (finalI < avgRunCount) {
                         removeChkComboListener();
-                        getTSPTable();
                         getFitnessChart();
                         addChkComboListener();
                     }
                     else {
                         removeChkComboListener();
-                        getTSPTable();
                         getAvgFitnessChart();
+                        getAvgTSPTable();
                         enableInterface();
                         addChkComboListener();
                     }
@@ -377,6 +386,10 @@ public class TSPSolverController implements Initializable {
         webViewOutput.getEngine().loadContent(TSPSolver.getTSPTableData());
     }
 
+    public void getAvgTSPTable() {
+        webViewOutput.getEngine().loadContent(TSPSolver.getAvgTSPTableData());
+    }
+
     public void getFitnessChart() {
 
         XYChart.Series<String, Integer> fitnessSeries = new XYChart.Series<String, Integer>();
@@ -392,16 +405,20 @@ public class TSPSolverController implements Initializable {
             }
         }
 
+        
+
         lineChartFitness.getData().add(fitnessSeries);
+        fitnessSeries.getNode().setStyle("-fx-stroke: red; -fx-stroke-width: 1px; -fx-background-color: red, white;");
         numberAxisYFitness.setAutoRanging(false);
-        Double tickUnit = ((0.1 * (maxFitness - minFitness)));
+        Long tickUnit = Math.round((0.1 * (maxFitness - minFitness)) / 50) * 50;
         numberAxisYFitness.setTickUnit(tickUnit.intValue());
-        System.out.println("Tick Unit: " + tickUnit);
+        // System.out.println("Tick Unit: " + tickUnit);
         numberAxisYFitness.setMinorTickVisible(true);
-        System.out.println("Max: " + maxFitness + " Min: " + minFitness);
+        // System.out.println("Max: " + maxFitness + " Min: " + minFitness);
         numberAxisYFitness.setUpperBound((maxFitness + (int) (maxFitness * 0.1)) - ((maxFitness + (int) (maxFitness * 0.05)) % 100));
         numberAxisYFitness.setLowerBound((minFitness - (int) (minFitness * 0.1)) - ((minFitness - (int) (minFitness * 0.05)) % 100));
     }
+    
 
     public void clearFitnessChart() {
         lineChartFitness.getData().clear();
@@ -417,8 +434,7 @@ public class TSPSolverController implements Initializable {
             AvgFitnessSeries.getData().add(new XYChart.Data<String, Integer>(avgFitnessData.getKey().get(i), avgFitnessData.getValue().get(i).intValue()));
         }
         lineChartFitness.getData().add(AvgFitnessSeries);
-        AvgFitnessSeries.getNode().setStyle("-fx-stroke: #00ff00; -fx-stroke-width: 2px;");
-
+        AvgFitnessSeries.getNode().setStyle("-fx-stroke: green; -fx-stroke-width: 1.5px; -fx-background-color: green, white;");        
     }
 
     // Get tour size to update GUI field
@@ -521,5 +537,5 @@ public class TSPSolverController implements Initializable {
         }
         this.datasetList = FXCollections.observableArrayList(datasetList);
     }
-    
+
 }

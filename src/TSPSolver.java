@@ -2,7 +2,6 @@ package src;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import javafx.util.Pair;
 
@@ -20,14 +19,21 @@ public class TSPSolver {
     private ArrayList<Double> avgFitnessYData;
     // String for the config output and Stringbuilder sovlerOutput;
     private StringBuilder TSPSolverTableData;
+    private StringBuilder avgTSPSolverTableData;
 
     // Control for running the GA, should be in GA object, but thats A LOT of refactoring
-    private int numGenerations;
+    private Integer numGenerations;
+    
+    // control for keeping data
+    private Integer avgRunCount = 0;
 
     // Constructor for the solver. Will also create a map. 
-    public TSPSolver(int numGenerations, int populationSize, double mutationRate, double crossoverRate, int tournamentSize, String crossoverFcn, String selectionFcn, String dataset) {
+    public TSPSolver(int numGenerations, int populationSize, double mutationRate, double crossoverRate, int tournamentSize, 
+                                                String crossoverFcn, String selectionFcn, String dataset, Integer avgRunCount) {
         // set initial num generations
         this.numGenerations = numGenerations;
+        // set initial avg run count
+        this.avgRunCount = avgRunCount;
         // Create new Map object to handle database stuff. 
         map = new Map(dataset);
         map.reload();
@@ -74,7 +80,6 @@ public class TSPSolver {
         fitnessYData.clear();
 
         TSPSolverTableData = new StringBuilder("<table><tr><th>Iteration</th><th>Route</th><th>Distance</th></tr>");
-    
         // Add initial solution to the table
         TSPSolverTableData.append("<tr><td>Initial</td><td>")
                 .append(Arrays.toString(bestTour.getRoute()))
@@ -96,9 +101,9 @@ public class TSPSolver {
             GA.mutation();
             GA.fitness();
 
-            System.out.println("numGeneration is " + i);
+            // System.out.println("numGeneration is " + i);
     
-            if (i % updateInterval == 0) {        
+            if ((i % updateInterval == 0) && (i != 0)) {        
                 bestTour = GA.getFittest();
                 //
                 // Add current record to the table
@@ -137,30 +142,43 @@ public class TSPSolver {
         fitnessYData.add(bestTour.getFitness());
 
         updateAvgFitness();
+        updateAvgFitnessTable();
         // Print results to the console
         System.out.println("Finished");
         System.out.println("Final distance: " + bestTour.getFitness());
         System.out.println("Final Solution:");
-        System.out.println(Arrays.toString(bestTour.getRoute()));
+        // System.out.println(Arrays.toString(bestTour.getRoute()));
     }
 
     // Should set the new rolling avg for the fitness data. 
-    public void updateAvgFitness() {
+    private void updateAvgFitness() {
+        System.out.println("Updating avg fitness data");
         if (avgFitnessYData.size() == 0) {
             for (int i = 0; i < fitnessYData.size(); i++) {
                 avgFitnessYData.add(fitnessYData.get(i));
             }
+        } 
+        else {
+            for (int i = 0; i < fitnessYData.size(); i++) {
+                double newAvg = avgFitnessYData.get(i) + fitnessYData.get(i);
+                avgFitnessYData.set(i, newAvg);
+            }
         }
-        System.out.println("fitnessYData size is " + fitnessYData.size());
-        System.out.println("avgFitnessYData size is " + avgFitnessYData.size());
-        for (int i = 0; i < fitnessYData.size(); i++) {
-            double avg = (avgFitnessYData.get(i) + fitnessYData.get(i)) / 2.0;
-            avgFitnessYData.set(i, avg);
+    }
+
+    private void updateAvgFitnessTable() {
+        avgTSPSolverTableData = new StringBuilder("<table><tr><th>Iteration</th><th>Distance</th></tr>");
+        for (int i = 0; i < avgFitnessYData.size(); i++) {
+            avgTSPSolverTableData.append("<tr><td>").append(i)
+                    .append("</td><td>").append(avgFitnessYData.get(i))
+                    .append("</td></tr>");
         }
+        avgTSPSolverTableData.append("</table>");
     }
 
     public void clearAvgFitness() {
         avgFitnessYData.clear();
+        avgTSPSolverTableData = null;
     }
 
     public void setUserRoute(int[] userRoute) {
@@ -214,11 +232,22 @@ public class TSPSolver {
         GA.setCityMap(map.getCityMatrix());
     }
 
+    public void setAvgRunCount(int avgRunCount) {
+        this.avgRunCount = avgRunCount;
+    }
+
     public Pair<ArrayList<String>, ArrayList<Double>> getFitnessData() {
         return new Pair<ArrayList<String>, ArrayList<Double>>(fitnessXData, fitnessYData);
     }
 
     public Pair<ArrayList<String>, ArrayList<Double>> getAvgFitnessData() {
+        // System.out.println("Getting avg fitness data");
+        for (int i = 0; i < avgFitnessYData.size(); i++) {
+            double dividedValue = avgFitnessYData.get(i) / avgRunCount;
+            // System.out.println("Avg fitness data is " + avgFitnessYData.get(i) + " and avg run count is " + avgRunCount);
+            // System.out.println("Divided value is " + dividedValue);
+            avgFitnessYData.set(i, dividedValue);
+        }
         return new Pair<ArrayList<String>, ArrayList<Double>>(fitnessXData, avgFitnessYData);
     }
 
@@ -305,5 +334,13 @@ public class TSPSolver {
 
     public String getTSPTableData() {
         return TSPSolverTableData.toString();
+    }
+
+    public String getAvgTSPTableData() {
+        return avgTSPSolverTableData.toString();
+    }
+
+    public Integer getAvgRunCount() {
+        return avgRunCount;
     }
 }

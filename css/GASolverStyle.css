@@ -24,3 +24,15 @@ tr:last-child {
     background-color: rgb(106, 248, 208); 
     font-weight: bold;
 }
+
+h1 {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    font-size: 1.5em;
+    text-align: center;
+    color: rgb(0, 0, 0);
+  }
