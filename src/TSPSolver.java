@@ -167,11 +167,22 @@ public class TSPSolver {
 
     private void updateAvgFitnessTable() {
         avgTSPSolverTableData = new StringBuilder("<table><tr><th>Iteration</th><th>Distance</th></tr>");
+        // Loop throught and get the avg fitness data
         for (int i = 0; i < avgFitnessYData.size(); i++) {
-            avgTSPSolverTableData.append("<tr><td>").append(i)
-                    .append("</td><td>").append(avgFitnessYData.get(i))
+            avgTSPSolverTableData.append("<tr><td>");
+            // change table to show "final" on last row
+            if (i == avgFitnessYData.size() - 1) {
+                avgTSPSolverTableData.append("Final");
+            } 
+            // Get the iteration number if not final row. Just get this from the fitnessX data as it is tied to the run case
+            else {
+                avgTSPSolverTableData.append(fitnessXData.get(i));
+            }
+            // Add the rest of the data
+            avgTSPSolverTableData.append("</td><td>").append(avgFitnessYData.get(i))
                     .append("</td></tr>");
         }
+        // Close off the table
         avgTSPSolverTableData.append("</table>");
     }
 
