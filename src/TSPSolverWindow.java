@@ -25,6 +25,7 @@ public class TSPSolverWindow extends Application {
 
         // Basic JAVAfx stuff here on out
         Scene scene = new Scene(mainLayout);
+        System.out.println("current directory: " + System.getProperty("user.dir"));
         stage.setScene(scene);
         stage.setTitle("GA-for-TSP");
         stage.show();

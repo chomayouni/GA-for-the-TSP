@@ -73,6 +73,11 @@ public class TSPSolverController implements Initializable {
     // List change listener, we 
     private ListChangeListener<String> chkComboListener;
 
+    // These are for the fitness graph. Need to keep global for avg runs (dirty, but whatever)
+    private Integer minFitness = Integer.MAX_VALUE;
+    private Integer maxFitness = Integer.MIN_VALUE;
+
+
     public TSPSolverController() {
         // Initial Constants, can pull this up if we want. Will initial txt fields with these as well. NOT part of this class. Should be passed 
         //      into the TSP constructor to be honest
@@ -109,7 +114,6 @@ public class TSPSolverController implements Initializable {
         // Initilize the css for the output windows webviews
         webViewConfig.getEngine().setUserStyleSheetLocation(getClass().getResource("../css/GAConfigStyle.css").toString());
         webViewOutput.getEngine().setUserStyleSheetLocation(getClass().getResource("../css/GASolverStyle.css").toString());
-
 
         // Initilize GUI with TSP settings
         // Initilize Text fields and update TSP with pertinent information from startup
@@ -301,12 +305,14 @@ public class TSPSolverController implements Initializable {
         // Run the TSP solver in a seperate thread
         new Thread(() -> {
             // Run the TSP solver
+            TSPSolver.clearAvgFitness();
             TSPSolver.run();
             // Enable the interface
             Platform.runLater(() -> {
                 removeChkComboListener();
                 getTSPTable();
-                getFitnessChart(true);
+                clearFitnessChart();
+                getFitnessChart();
                 System.out.println("Done running");
                 enableInterface();
                 addChkComboListener();
@@ -315,7 +321,6 @@ public class TSPSolverController implements Initializable {
 
     }
 
-    // Run the solver, but plot and get 10 runs stuff
     public void avg() {
         // Grab any changes the user didnt hit enter on
         setNumGenerations();
@@ -327,24 +332,36 @@ public class TSPSolverController implements Initializable {
         getConfigTable();
         // disable interface
         disableInterface();
-        // Run the TSP solver (10 times) in a seperate thread
+        // Clear graph
+        clearFitnessChart();
+        // Run the TSP solver (10 times) in a separate thread
         new Thread(() -> {
-            for (int i = 0; i < 10; i++) {
+            TSPSolver.clearAvgFitness();
+            for (int i = 0; i <= 10; i++) {
+                final int finalI = i;
                 // Run the TSP solver
-                TSPSolver.run();
-
+                if (i < 10) {
+                    TSPSolver.run();
+                }            
                 // Update the interface
                 Platform.runLater(() -> {
-                    removeChkComboListener();
-                    getTSPTable();
-                    getFitnessChart(false);
-                    System.out.println("Done running");
-                    enableInterface();
-                    addChkComboListener();
+                    if (finalI < 10) {
+                        removeChkComboListener();
+                        getTSPTable();
+                        getFitnessChart();
+                        addChkComboListener();
+                    }
+                    else {
+                        removeChkComboListener();
+                        getTSPTable();
+                        getAvgFitnessChart();
+                        enableInterface();
+                        addChkComboListener();
+                    }
                 });
-                // just wait for a second each thread
+                // just wait for a bit each thread, want to update GUI
                 try {
-                    Thread.sleep(100); // wait for 1 second
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -360,15 +377,12 @@ public class TSPSolverController implements Initializable {
         webViewOutput.getEngine().loadContent(TSPSolver.getTSPTableData());
     }
 
-    public void getFitnessChart(Boolean clear) {
-        // Objects for the XYChart fitness graph
-        if (clear)
-            lineChartFitness.getData().clear();
-        Integer minFitness = Integer.MAX_VALUE;
-        Integer maxFitness = Integer.MIN_VALUE;
+    public void getFitnessChart() {
+
         XYChart.Series<String, Integer> fitnessSeries = new XYChart.Series<String, Integer>();
         Pair<ArrayList<String>, ArrayList<Double>> fitnessData = TSPSolver.getFitnessData();
-        for(int i = 0; i < fitnessData.getKey().size(); i++) {
+
+        for (int i = 0; i < fitnessData.getKey().size(); i++) {
             fitnessSeries.getData().add(new XYChart.Data<String, Integer>(fitnessData.getKey().get(i), fitnessData.getValue().get(i).intValue()));
             if (fitnessData.getValue().get(i).intValue() < minFitness) {
                 minFitness = fitnessData.getValue().get(i).intValue();
@@ -377,18 +391,34 @@ public class TSPSolverController implements Initializable {
                 maxFitness = fitnessData.getValue().get(i).intValue();
             }
         }
+
         lineChartFitness.getData().add(fitnessSeries);
         numberAxisYFitness.setAutoRanging(false);
         Double tickUnit = ((0.1 * (maxFitness - minFitness)));
-        // double tickUnit = 1.0;
         numberAxisYFitness.setTickUnit(tickUnit.intValue());
         System.out.println("Tick Unit: " + tickUnit);
         numberAxisYFitness.setMinorTickVisible(true);
         System.out.println("Max: " + maxFitness + " Min: " + minFitness);
-        numberAxisYFitness.setUpperBound((maxFitness + (int)(maxFitness * 0.1)) - ((maxFitness + (int)(maxFitness * 0.05)) % 100));
-        numberAxisYFitness.setLowerBound((minFitness - (int)(minFitness * 0.1)) - ((minFitness - (int)(minFitness * 0.05)) % 100));
-        // numberAxisYFitness.setUpperBound(maxFitness + ((0.2 * (maxFitness - minFitness)) % 100));
-        // numberAxisYFitness.setLowerBound(minFitness - ((0.2 * (maxFitness - minFitness)) % 100));
+        numberAxisYFitness.setUpperBound((maxFitness + (int) (maxFitness * 0.1)) - ((maxFitness + (int) (maxFitness * 0.05)) % 100));
+        numberAxisYFitness.setLowerBound((minFitness - (int) (minFitness * 0.1)) - ((minFitness - (int) (minFitness * 0.05)) % 100));
+    }
+
+    public void clearFitnessChart() {
+        lineChartFitness.getData().clear();
+        minFitness = Integer.MAX_VALUE;
+        maxFitness = Integer.MIN_VALUE;
+    }
+
+    public void getAvgFitnessChart() {
+        System.out.println("Getting avg fitness chart");
+        XYChart.Series<String, Integer> AvgFitnessSeries = new XYChart.Series<String, Integer>();
+        Pair<ArrayList<String>, ArrayList<Double>> avgFitnessData = TSPSolver.getAvgFitnessData();
+        for (int i = 0; i < avgFitnessData.getKey().size(); i++) {
+            AvgFitnessSeries.getData().add(new XYChart.Data<String, Integer>(avgFitnessData.getKey().get(i), avgFitnessData.getValue().get(i).intValue()));
+        }
+        lineChartFitness.getData().add(AvgFitnessSeries);
+        AvgFitnessSeries.getNode().setStyle("-fx-stroke: #00ff00; -fx-stroke-width: 2px;");
+
     }
 
     // Get tour size to update GUI field

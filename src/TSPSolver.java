@@ -2,6 +2,8 @@ package src;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+
 import javafx.util.Pair;
 
 public class TSPSolver {
@@ -13,6 +15,9 @@ public class TSPSolver {
     // Data object for fitness data
     private ArrayList<String> fitnessXData;
     private ArrayList<Double> fitnessYData;
+
+    // data for long run avgs
+    private ArrayList<Double> avgFitnessYData;
     // String for the config output and Stringbuilder sovlerOutput;
     private StringBuilder TSPSolverTableData;
 
@@ -34,6 +39,7 @@ public class TSPSolver {
         // Create the data objects for the fitness graph
         fitnessXData = new ArrayList<String>();
         fitnessYData = new ArrayList<Double>();
+        avgFitnessYData = new ArrayList<>();
     }
 
     // Add a city to the data base
@@ -81,7 +87,9 @@ public class TSPSolver {
         fitnessYData.add(bestTour.getFitness());
     
         long startTime = System.currentTimeMillis();
-        
+
+
+        int updateInterval = Math.max(1, numGenerations / 25);
         for (int i = 0; i < numGenerations; i++) {
             GA.selection();
             GA.crossover();
@@ -90,7 +98,7 @@ public class TSPSolver {
 
             System.out.println("numGeneration is " + i);
     
-            if ((i%(numGenerations/25) == 0) && (i != 0)) {        
+            if (i % updateInterval == 0) {        
                 bestTour = GA.getFittest();
     
                 // Add current record to the table
@@ -127,12 +135,32 @@ public class TSPSolver {
         // Add final solution to the chart
         fitnessXData.add(Integer.toString(numGenerations));
         fitnessYData.add(bestTour.getFitness());
-    
+
+        updateAvgFitness();
         // Print results to the console
         System.out.println("Finished");
         System.out.println("Final distance: " + bestTour.getFitness());
         System.out.println("Final Solution:");
         System.out.println(Arrays.toString(bestTour.getRoute()));
+    }
+
+    // Should set the new rolling avg for the fitness data. 
+    public void updateAvgFitness() {
+        if (avgFitnessYData.size() == 0) {
+            for (int i = 0; i < fitnessYData.size(); i++) {
+                avgFitnessYData.add(fitnessYData.get(i));
+            }
+        }
+        System.out.println("fitnessYData size is " + fitnessYData.size());
+        System.out.println("avgFitnessYData size is " + avgFitnessYData.size());
+        for (int i = 0; i < fitnessYData.size(); i++) {
+            double avg = (avgFitnessYData.get(i) + fitnessYData.get(i)) / 2.0;
+            avgFitnessYData.set(i, avg);
+        }
+    }
+
+    public void clearAvgFitness() {
+        avgFitnessYData.clear();
     }
 
     public void setUserRoute(int[] userRoute) {
@@ -188,6 +216,10 @@ public class TSPSolver {
 
     public Pair<ArrayList<String>, ArrayList<Double>> getFitnessData() {
         return new Pair<ArrayList<String>, ArrayList<Double>>(fitnessXData, fitnessYData);
+    }
+
+    public Pair<ArrayList<String>, ArrayList<Double>> getAvgFitnessData() {
+        return new Pair<ArrayList<String>, ArrayList<Double>>(fitnessXData, avgFitnessYData);
     }
 
     public int getNumGenerations() {

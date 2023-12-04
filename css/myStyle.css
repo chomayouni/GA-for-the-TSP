@@ -1,0 +1,12 @@
+*.chart-series-line {
+    -fx-stroke: #FF0000;
+    -fx-stroke-width: 2px; /* Adjust this value to make the lines thinner or thicker */
+}
+
+*.chart-line-symbol {
+    -fx-background-color: #FF0000, white;
+    -fx-background-radius: 3x; /* No points */
+    -fx-background-size: 3px, 3px; /* No points */
+    -fx-stroke: #FF0000; /* Change this to the color you want for the outline */
+    -fx-stroke-width: 2px; /* No outline */
+}
