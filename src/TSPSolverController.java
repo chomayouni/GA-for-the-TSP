@@ -171,6 +171,7 @@ public class TSPSolverController implements Initializable {
                 getTourSize();
             } 
         });
+
     }
 
     private void initializeChkComboBoxCities() {
@@ -241,7 +242,7 @@ public class TSPSolverController implements Initializable {
         txtFieldTournamentSize.setDisable(false);
 
         // Conditionally turn on only if custom data set is being used. 
-        if (TSPSolver.getDataset().equals("Custom")) {
+        if (TSPSolver.getDataset().equals("CUSTOM")) {
             System.out.println("Hello?");
             btnAdd.setDisable(false);
             txtFieldNewCity.setDisable(false);
@@ -392,7 +393,7 @@ public class TSPSolverController implements Initializable {
     }
 
     public void setDataset(String arg) {
-        if (arg.equals("Custom")) {
+        if (arg.equals("CUSTOM")) {
             btnAdd.setDisable(false);
             txtFieldNewCity.setDisable(false);
             chkComboBoxCities.setDisable(false);
@@ -422,14 +423,18 @@ public class TSPSolverController implements Initializable {
         try {
             Path dir = Paths.get("GA-for-the-TSP/data/TSP_DATASET/Symmetric");
             datasetList = FXCollections.observableArrayList();
-
+    
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
                 for (Path file: stream) {
                     String fileName = file.getFileName().toString();
                     if (fileName.endsWith(".TXT")) {
                         fileName = fileName.substring(0, fileName.length() - 4);
                     }
-                    datasetList.add(fileName);
+                    if (fileName.equalsIgnoreCase("CUSTOM")) {
+                        datasetList.add(0, fileName); // Add "CUSTOM" to the first index, otherwise it breaks everything and is annoying
+                    } else {
+                        datasetList.add(fileName);
+                    }
                 }
             } catch (IOException | DirectoryIteratorException x) {
                 System.err.println(x);

@@ -170,7 +170,7 @@ public class Map {
         initilizeCitiesScanner();
         //Skip the number of cities, and name of cities
         citiesScanner.nextLine();
-        if (dataset.equals("Custom")) {
+        if (dataset.equals("CUSTOM")) {
             citiesScanner.nextLine();
         }
         // Map var that will be returned
@@ -221,11 +221,17 @@ public class Map {
         // Initialize the array size
         cityNames = new String[numberOfCities];
         // Skip the number of cities parameter
-        citiesScanner.nextLine();
-        for (int i = 0; i < numberOfCities; i++) {
-            cityNames[i] = citiesScanner.next();
-            // System.out.println(cityNames[i]);
+        if (dataset.equals("CUSTOM")) {
+            citiesScanner.nextLine();
+            for (int i = 0; i < numberOfCities; i++) {
+                cityNames[i] = citiesScanner.next();
+                // System.out.println(cityNames[i]);
+            }
         }
+        else {
+            System.out.println("This dataset does not contain the city");
+        }
+
     }
 
     // Method for setting user route names

@@ -241,7 +241,7 @@ public class TSPSolver {
 
     // Set output for the config table
     public String getConfigTable() {
-        if (map.getDataset().equals("Custom")) {
+        if (map.getDataset().equals("CUSTOM")) {
             String configOutput = "<table>"
             + "<tr><th>Crossover Function</th><td>" + GA.getCrossoverFcn() + "</td></tr>"
             + "<tr><th>Selection Function</th><td>" + GA.getSelectionFcn() + "</td></tr>"
