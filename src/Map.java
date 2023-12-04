@@ -34,6 +34,12 @@ public class Map {
         map = null;
         this.dataset = dataset;
         citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Symmetric/" + this.dataset + ".TXT");
+        if (!citiesFile.exists()) {
+            citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Asymmetric/" + this.dataset + ".TXT");
+        }
+        else {
+            System.out.println("File does not exist, things are going to break yo");
+        }
         System.out.println("cities file is " + citiesFile);
         System.out.println("New map");
         google = new Google();
@@ -229,7 +235,7 @@ public class Map {
             }
         }
         else {
-            System.out.println("This dataset does not contain the city");
+            System.out.println("This dataset does not contain the city names, thus will not be populated");
         }
 
     }
@@ -261,6 +267,12 @@ public class Map {
         this.dataset = dataset;
         citiesFile = null;
         citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Symmetric/" + this.dataset + ".TXT");
+        if (!citiesFile.exists()) {
+            citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Asymmetric/" + this.dataset + ".TXT");
+        }
+        else {
+            System.out.println("File does not exist, things are going to break yo");
+        }
         System.out.println("New Dataset is " + this.dataset);
         reload();
     }

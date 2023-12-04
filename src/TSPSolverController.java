@@ -514,28 +514,35 @@ public class TSPSolverController implements Initializable {
 
     private void getDatasetNames() {
         List<String> datasetList = new ArrayList<>();
-        try {
-            Path dir = Paths.get("GA-for-the-TSP/data/TSP_DATASET/Symmetric");
+        String[] dirs = {"Symmetric", "Asymmetric"};
 
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-                for (Path file : stream) {
-                    String fileName = file.getFileName().toString();
-                    if (fileName.endsWith(".TXT")) {
-                        fileName = fileName.substring(0, fileName.length() - 4);
+        for (String dirName : dirs) {
+            try {
+                Path dir = Paths.get("GA-for-the-TSP/data/TSP_DATASET/" + dirName);
+
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+                    for (Path file : stream) {
+                        String fileName = file.getFileName().toString();
+                        if (fileName.endsWith(".TXT")) {
+                            fileName = fileName.substring(0, fileName.length() - 4);
+                        }
+                        if (fileName.equalsIgnoreCase("CUSTOM")) {
+                            datasetList.add(0, fileName); // Add "CUSTOM" to the first index, otherwise it breaks everything and is annoying
+                            // System.out.println("Added CUSTOM to dataset list");
+                        } else {
+                            datasetList.add(fileName);
+                            // System.out.println("Added " + fileName + " to dataset list");
+                        }
                     }
-                    if (fileName.equalsIgnoreCase("CUSTOM")) {
-                        datasetList.add(0, fileName); // Add "CUSTOM" to the first index, otherwise it breaks everything and is annoying
-                    } else {
-                        datasetList.add(fileName);
-                    }
+                } catch (IOException | DirectoryIteratorException x) {
+                    System.err.println(x);
                 }
-            } catch (IOException | DirectoryIteratorException x) {
-                System.err.println(x);
+            } catch (InvalidPathException x) {
+                System.err.println("Invalid directory path: " + x);
             }
-        } catch (InvalidPathException x) {
-            System.err.println("Invalid directory path: " + x);
         }
         this.datasetList = FXCollections.observableArrayList(datasetList);
+        System.out.println("Dataset list: " + datasetList);
+        // System.out.println("First Dataset is " + datasetList.get(0));
     }
-
 }
