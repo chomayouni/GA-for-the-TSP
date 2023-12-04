@@ -51,6 +51,7 @@ public class TSPSolverController implements Initializable {
     @FXML private TextField txtFieldNewCity;
     @FXML private Button btnRun;
     @FXML private Button btnAdd;
+    @FXML private Button btnAvg;
     @FXML private LineChart<String, Integer> lineChartFitness;
     @FXML private GridPane gridPanConfig;
     @FXML private GridPane gridPaneDataset;
@@ -221,18 +222,23 @@ public class TSPSolverController implements Initializable {
 
     private void disableInterface() {
         btnRun.setDisable(true);
+        btnAvg.setDisable(true);
+        btnAdd.setDisable(true);
         choiceBoxCrossover.setDisable(true);
         choiceBoxSelection.setDisable(true);
+        chkComboBoxCities.setDisable(true);
         comboBoxDataset.setDisable(true);
         txtFieldNumGenerations.setDisable(true);
         txtFieldPopSize.setDisable(true);
         txtFieldMutationRate.setDisable(true);
         txtFieldCrossoverRate.setDisable(true);
         txtFieldTournamentSize.setDisable(true);
+        txtFieldNewCity.setDisable(true);
     }
 
     private void enableInterface() {
         btnRun.setDisable(false);
+        btnAvg.setDisable(false);
         choiceBoxSelection.setDisable(false);
         choiceBoxCrossover.setDisable(false);
         comboBoxDataset.setDisable(false);
@@ -248,6 +254,7 @@ public class TSPSolverController implements Initializable {
             btnAdd.setDisable(false);
             txtFieldNewCity.setDisable(false);
             chkComboBoxCities.setDisable(false);
+            
         }
     }
 
@@ -299,13 +306,50 @@ public class TSPSolverController implements Initializable {
             Platform.runLater(() -> {
                 removeChkComboListener();
                 getTSPTable();
-                getFitnessChart();
+                getFitnessChart(true);
                 System.out.println("Done running");
                 enableInterface();
                 addChkComboListener();
             });
         }).start();
 
+    }
+
+    // Run the solver, but plot and get 10 runs stuff
+    public void avg() {
+        // Grab any changes the user didnt hit enter on
+        setNumGenerations();
+        setPopulationSize();
+        setMutationRate();
+        setCrossoverRate();
+        setTournamentSize();
+        // get the current config table for output
+        getConfigTable();
+        // disable interface
+        disableInterface();
+        // Run the TSP solver (10 times) in a seperate thread
+        new Thread(() -> {
+            for (int i = 0; i < 10; i++) {
+                // Run the TSP solver
+                TSPSolver.run();
+
+                // Update the interface
+                Platform.runLater(() -> {
+                    removeChkComboListener();
+                    getTSPTable();
+                    getFitnessChart(false);
+                    System.out.println("Done running");
+                    enableInterface();
+                    addChkComboListener();
+                });
+                // just wait for a second each thread
+                try {
+                    Thread.sleep(100); // wait for 1 second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public void getConfigTable() {
@@ -316,9 +360,10 @@ public class TSPSolverController implements Initializable {
         webViewOutput.getEngine().loadContent(TSPSolver.getTSPTableData());
     }
 
-    public void getFitnessChart() {
+    public void getFitnessChart(Boolean clear) {
         // Objects for the XYChart fitness graph
-        lineChartFitness.getData().clear();
+        if (clear)
+            lineChartFitness.getData().clear();
         Integer minFitness = Integer.MAX_VALUE;
         Integer maxFitness = Integer.MIN_VALUE;
         XYChart.Series<String, Integer> fitnessSeries = new XYChart.Series<String, Integer>();
