@@ -19,6 +19,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -40,7 +41,7 @@ public class TSPSolverController implements Initializable {
     @FXML private VBox mainLayout;
     @FXML private ChoiceBox<String> choiceBoxCrossover;
     @FXML private ChoiceBox<String> choiceBoxSelection;
-    @FXML private ChoiceBox<String> choiceBoxDataset;
+    @FXML private ComboBox<String> comboBoxDataset;
     @FXML private TextField txtFieldNumGenerations;
     @FXML private TextField txtFieldTourSize;
     @FXML private TextField txtFieldPopSize;
@@ -158,11 +159,11 @@ public class TSPSolverController implements Initializable {
 
     private void initializeChoiceBoxDataset() {
         // Add the observable list to the choice box for the dataset
-        choiceBoxDataset.setItems(datasetList);
-        choiceBoxDataset.setValue(datasetList.get(0));
+        comboBoxDataset.setItems(datasetList);
+        comboBoxDataset.setValue(datasetList.get(0));
 
         // add the listener for when the data set choice box is changed. 
-        choiceBoxDataset.getSelectionModel().selectedIndexProperty().addListener(new 
+        comboBoxDataset.getSelectionModel().selectedIndexProperty().addListener(new 
         ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov, 
             Number value, Number new_value) {
@@ -222,7 +223,7 @@ public class TSPSolverController implements Initializable {
         btnRun.setDisable(true);
         choiceBoxCrossover.setDisable(true);
         choiceBoxSelection.setDisable(true);
-        choiceBoxDataset.setDisable(true);
+        comboBoxDataset.setDisable(true);
         txtFieldNumGenerations.setDisable(true);
         txtFieldPopSize.setDisable(true);
         txtFieldMutationRate.setDisable(true);
@@ -234,7 +235,7 @@ public class TSPSolverController implements Initializable {
         btnRun.setDisable(false);
         choiceBoxSelection.setDisable(false);
         choiceBoxCrossover.setDisable(false);
-        choiceBoxDataset.setDisable(false);
+        comboBoxDataset.setDisable(false);
         txtFieldNumGenerations.setDisable(false);
         txtFieldPopSize.setDisable(false);
         txtFieldMutationRate.setDisable(false);
@@ -419,13 +420,14 @@ public class TSPSolverController implements Initializable {
         getConfigTable();
     }
 
+
     private void getDatasetNames() {
+        List<String> datasetList = new ArrayList<>();
         try {
             Path dir = Paths.get("GA-for-the-TSP/data/TSP_DATASET/Symmetric");
-            datasetList = FXCollections.observableArrayList();
-    
+
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-                for (Path file: stream) {
+                for (Path file : stream) {
                     String fileName = file.getFileName().toString();
                     if (fileName.endsWith(".TXT")) {
                         fileName = fileName.substring(0, fileName.length() - 4);
@@ -442,6 +444,7 @@ public class TSPSolverController implements Initializable {
         } catch (InvalidPathException x) {
             System.err.println("Invalid directory path: " + x);
         }
+        this.datasetList = FXCollections.observableArrayList(datasetList);
     }
     
 }

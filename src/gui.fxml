@@ -37,6 +37,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
@@ -107,9 +108,9 @@
                            <children>
                               <Label prefHeight="17.0" prefWidth="89.0" text="Select Cities" GridPane.rowIndex="1" />
                               <Label text="Select Dataset" />
-                              <ChoiceBox fx:id="choiceBoxDataset" prefHeight="25.0" prefWidth="81.0" GridPane.columnIndex="1" />
                               <Label disable="true" text="Select Starting City" visible="false" GridPane.rowIndex="2" />
                               <ChoiceBox fx:id="choiceBoxStartingCity" disable="true" prefWidth="150.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="comboBoxDataset" prefWidth="150.0" GridPane.columnIndex="1" />
                            </children>
                         </GridPane>
                      </children></AnchorPane>
