@@ -391,6 +391,7 @@ public class TSPSolverController implements Initializable {
     }
 
     public void getAvgTSPTable() {
+        System.out.println("Getting avg tsp table");
         webViewOutput.getEngine().loadContent(TSPSolver.getAvgTSPTableData());
     }
 

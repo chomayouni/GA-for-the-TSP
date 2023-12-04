@@ -141,7 +141,6 @@ public class TSPSolver {
         fitnessYData.add(bestTour.getFitness());
 
         updateAvgFitness();
-        updateAvgFitnessTable();
         // Print results to the console
         System.out.println("Finished");
         System.out.println("Final distance: " + bestTour.getFitness());
@@ -251,10 +250,12 @@ public class TSPSolver {
         // System.out.println("Getting avg fitness data");
         for (int i = 0; i < avgFitnessYData.size(); i++) {
             double dividedValue = avgFitnessYData.get(i) / avgRunCount;
-            // System.out.println("Avg fitness data is " + avgFitnessYData.get(i) + " and avg run count is " + avgRunCount);
-            // System.out.println("Divided value is " + dividedValue);
+            System.out.println("Avg fitness data is " + avgFitnessYData.get(i) + " and avg run count is " + avgRunCount);
+            System.out.println("Divided value is " + dividedValue);
             avgFitnessYData.set(i, dividedValue);
+            System.out.println("New avg fitness data is " + avgFitnessYData.get(i));
         }
+        updateAvgFitnessTable();
         return new Pair<ArrayList<String>, ArrayList<Double>>(fitnessXData, avgFitnessYData);
     }
 
