@@ -535,12 +535,12 @@ public class TSPSolverController implements Initializable {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
                     for (Path file : stream) {
                         String fileName = file.getFileName().toString();
-                        if (fileName.endsWith(".TXT")) {
+                        if (fileName.endsWith(".txt")) {
                             fileName = fileName.substring(0, fileName.length() - 4);
                         }
-                        if (fileName.equalsIgnoreCase("CUSTOM")) {
+                        if (fileName.equalsIgnoreCase("custom")) {
                             datasetList.add(0, fileName); // Add "CUSTOM" to the first index, otherwise it breaks everything and is annoying
-                            // System.out.println("Added CUSTOM to dataset list");
+                            System.out.println("Added Custom to dataset list");
                         } else {
                             datasetList.add(fileName);
                             // System.out.println("Added " + fileName + " to dataset list");

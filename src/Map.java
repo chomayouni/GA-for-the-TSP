@@ -33,9 +33,9 @@ public class Map {
     public Map(String dataset) {
         map = null;
         this.dataset = dataset;
-        citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Symmetric/" + this.dataset + ".TXT");
+        citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Symmetric/" + this.dataset + ".txt");
         if (!citiesFile.exists()) {
-            citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Asymmetric/" + this.dataset + ".TXT");
+            citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Asymmetric/" + this.dataset + ".txt");
         }
         else {
             System.out.println("File does not exist, things are going to break yo");
@@ -135,7 +135,7 @@ public class Map {
         citiesScanner.nextLine();
         citiesScanner.nextLine();
         //Print the number of cities grabbed on initialization
-        System.out.print("This city database contains " + numberOfCities + " cities.");
+        System.out.print("This city database contains " + numberOfCities + " cities");
         for (int i = 0; i < numberOfCities; i++) {
             System.out.println(citiesScanner.next());
         }
@@ -176,7 +176,7 @@ public class Map {
         initilizeCitiesScanner();
         //Skip the number of cities, and name of cities
         citiesScanner.nextLine();
-        if (dataset.equals("CUSTOM")) {
+        if (dataset.equalsIgnoreCase("Custom.txt")) {
             citiesScanner.nextLine();
         }
         // Map var that will be returned
@@ -227,7 +227,8 @@ public class Map {
         // Initialize the array size
         cityNames = new String[numberOfCities];
         // Skip the number of cities parameter
-        if (dataset.equals("CUSTOM")) {
+        System.out.println("dataset is " + dataset);
+        if (dataset.equals("Custom")) {
             citiesScanner.nextLine();
             for (int i = 0; i < numberOfCities; i++) {
                 cityNames[i] = citiesScanner.next();
@@ -266,9 +267,9 @@ public class Map {
     public void setDataset(String dataset) {
         this.dataset = dataset;
         citiesFile = null;
-        citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Symmetric/" + this.dataset + ".TXT");
+        citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Symmetric/" + this.dataset + ".txt");
         if (!citiesFile.exists()) {
-            citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Asymmetric/" + this.dataset + ".TXT");
+            citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Asymmetric/" + this.dataset + ".txt");
         }
         else {
             System.out.println("File does not exist, things are going to break yo");
