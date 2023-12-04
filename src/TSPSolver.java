@@ -100,7 +100,7 @@ public class TSPSolver {
     
             if (i % updateInterval == 0) {        
                 bestTour = GA.getFittest();
-    
+                //
                 // Add current record to the table
                 TSPSolverTableData.append("<tr><td>").append(i)
                        .append("</td><td>").append(Arrays.toString(bestTour.getRoute()))
