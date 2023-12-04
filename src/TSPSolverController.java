@@ -1,5 +1,6 @@
 package src;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,8 @@ import javafx.util.Pair;
 
 import org.controlsfx.control.CheckComboBox;
 import javafx.scene.chart.CategoryAxis;
+import java.nio.file.*;
+
 
 public class TSPSolverController implements Initializable {
 
@@ -61,7 +64,8 @@ public class TSPSolverController implements Initializable {
     // Observable lists to tie to the choice box and check combo box, then we will add a listener to them to update the TSP model
     private ObservableList<String> crossoverList = FXCollections.observableArrayList("One-Point Crossover", "Two-Point Crossover", "CX Crossover", "CX2 Crossover", "Greedy Crossover", "PMX Crossover", "OX Crossover", "SCX Crossover");
     private ObservableList<String> selectionList = FXCollections.observableArrayList("Tournament Selection", "Proportional Selection");
-    private ObservableList<String> datasetList = FXCollections.observableArrayList("Custom", "CO04", "HA30", "KN57", "LAU15", "SGB128", "SH07", "SP11", "UK12", "USCA312", "WG22", "WG59");
+    // This one is initilized in its own method, as its populated from the directory full of datasets. 
+    private ObservableList<String> datasetList;
     private ObservableList<String> citiesList = FXCollections.observableArrayList();
 
     // List change listener, we 
@@ -75,9 +79,12 @@ public class TSPSolverController implements Initializable {
         double mutationRate = 0.05;
         double crossoverRate = 0.80;
         int tournamentSize = 2;
+        // Get we get the dataset names from the dataset folder. SHould really be in the initilize method for the datasetChoice box, but need it to grab a default here. 
+        getDatasetNames();
         String initialCrossoverFcn = crossoverList.get(0); // First one default
         String initialSelectionFcn = selectionList.get(0); // first one default
         String initialDataset = datasetList.get(0); // first one default
+        System.out.println("Initial Dataset: " + initialDataset);
         TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, initialCrossoverFcn, initialSelectionFcn, initialDataset);
     }
 
@@ -409,6 +416,27 @@ public class TSPSolverController implements Initializable {
         // Update tour size, since the user route has changed
         getTourSize();
         getConfigTable();
+    }
+
+    private void getDatasetNames() {
+        try {
+            Path dir = Paths.get("GA-for-the-TSP/data/TSP_DATASET/Symmetric");
+            datasetList = FXCollections.observableArrayList();
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+                for (Path file: stream) {
+                    String fileName = file.getFileName().toString();
+                    if (fileName.endsWith(".TXT")) {
+                        fileName = fileName.substring(0, fileName.length() - 4);
+                    }
+                    datasetList.add(fileName);
+                }
+            } catch (IOException | DirectoryIteratorException x) {
+                System.err.println(x);
+            }
+        } catch (InvalidPathException x) {
+            System.err.println("Invalid directory path: " + x);
+        }
     }
     
 }

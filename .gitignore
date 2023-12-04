@@ -1,2 +1,4 @@
 src/*.class
 .classpath
+
+data/TSP_DATASET/

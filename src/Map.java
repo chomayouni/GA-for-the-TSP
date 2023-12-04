@@ -33,7 +33,8 @@ public class Map {
     public Map(String dataset) {
         map = null;
         this.dataset = dataset;
-        citiesFile = new File("GA-for-the-TSP/data/" + this.dataset + ".txt");
+        citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Symmetric/" + this.dataset + ".TXT");
+        System.out.println("cities file is " + citiesFile);
         System.out.println("New map");
         google = new Google();
         setNumberOfCities();
@@ -152,11 +153,11 @@ public class Map {
 
     public void setUserRoute(int[] userRoute) {
         this.userRoute = userRoute;
-        System.out.print("User route is ");
-        for (int i = 0; i < this.userRoute.length; i++) {
-            System.out.print(this.userRoute[i] + ", ");
-        }
-        System.out.println();
+        // System.out.print("User route is ");
+        // for (int i = 0; i < this.userRoute.length; i++) {
+        //     System.out.print(this.userRoute[i] + ", ");
+        // }
+        // System.out.println();
         setUserNumberOfCities();
         createUserCitiesMatrix();
         setUserCityNames();
@@ -214,7 +215,7 @@ public class Map {
     // set the names of cities from the txt file
     private void setCityNames() {
         cityNames = null;
-        System.out.println("set city names call");
+        // System.out.println("set city names call");
         // Reset scanner object
         initilizeCitiesScanner();
         // Initialize the array size
@@ -223,7 +224,7 @@ public class Map {
         citiesScanner.nextLine();
         for (int i = 0; i < numberOfCities; i++) {
             cityNames[i] = citiesScanner.next();
-            System.out.println(cityNames[i]);
+            // System.out.println(cityNames[i]);
         }
     }
 
@@ -253,7 +254,7 @@ public class Map {
     public void setDataset(String dataset) {
         this.dataset = dataset;
         citiesFile = null;
-        citiesFile = new File("GA-for-the-TSP/data/" + this.dataset + ".txt");
+        citiesFile = new File("GA-for-the-TSP/data/TSP_DATASET/Symmetric/" + this.dataset + ".TXT");
         System.out.println("New Dataset is " + this.dataset);
         reload();
     }
