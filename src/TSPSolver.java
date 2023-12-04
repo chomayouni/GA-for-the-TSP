@@ -25,15 +25,14 @@ public class TSPSolver {
     private Integer numGenerations;
     
     // control for keeping data
-    private Integer avgRunCount = 0;
+    private Integer avgRunCount;
 
     // Constructor for the solver. Will also create a map. 
     public TSPSolver(int numGenerations, int populationSize, double mutationRate, double crossoverRate, int tournamentSize, 
-                                                String crossoverFcn, String selectionFcn, String dataset, Integer avgRunCount) {
+                                                String crossoverFcn, String selectionFcn, String dataset) {
         // set initial num generations
         this.numGenerations = numGenerations;
-        // set initial avg run count
-        this.avgRunCount = avgRunCount;
+
         // Create new Map object to handle database stuff. 
         map = new Map(dataset);
         map.reload();
@@ -232,15 +231,12 @@ public class TSPSolver {
         GA.setCityMap(map.getCityMatrix());
     }
 
-    public void setAvgRunCount(int avgRunCount) {
-        this.avgRunCount = avgRunCount;
-    }
 
     public Pair<ArrayList<String>, ArrayList<Double>> getFitnessData() {
         return new Pair<ArrayList<String>, ArrayList<Double>>(fitnessXData, fitnessYData);
     }
 
-    public Pair<ArrayList<String>, ArrayList<Double>> getAvgFitnessData() {
+    public Pair<ArrayList<String>, ArrayList<Double>> getAvgFitnessData(int avgRunCount) {
         // System.out.println("Getting avg fitness data");
         for (int i = 0; i < avgFitnessYData.size(); i++) {
             double dividedValue = avgFitnessYData.get(i) / avgRunCount;
@@ -338,9 +334,5 @@ public class TSPSolver {
 
     public String getAvgTSPTableData() {
         return avgTSPSolverTableData.toString();
-    }
-
-    public Integer getAvgRunCount() {
-        return avgRunCount;
     }
 }

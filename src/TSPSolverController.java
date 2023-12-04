@@ -50,6 +50,7 @@ public class TSPSolverController implements Initializable {
     @FXML private TextField txtFieldCrossoverRate;
     @FXML private TextField txtFieldTournamentSize;
     @FXML private TextField txtFieldNewCity;
+    @FXML private TextField txtFieldAvgRuns;
     @FXML private Button btnRun;
     @FXML private Button btnAdd;
     @FXML private Button btnAvg;
@@ -77,9 +78,8 @@ public class TSPSolverController implements Initializable {
     // These are for the fitness graph. Need to keep global for avg runs (dirty, but whatever)
     private Integer minFitness = Integer.MAX_VALUE;
     private Integer maxFitness = Integer.MIN_VALUE;
+    private Integer avgRunCount;
 
-    // Control for avg run stuff
-    private Integer avgRunCount = 10;
 
     public TSPSolverController() {
         // Initial Constants, can pull this up if we want. Will initial txt fields with these as well. NOT part of this class. Should be passed 
@@ -95,16 +95,16 @@ public class TSPSolverController implements Initializable {
         String initialSelectionFcn = selectionList.get(0); // first one default
         String initialDataset = datasetList.get(0); // first one default
         System.out.println("Initial Dataset: " + initialDataset);
-        TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, initialCrossoverFcn, initialSelectionFcn, initialDataset, avgRunCount);
+        TSPSolver = new TSPSolver(numGenerations, populationSize, mutationRate, crossoverRate, tournamentSize, initialCrossoverFcn, initialSelectionFcn, initialDataset);
     }
 
     // This method is automatically called after the FXML is loaded, it is the "constructor" for the FXML. Need to place any FXMLlogic in here, as the normal, TSPSOlverController constructor does not
     //      have access to the FXML objects yet. 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        // Update button text real quick
-        btnAvg.setText("Average (" + avgRunCount + " Runs)");
 
+        // Set the avg run count for controller. 
+        avgRunCount = 10;
         // Initialize the choice box for the crossover function as well as supporting stuff.
         initializeChoiceBoxCrossover();
 
@@ -128,6 +128,7 @@ public class TSPSolverController implements Initializable {
         txtFieldMutationRate.setText(Double.toString(TSPSolver.getMutationRate()));
         txtFieldCrossoverRate.setText(Double.toString(TSPSolver.getCrossoverRate()));
         txtFieldTournamentSize.setText(Integer.toString(TSPSolver.getTournamentSize()));
+        txtFieldAvgRuns.setText(Integer.toString(avgRunCount));
 
         // Update user route with the defaults, also updated tour szie. 
         setUserRoute();
@@ -244,6 +245,7 @@ public class TSPSolverController implements Initializable {
         txtFieldCrossoverRate.setDisable(true);
         txtFieldTournamentSize.setDisable(true);
         txtFieldNewCity.setDisable(true);
+        txtFieldAvgRuns.setDisable(true);
         webViewOutput.getEngine().loadContent("<h1>Running...</h1>");
 
     }
@@ -259,11 +261,11 @@ public class TSPSolverController implements Initializable {
         txtFieldMutationRate.setDisable(false);
         txtFieldCrossoverRate.setDisable(false);
         txtFieldTournamentSize.setDisable(false);
+        txtFieldAvgRuns.setDisable(false);
 
 
         // Conditionally turn on only if custom data set is being used. 
         if (TSPSolver.getDataset().equals("CUSTOM")) {
-            System.out.println("Hello?");
             btnAdd.setDisable(false);
             txtFieldNewCity.setDisable(false);
             chkComboBoxCities.setDisable(false);
@@ -311,6 +313,7 @@ public class TSPSolverController implements Initializable {
         getConfigTable();
         // disable interface
         disableInterface();
+        
         // Run the TSP solver in a seperate thread
         new Thread(() -> {
             // Run the TSP solver
@@ -337,6 +340,7 @@ public class TSPSolverController implements Initializable {
         setMutationRate();
         setCrossoverRate();
         setTournamentSize();
+        setAvgRuns();
         // get the current config table for output
         getConfigTable();
         // disable interface
@@ -429,7 +433,7 @@ public class TSPSolverController implements Initializable {
     public void getAvgFitnessChart() {
         System.out.println("Getting avg fitness chart");
         XYChart.Series<String, Integer> AvgFitnessSeries = new XYChart.Series<String, Integer>();
-        Pair<ArrayList<String>, ArrayList<Double>> avgFitnessData = TSPSolver.getAvgFitnessData();
+        Pair<ArrayList<String>, ArrayList<Double>> avgFitnessData = TSPSolver.getAvgFitnessData(avgRunCount);
         for (int i = 0; i < avgFitnessData.getKey().size(); i++) {
             AvgFitnessSeries.getData().add(new XYChart.Data<String, Integer>(avgFitnessData.getKey().get(i), avgFitnessData.getValue().get(i).intValue()));
         }
@@ -472,6 +476,12 @@ public class TSPSolverController implements Initializable {
         getConfigTable();
     }
 
+    // sets number of runs for avg runs
+    public void setAvgRuns() {
+        avgRunCount = (Integer.parseInt(txtFieldAvgRuns.getText()));
+        System.out.println("Avg run count: " + avgRunCount);
+    }
+
     // Sets crossover function in TSP from gui
     public void setCrossoverFcn(String arg) {
         TSPSolver.setCrossoverFcn(arg);
@@ -483,6 +493,8 @@ public class TSPSolverController implements Initializable {
         TSPSolver.setSelectionFcn(arg);
         getConfigTable();
     }
+
+
 
     public void setDataset(String arg) {
         if (arg.equals("CUSTOM")) {
