@@ -55,7 +55,6 @@ public class TSPSolverController implements Initializable {
     @FXML private Button btnAdd;
     @FXML private Button btnAvg;
     @FXML private LineChart<String, Integer> lineChartFitness;
-    @FXML private GridPane gridPanConfig;
     @FXML private GridPane gridPaneDataset;
     @FXML private WebView webViewConfig;
     @FXML private WebView webViewOutput;
@@ -99,8 +98,7 @@ public class TSPSolverController implements Initializable {
     }
 
     // This method is automatically called after the FXML is loaded, it is the "constructor" for the FXML. Need to place any FXMLlogic in here, as the normal, TSPSOlverController constructor does not
-    //      have access to the FXML objects yet. 
-    @Override
+    //      have access to the FXML ob
     public void initialize(URL arg0, ResourceBundle arg1) {
 
         // Set the avg run count for controller. 
@@ -246,7 +244,6 @@ public class TSPSolverController implements Initializable {
         txtFieldTournamentSize.setDisable(true);
         txtFieldNewCity.setDisable(true);
         txtFieldAvgRuns.setDisable(true);
-        webViewOutput.getEngine().loadContent("<h1>Running...</h1>");
 
     }
 
@@ -265,7 +262,7 @@ public class TSPSolverController implements Initializable {
 
 
         // Conditionally turn on only if custom data set is being used. 
-        if (TSPSolver.getDataset().equals("CUSTOM")) {
+        if (TSPSolver.getDataset().equalsIgnoreCase("custom")) {
             btnAdd.setDisable(false);
             txtFieldNewCity.setDisable(false);
             chkComboBoxCities.setDisable(false);
@@ -277,7 +274,8 @@ public class TSPSolverController implements Initializable {
     public void addCity() {
         // Disable buttons
         disableInterface();
-    
+        webViewOutput.getEngine().loadContent("<h1>Adding City to Dataset...</h1>");
+
         // Break out the non javaFX stuff into a seperate thread, this allows us to disable the buttons, then schedule them to be re-enabled AFTER 
         //      the non-javaFX stuff is done. Otherwise, the UI stuff happens at first since its so short, then the non-javaFX stuff happens, due to 
         //      not explicitly "Scheduling" it to happen after the UI stuff.
@@ -296,6 +294,7 @@ public class TSPSolverController implements Initializable {
                 toggleAllCities();
                 enableInterface();
                 addChkComboListener();
+                webViewOutput.getEngine().loadContent("<h1>" + city.toString() + " added to Cutsom Dataset</h1>");
             });
         }).start();
 
@@ -313,7 +312,8 @@ public class TSPSolverController implements Initializable {
         getConfigTable();
         // disable interface
         disableInterface();
-        
+        webViewOutput.getEngine().loadContent("<h1>Running...</h1>");
+
         // Run the TSP solver in a seperate thread
         new Thread(() -> {
             // Run the TSP solver
@@ -345,6 +345,7 @@ public class TSPSolverController implements Initializable {
         getConfigTable();
         // disable interface
         disableInterface();
+        webViewOutput.getEngine().loadContent("<h1>Running...</h1>");
         // Clear graph
         clearFitnessChart();
         System.out.println("---------- Running avg ----------");
@@ -424,13 +425,6 @@ public class TSPSolverController implements Initializable {
         numberAxisYFitness.setLowerBound((minFitness - (int) (minFitness * 0.1)) - ((minFitness - (int) (minFitness * 0.05)) % 100));
     }
     
-
-    public void clearFitnessChart() {
-        lineChartFitness.getData().clear();
-        minFitness = Integer.MAX_VALUE;
-        maxFitness = Integer.MIN_VALUE;
-    }
-
     public void getAvgFitnessChart() {
         System.out.println("Getting avg fitness chart");
         XYChart.Series<String, Integer> AvgFitnessSeries = new XYChart.Series<String, Integer>();
@@ -440,6 +434,12 @@ public class TSPSolverController implements Initializable {
         }
         lineChartFitness.getData().add(AvgFitnessSeries);
         AvgFitnessSeries.getNode().setStyle("-fx-stroke: green; -fx-stroke-width: 1.5px; -fx-background-color: green, white;");        
+    }
+
+    public void clearFitnessChart() {
+        lineChartFitness.getData().clear();
+        minFitness = Integer.MAX_VALUE;
+        maxFitness = Integer.MIN_VALUE;
     }
 
     // Get tour size to update GUI field
@@ -498,7 +498,7 @@ public class TSPSolverController implements Initializable {
 
 
     public void setDataset(String arg) {
-        if (arg.equals("CUSTOM")) {
+        if (arg.equalsIgnoreCase("Custom")) {
             btnAdd.setDisable(false);
             txtFieldNewCity.setDisable(false);
             chkComboBoxCities.setDisable(false);

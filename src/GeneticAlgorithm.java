@@ -59,6 +59,7 @@ public class GeneticAlgorithm {
     // is better
     public void fitness()
     {
+		// printCityMap();
     	// For each member of the population
     	for (int i = 0; i < populationSize; i++)
     	{
@@ -194,6 +195,7 @@ public class GeneticAlgorithm {
     public void crossover()
     {
     	// Create a temporary population to hold children of current population
+		// System.out.println("populationSize: " + populationSize + " tourSize: " + tourSize + "");
     	Population childPop = new Population(populationSize,tourSize, false);
     	// Each crossover returns two children, hold them in this temp array
     	int[][] children = new int[2][tourSize];
@@ -667,7 +669,7 @@ public class GeneticAlgorithm {
 //        return child;
 //    }
     
-    public int[] scxCrossover(int parent1Idx, int parent2Idx)
+    private int[] scxCrossover(int parent1Idx, int parent2Idx)
     {
     	int[] parent1 = population.getRoute(parent1Idx);
     	int[] parent2 = population.getRoute(parent2Idx);
@@ -745,7 +747,7 @@ public class GeneticAlgorithm {
     }
     
     // Paper four Order Crossover
-    public int[][] oxCrossover(int parent1Idx, int parent2Idx)
+    private int[][] oxCrossover(int parent1Idx, int parent2Idx)
     {
     	int[] parent1 = population.getRoute(parent1Idx);
     	int[] parent2 = population.getRoute(parent2Idx);
@@ -817,7 +819,7 @@ public class GeneticAlgorithm {
     }
     
     // Paper four partially-mapped crossover
-    public int[][] pmxCrossover(int parent1Idx, int parent2Idx)
+    private int[][] pmxCrossover(int parent1Idx, int parent2Idx)
     {
     	int[] parent1 = population.getRoute(parent1Idx);
     	int[] parent2 = population.getRoute(parent2Idx);
@@ -904,7 +906,7 @@ public class GeneticAlgorithm {
     	return children;
     }
     
-    public int[][] cxCrossover(int parent1Idx, int parent2Idx)
+    private int[][] cxCrossover(int parent1Idx, int parent2Idx)
     {
     	int[] parent1 = population.getRoute(parent1Idx);
     	int[] parent2 = population.getRoute(parent2Idx);
@@ -981,7 +983,7 @@ public class GeneticAlgorithm {
     }
 
     // Paper four crossover
-    public int[][] cx2Crossover(int parent1Idx, int parent2Idx)
+    private int[][] cx2Crossover(int parent1Idx, int parent2Idx)
     {
     	int[] parent1 = population.getRoute(parent1Idx);
     	int[] parent2 = population.getRoute(parent2Idx);
@@ -1142,7 +1144,7 @@ public class GeneticAlgorithm {
 	}
 	
     // Paper three
-    private int[][] twoPointCrossover(int parent1, int parent2) {
+    private int[][] twoPointCrossover(int parent1Idx, int parent2Idx) {
     	// Initialize the two child chromosomes
         int[][] children = new int[2][tourSize+1];
         Arrays.fill(children[0], -1);
@@ -1161,12 +1163,12 @@ public class GeneticAlgorithm {
         
         // Create the first child
         // Take parent one inside of the two crossover points
-        System.arraycopy(population.getRoute(parent1), startPoint, children[0], startPoint, endPoint - startPoint);
+        System.arraycopy(population.getRoute(parent1Idx), startPoint, children[0], startPoint, endPoint - startPoint);
 
         // Take parent two outside of the two crossover points if possible
         for (int i = 0; i < tourSize; i++) {
             if (children[0][i] == -1) {
-                for (int city : population.getRoute(parent2)) {
+                for (int city : population.getRoute(parent2Idx)) {
                     if (!contains(children[0], city)) {
                         children[0][i] = city;
                         break;
@@ -1179,12 +1181,12 @@ public class GeneticAlgorithm {
         
         // Create the second child
         // Take parent two inside of the two crossover points
-        System.arraycopy(population.getRoute(parent2), startPoint, children[1], startPoint, endPoint - startPoint);
+        System.arraycopy(population.getRoute(parent2Idx), startPoint, children[1], startPoint, endPoint - startPoint);
 
         // Take parent one outside of the two crossover points if possible
         for (int i = 0; i < tourSize; i++) {
             if (children[1][i] == -1) {
-                for (int city : population.getRoute(parent1)) {
+                for (int city : population.getRoute(parent1Idx)) {
                     if (!contains(children[1], city)) {
                         children[1][i] = city;
                         break;
@@ -1275,7 +1277,7 @@ public class GeneticAlgorithm {
     
     // Utility function, check if an array of integers
     // contains a specified integer
-    private boolean contains(int[] array, int target)
+    private Boolean contains(int[] array, int target)
     {
     	for ( int i = 0; i < array.length; i++)
     	{
@@ -1287,7 +1289,7 @@ public class GeneticAlgorithm {
     
     // Utility function, returns the index of a value
     // if it is in an array
-    public static int indexOf(int[] array, int value) {
+    private int indexOf(int[] array, int value) {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == value) {
                 return i;
@@ -1446,6 +1448,19 @@ public class GeneticAlgorithm {
 	// set city map
 	public void setCityMap(int[][] cityMap) {
 		this.cityMap = cityMap;
+
+	}
+
+	public void printCityMap() {
+		System.out.println("City map set to: ");
+		for (int i = 0; i < cityMap.length; i++)
+		{
+			for (int j = 0; j < cityMap.length; j++)
+			{
+				System.out.print(cityMap[i][j] + " ");
+			}
+		System.out.println();
+		}
 	}
 }
 

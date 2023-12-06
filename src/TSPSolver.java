@@ -24,8 +24,6 @@ public class TSPSolver {
     // Control for running the GA, should be in GA object, but thats A LOT of refactoring
     private Integer numGenerations;
     
-    // control for keeping data
-    private Integer avgRunCount;
 
     // Constructor for the solver. Will also create a map. 
     public TSPSolver(int numGenerations, int populationSize, double mutationRate, double crossoverRate, int tournamentSize, 
@@ -65,6 +63,7 @@ public class TSPSolver {
     public void run() {
         // Must get fitness before GA operation loop
         // updateTSP();
+        System.out.println("GA tour size is " + GA.getTourSize());
         GA.newPopulation();
         GA.fitness();
     
@@ -192,7 +191,7 @@ public class TSPSolver {
 
     public void setUserRoute(int[] userRoute) {
         map.setUserRoute(userRoute);
-        // System.out.println("New User Route is " + this.userRoute[0]);
+        System.out.println("User Route is " + userRoute[0]);
         // User route and actual city data are not part of the TSP, they are part of the map object. 
         //      so those must be updated first via the update TSP then we can print the setup (which prints) 
         //      the routes
@@ -310,7 +309,7 @@ public class TSPSolver {
 
     // Set output for the config table
     public String getConfigTable() {
-        if (map.getDataset().equals("CUSTOM")) {
+        if (map.getDataset().equalsIgnoreCase("Custom")) {
             String configOutput = "<table>"
             + "<tr><th>Crossover Function</th><td>" + GA.getCrossoverFcn() + "</td></tr>"
             + "<tr><th>Selection Function</th><td>" + GA.getSelectionFcn() + "</td></tr>"

@@ -83,7 +83,7 @@ public class Google {
         return distance.intValue();
     }
 
-    public String encodeURL(String city) {
+    private String encodeURL(String city) {
         String output = "";
         try {
             output = URLEncoder.encode(city, "UTF-8");

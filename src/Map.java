@@ -58,7 +58,7 @@ public class Map {
     }
     // This method is called repeatedly to reset the scanner, for when we go into the txt file multiple times, more or less
     //      for debugging purposes
-    private void initilizeCitiesScanner() {
+    private void initializeCitiesScanner() {
         //Scanner object wants to be in a try catch to get rid of warning if there is an invalid file path
         citiesScanner = null;
         try {
@@ -130,7 +130,7 @@ public class Map {
 
     public void printCities() {
         //Reset scanner each time we go back into it
-        initilizeCitiesScanner();
+        initializeCitiesScanner();
         //Skip the number of cities, and name of cities
         citiesScanner.nextLine();
         citiesScanner.nextLine();
@@ -143,7 +143,7 @@ public class Map {
 
     public void printCitiesMatrixFromTxt() {
         //I'm just usually reseting the scanner each time we need to go back into the txt file
-        initilizeCitiesScanner();
+        initializeCitiesScanner();
 
         //skip the number of cities
         citiesScanner.nextLine();
@@ -173,10 +173,10 @@ public class Map {
     private void createCitiesMatrix() {
         map = null;
         //I'm just usually reseting the scanner each time we need to go back into the txt file
-        initilizeCitiesScanner();
+        initializeCitiesScanner();
         //Skip the number of cities, and name of cities
         citiesScanner.nextLine();
-        if (dataset.equalsIgnoreCase("Custom.txt")) {
+        if (dataset.equalsIgnoreCase("Custom")) {
             citiesScanner.nextLine();
         }
         // Map var that will be returned
@@ -223,12 +223,13 @@ public class Map {
         cityNames = null;
         // System.out.println("set city names call");
         // Reset scanner object
-        initilizeCitiesScanner();
+        initializeCitiesScanner();
         // Initialize the array size
         cityNames = new String[numberOfCities];
         // Skip the number of cities parameter
         System.out.println("dataset is " + dataset);
         if (dataset.equals("Custom")) {
+            System.out.println("Custom dataset, adding city names");
             citiesScanner.nextLine();
             for (int i = 0; i < numberOfCities; i++) {
                 cityNames[i] = citiesScanner.next();
@@ -253,7 +254,7 @@ public class Map {
     // set the number of cities from the txt file
     private void setNumberOfCities() {
         // Reset scanner object
-        initilizeCitiesScanner();
+        initializeCitiesScanner();
         // Get the number of cities from the first piece of data in txt file
         numberOfCities = Integer.parseInt(citiesScanner.next());
     }
