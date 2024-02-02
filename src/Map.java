@@ -69,7 +69,10 @@ public class Map {
         }
     }
 
-    public Boolean addCity(String city) {
+    public Boolean addCity(String city, String APIKey) {
+        // Update the API key
+        google.setAPIKey(APIKey);
+
         // check if city already exists
         for (int i = 0; i < numberOfCities; i++) {
             if (cityNames[i].equals(city)) {
@@ -81,7 +84,11 @@ public class Map {
         ArrayList<Integer> newDistances = new ArrayList<>();
 
         for (int i = 0; i < numberOfCities; i++) {
-            newDistances.add(google.getDistance(cityNames[i], city));
+            int dist = google.getDistance(cityNames[i], city);
+            if (dist == -1) {
+                return false;
+            }
+            newDistances.add(dist);
 
         }
         // This is the 0 for the city -> city (self to self) which can just be manually added

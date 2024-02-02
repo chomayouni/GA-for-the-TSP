@@ -111,7 +111,7 @@
                         </GridPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="82.0" prefWidth="244.0">
+                  <AnchorPane prefHeight="161.0" prefWidth="243.0">
                      <children>
                         <GridPane layoutX="32.0" layoutY="33.0">
                            <columnConstraints>
@@ -120,13 +120,16 @@
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" />
                            </rowConstraints>
                            <children>
                               <Label text="City Name" />
                               <TextField fx:id="txtFieldNewCity" prefWidth="124.0" GridPane.columnIndex="1" />
+                              <Label text="API Key" GridPane.rowIndex="1" />
+                              <TextField fx:id="txtFieldAPIKey" prefWidth="124.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
-                        <Button fx:id="btnAdd" layoutX="83.0" layoutY="73.0" mnemonicParsing="false" onAction="#addCity" prefHeight="27.0" prefWidth="78.0" text="Add" />
+                        <Button fx:id="btnAdd" layoutX="83.0" layoutY="104.0" mnemonicParsing="false" onAction="#addCity" prefHeight="27.0" prefWidth="78.0" text="Add" />
                      </children>
                   </AnchorPane>
                   <AnchorPane prefHeight="157.0" prefWidth="244.0">

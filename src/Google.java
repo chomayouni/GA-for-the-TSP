@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class Google {
 
     // Really should never push the real key...
-    private String apiKey = "no";
+    private String apiKey = "";
 
     // Hard coded units for American people
     private String units = "imperial";
@@ -48,6 +48,13 @@ public class Google {
             reader.close();
 
             JSONObject jsonResponse = new JSONObject(response.toString());
+
+            // Check if the response is valid, checking if there is an error message
+            if (jsonResponse.has("error_message")) {
+                System.out.println("Error: " + jsonResponse.getString("error_message"));
+                conn.disconnect();
+                return -1;
+            }
 
             // Parse out the data from the json object
             output = jsonResponse.getJSONArray("rows")
@@ -93,6 +100,12 @@ public class Google {
         }
         // System.out.println(output);
         return output;
+    }
+
+    // setter for the API key
+    public void setAPIKey(String key) {
+        apiKey = key;
+        ;
     }
     
 }

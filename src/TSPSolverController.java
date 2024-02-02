@@ -51,6 +51,7 @@ public class TSPSolverController implements Initializable {
     @FXML private TextField txtFieldTournamentSize;
     @FXML private TextField txtFieldNewCity;
     @FXML private TextField txtFieldAvgRuns;
+    @FXML private TextField txtFieldAPIKey;
     @FXML private Button btnRun;
     @FXML private Button btnAdd;
     @FXML private Button btnAvg;
@@ -244,6 +245,7 @@ public class TSPSolverController implements Initializable {
         txtFieldTournamentSize.setDisable(true);
         txtFieldNewCity.setDisable(true);
         txtFieldAvgRuns.setDisable(true);
+        txtFieldAPIKey.setDisable(true);
 
     }
 
@@ -264,6 +266,7 @@ public class TSPSolverController implements Initializable {
         // Conditionally turn on only if custom data set is being used. 
         if (TSPSolver.getDataset().equalsIgnoreCase("custom")) {
             btnAdd.setDisable(false);
+            txtFieldAPIKey.setDisable(false);
             txtFieldNewCity.setDisable(false);
             chkComboBoxCities.setDisable(false);
             
@@ -282,9 +285,11 @@ public class TSPSolverController implements Initializable {
         new Thread(() -> {
             // Get the city to be added
             String city = txtFieldNewCity.getText();
+            // Get the API key
+            String apiKey = txtFieldAPIKey.getText();
     
             // Call addCity method, will append to cities list if its good. 
-            if (TSPSolver.addCity(city)) {
+            if (TSPSolver.addCity(city, apiKey)) {
                 citiesList.add(city);
             }
             // Enable buttons   
@@ -498,14 +503,16 @@ public class TSPSolverController implements Initializable {
 
 
     public void setDataset(String arg) {
-        if (arg.equalsIgnoreCase("Custom")) {
+        if (arg.equalsIgnoreCase("custom")) {
             btnAdd.setDisable(false);
             txtFieldNewCity.setDisable(false);
+            txtFieldAPIKey.setDisable(false);
             chkComboBoxCities.setDisable(false);
         } 
         else {
             btnAdd.setDisable(true);
             txtFieldNewCity.setDisable(true);
+            txtFieldAPIKey.setDisable(true);
             chkComboBoxCities.setDisable(true);
         }
         TSPSolver.setDataset(arg);

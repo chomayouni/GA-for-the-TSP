@@ -46,15 +46,16 @@ public class TSPSolver {
     }
 
     // Add a city to the data base
-    public Boolean addCity(String city) {
+    public Boolean addCity(String city, String APIKey) {
         // Check to make sure city is not already in the db
-        if (map.addCity(city)) {
+        if (map.addCity(city, APIKey)) {
             map.reload();
             // txtAreaOutput.setText(city + " added to database");
             return true;
             
         } else {
             // txtAreaOutput.setText(city + " already in database");
+            System.out.println("Error when adding city");
             return false;
         }
 
